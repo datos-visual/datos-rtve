@@ -1,0 +1,34 @@
+{
+  "name": "rtve-app-pf-fosas",
+  "distName": "pf-fosas",    
+  "projectType": "pf",
+  "dbType": "No Database",
+  "main": "dist/app.js",
+  "author": {
+    "name": "Pedro Pastor",
+    "email": "pedro.pastor@rtve.es"
+  },
+  "contributors": [],
+  "license": "Apache-2.0",  
+  "version": "1.0.0",
+  "description": "Aplicación de páginas finales de fosas de la Guerra Civil Española",  
+  "scripts": {
+    "rebuild": "rtve-ci-build rebuild",
+    "depstree": "rtve-ci-build a-deps",
+    "gitflow": "rtve-ci-build gf",    
+    "linguist": "rtve-ci-build linguist"
+  },  
+  "dependencies": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.irtve.rtve.int:node-pf/rtve-app-pf-fosas.git"
+  },
+  "devDependencies": {
+    "grunt": "1.6.1",
+    "grunt-ci-manager": "3.0.3"
+  },
+  "engines": {
+    "node": "20"
+  }
+}
