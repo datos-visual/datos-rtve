@@ -1,0 +1,23 @@
+# Por defecto ignora: 
+# Sistema = .*.swp, ._*, .DS_Store
+# SCM = .git, .hg, .svn, CVS
+# npm = .npmrc, npm-debug.log
+# waf = .lock-wscript, .wafpickle-*
+# gyp = config.gypi
+
+### Eclipse ###		
+.project
+.settings/
+
+### Visual Studio Code ###
+.vscode/*
+.history
+
+### SublimeText ###
+*.sublime-workspace
+*.sublime-project
+
+### RTVE ###
+src/
+karma_html/
+reports/

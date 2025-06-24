@@ -1,0 +1,52 @@
+### Node ###
+node_modules/
+npm-debug.log
+npm-shrinkwrap.json
+package-lock.json
+
+### Mac ###
+.DS_Store
+
+### Eclipse ###		
+.project
+.settings/
+
+### Visual Studio Code ###
+.vscode/*
+.history
+
+### SublimeText ###
+*.sublime-workspace
+*.sublime-project
+
+### RTVE ###
+# RTVE Test
+karma_html/
+reports/
+# RTVE Assets
+src/.tmp
+src/views/imported/
+/src/assets/js/tpl
+# RTVE pf-final Assets
+src/views/layout/base.html
+src/views/layout/footer.html
+src/views/layout/layout.html
+src/views/layout/menu_radio.html
+src/views/layout/menu.html
+src/views/layout/rtve-play.html
+src/views/layout/error/
+
+# RTVE test Assets
+src/test/views/layout/base.html
+src/test/views/layout/layout.html
+src/test/views/layout/error*
+# RTVE Deploy
+dist/
+
+#Docker
+.env
+cache
+docker-compose_test.yml
+Dockerfile_test
+# Template generada por rtve-play-utils
+src/views/layout/rtve-play.html
