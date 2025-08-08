@@ -5,8 +5,8 @@
   "dbType": "No Database",
   "main": "dist/app.js",
   "author": {
-    "name": "Pedro Pastor",
-    "email": "pedro.pastor@rtve.es"
+    "name": "name",
+    "email": "example@email.com"
   },
   "contributors": [],
   "license": "Apache-2.0",  
@@ -19,6 +19,8 @@
     "linguist": "rtve-ci-build linguist"
   },  
   "dependencies": {
+    "rtve-module-common": "2.3.2",
+    "cookie-parser": "^1.4.5"
   },
   "repository": {
     "type": "git",

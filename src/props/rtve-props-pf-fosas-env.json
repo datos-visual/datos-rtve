@@ -1,0 +1,15 @@
+{
+	"common": {
+		"server_path": "noticias/fosas",
+		"jsonPath": "https://api.rtve.es/datos-repo/test-fosas/guia-optimizado.json"
+	},
+	"development": {
+
+	},
+	"production": {
+		"view_cache": true,
+        "swig_view_cache": "memory"
+  	},
+	
+	"test": {}
+}
