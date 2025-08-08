@@ -1,1 +1,0 @@
-Definitivamente, tomar el proyecto "rtve-app-pf-photogallery" como base.
