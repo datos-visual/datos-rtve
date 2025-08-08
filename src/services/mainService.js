@@ -5,7 +5,22 @@ const rtveLogger = require('rtve-module-logger'),
     properties = require('rtve-module-properties')(process.env.NODE_ENV),
     logger = rtveLogger.getLogger('rtve.pf-fosas.mainService');
 
-module.exports = {
 
+    function getHome(req, res, callback){
+
+    }
+
+    function getFosa(req, res, callback){
+
+    }
+
+    function filterByLoc(req, res, callback){
+
+    }
+
+module.exports = {
+    getHome: getHome,
+    getFosa: getFosa,
+    filterByLoc: filterByLoc
 };
 
