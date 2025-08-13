@@ -16,9 +16,7 @@ const homeController = (req, res) => {
         if (err) {
             res.status(500).send('Unhandled error: ' + err);
         } else {
-            res.render('VISTA_HOME', {
-                params: data
-            });
+            res.render('fosas/home', {});
         }
     });
 };
@@ -30,7 +28,6 @@ const filterController = (req, res) => {
             res.status(500).send('Unhandled error: ' + err);
         } else {
             res.render('VISTA_LOC', {
-                params: data
             });
         }
     });
@@ -42,9 +39,7 @@ const fosaController = (req, res) => {
         if (err) {
             res.status(500).send('Unhandled error: ' + err);
         } else {
-            res.render('VISTA_FOSA', {
-                params: data
-            });
+            res.render('fosas/fosa', data);
         }
     });
 };

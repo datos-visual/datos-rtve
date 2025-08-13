@@ -7,15 +7,22 @@ const rtveLogger = require('rtve-module-logger'),
 
 
     function getHome(req, res, callback){
-
+        let data = {};
+        //Construir objeto data con la información que se necesite
+        return callback(null, data);
     }
 
     function getFosa(req, res, callback){
-
+        let data = {
+            title: req.params.title,
+            id: req.params.id
+        };
+        return callback(null, data);
     }
 
     function filterByLoc(req, res, callback){
-
+        let data = {};
+        return callback(null, data);
     }
 
 module.exports = {
