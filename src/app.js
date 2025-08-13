@@ -1,23 +1,23 @@
 /* jshint esversion: 6 */
 const rtveLogger    = require('rtve-module-logger'),
     logger          = rtveLogger.getLogger('rtve.pf-fosas.app'),
-    pkg             = require(path.join(__dirname,'../package.json')),
-    common          = require('rtve-module-common')(pkg.distName),
     properties      = require('rtve-module-properties')(process.env.NODE_ENV),
     mainController  = require('./routes/mainController'),
-    { normalizeText } = require('./lib/utils'),
+//    { normalizeText } = require('./lib/utils'),
     swig            = require('swig'),
     mainService     = require('./services/mainService'),
     path            = require('path'),
+    pkg             = require(path.join(__dirname,'../package.json')),
+    common          = require('rtve-module-common')(pkg.distName),
     bodyParser      = require('body-parser'),
     express         = require('express');
 
 
-swig.setFilter('link', mainService.getLink);
+/* swig.setFilter('link', mainService.getLink);
 swig.setFilter('int', mainService.formatInt);
 swig.setFilter('number', mainService.formatNumber);
 swig.setFilter('replaceUrlParam', mainService.replaceUrlParam);
-swig.setFilter('normalizeText', normalizeText);
+swig.setFilter('normalizeText', normalizeText); */
 
 logger.debug(`Principal APP Request...`);
 
@@ -33,7 +33,6 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use("/css", express.static(__dirname + '/../dist/css'));
 app.use("/js", express.static(__dirname + '/../dist/js'));
 app.use('/' + properties.server_path, mainController);
-app.use(properties.server_path_politicos, politicosController);
 
 swig.setDefaults({
     cache: properties.swig_view_cache,

@@ -17,7 +17,7 @@ content_middleware.addMapExtension('html', 'text/html');
 content_middleware.setDefaultType('text/html');
 
 // Configuración para simular entorno de producción  (grunt pro)
-var isDevMode = process.argv.slice(2).includes('nobuild'),
+let isDevMode = process.argv.slice(2).includes('nobuild'),
     baseFolder = isDevMode ? '.' : '../dist',
     buildTarget = isDevMode ? '/.tmp/merge' : '.';
 
@@ -74,14 +74,14 @@ appwrapper
     // Procesa output y resuelve los Includes virtuales
     .use(common.middlewares.errorStatus, common.middlewares.errorRequest); // redirige errores
 
-var server = appwrapper.listen(properties.nodePort, serve); // Lanza el servidor
+let server = appwrapper.listen(properties.nodePort, serve); // Lanza el servidor
 
 module.exports = appwrapper;
 
 // MIDDLEWARES
 function rmExtensionName(req, res, next) {
-    var pathname = Url.parse(req.url).pathname;
-    var extname = path.extname(pathname);
+    let pathname = Url.parse(req.url).pathname;
+    let extname = path.extname(pathname);
     req.url = req.url.replace(extname, '');
     next();
 }
