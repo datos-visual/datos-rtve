@@ -23,6 +23,9 @@ logger.debug(`Principal APP Request...`);
 
 let app = express();
 
+// Configurar pfPath según arquitectura RTVE (requerido para módulos)
+app.locals.pfPath = common.getPfPath('/' + properties.server_path.split('/')[0]); // '/noticias'
+
 app.engine('html', swig.renderFile)
     .set('view engine', 'html')
     .set('views', path.join(__dirname, 'views'))
@@ -46,6 +49,8 @@ swig.setDefaults({
         vsp: properties.videos_version_player,
         apidomain: properties.api2Domain,
         jsdomain: properties.js2Domain,
+        pfPath: app.locals.pfPath,
+        globalURL: properties.globalURL
 
     }
 });
