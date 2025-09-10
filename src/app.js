@@ -33,8 +33,8 @@ app.engine('html', swig.renderFile)
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-app.use("/css", express.static(__dirname + '/../dist/css'));
-app.use("/js", express.static(__dirname + '/../dist/js'));
+app.use("/css", express.static(__dirname + '/.tmp/merge/css'));
+app.use("/js", express.static(__dirname + '/.tmp/merge/js'));
 app.use('/' + properties.server_path, mainController);
 
 swig.setDefaults({

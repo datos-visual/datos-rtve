@@ -1,0 +1,85 @@
+/* ===== COMPONENTE BOTÓN DE SCROLL - TRANSFORMADO DESDE SCSS ===== */
+
+scroll-button {
+    /* Solo estilos básicos del componente, sin posicionamiento */
+    display: inline-block;
+    /* El posicionamiento, z-index, etc. se define donde se use */
+}
+
+.scroll-button {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    color: #f3efef;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+    text-shadow: none;
+}
+
+.scroll-icon {
+    width: 42px;
+    height: 40px;
+    display: block;
+}
+
+.scroll-text {
+    font-family: "Public Sans", sans-serif, system-ui, -apple-system;
+    font-weight: 400;
+    font-size: clamp(12px, 1.2vw, 14px);
+    line-height: 24px;
+    letter-spacing: 0.03em;
+    color: rgba(243, 239, 239, 0.9);
+    text-align: center;
+    display: block;
+    text-shadow: none;
+}
+
+/* ===== ANIMACIÓN SOLO DE LA LÍNEA INTERNA DEL SVG (rueda) ===== */
+.mouse-icon .mouse-wheel {
+    transform-origin: 50% 50%;
+}
+
+.scroll-button.is-animated {
+    --wheel-range: 10px;
+    --wheel-duration: 1.8s;
+}
+
+.scroll-button.is-animated .mouse-icon .mouse-wheel {
+    animation: mouseWheelSlide var(--wheel-duration) linear infinite alternate;
+}
+
+@keyframes mouseWheelSlide {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(var(--wheel-range));
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 599.98px) {
+    .scroll-icon {
+        width: 36px;
+        height: 30px;
+    }
+    
+    .scroll-text {
+        font-size: 1.125rem;
+    }
+}
+
+/* Reducir animación en dispositivos que prefieren menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+    .scroll-button.is-animated {
+        animation: none;
+    }
+    
+    .scroll-button.is-animated:hover {
+        transform: translateY(-2px);
+    }
+}

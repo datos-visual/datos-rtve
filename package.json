@@ -1,6 +1,6 @@
 {
   "name": "rtve-app-pf-fosas",
-  "distName": "pf-fosas",    
+  "distName": "pf-fosas",
   "projectType": "pf",
   "dbType": "No Database",
   "main": "dist/app.js",
@@ -9,18 +9,18 @@
     "email": "example@email.com"
   },
   "contributors": [],
-  "license": "Apache-2.0",  
+  "license": "Apache-2.0",
   "version": "1.0.0",
-  "description": "Aplicación de páginas finales de fosas de la Guerra Civil Española",  
+  "description": "Aplicación de páginas finales de fosas de la Guerra Civil Española",
   "scripts": {
     "rebuild": "rtve-ci-build rebuild",
     "depstree": "rtve-ci-build a-deps",
-    "gitflow": "rtve-ci-build gf",    
+    "gitflow": "rtve-ci-build gf",
     "linguist": "rtve-ci-build linguist"
-  },  
+  },
   "dependencies": {
-    "rtve-module-common": "2.3.2",
-    "cookie-parser": "^1.4.5"
+    "cookie-parser": "^1.4.5",
+    "rtve-module-common": "2.3.2"
   },
   "repository": {
     "type": "git",
@@ -28,7 +28,9 @@
   },
   "devDependencies": {
     "grunt": "1.6.1",
-    "grunt-ci-manager": "2.1.0"
+    "grunt-ci-manager": "2.1.0",
+    "grunt-sass": "^4.0.0",
+    "sass": "^1.92.1"
   },
   "engines": {
     "node": "20"

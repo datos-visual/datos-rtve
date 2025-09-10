@@ -1,0 +1,108 @@
+/* ===== COMPONENTE CRÉDITOS - TRANSFORMADO DESDE SCSS ===== */
+
+creditos-section {
+    width: 100%;
+}
+
+.credits {
+    width: 100%;
+    height: auto;
+    padding-inline: 16px;
+    margin-bottom: 60px;
+    font-family: "Public Sans", sans-serif;
+}
+
+.credits .credits-wrapper {
+    max-width: 840px;
+    margin-inline: auto;
+    background-color: #f3efef;
+    position: relative;
+    padding: 40px 20px;
+}
+
+@media (min-width: 768px) {
+    .credits .credits-wrapper {
+        padding: 60px;
+    }
+}
+
+.credits .credits-wrapper .mostrar-flex {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.credits__title {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #333333;
+    margin-block: 0 20px;
+}
+
+@media (min-width: 768px) {
+    .credits__title {
+        font-size: 1.67rem;
+    }
+}
+
+.credits__subtitle {
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 30px;
+    color: #333333;
+    margin-block: 0;
+}
+
+@media (min-width: 768px) {
+    .credits__subtitle {
+        font-size: 1.125rem;
+    }
+}
+
+.credits__text {
+    font-weight: 400;
+    font-size: 1rem;
+    margin-block: 0 30px;
+    color: #7b7b7b;
+}
+
+@media (min-width: 768px) {
+    .credits__text {
+        font-size: 1.125rem;
+    }
+}
+
+/* ===== COMPONENTE MOSTRAR MÁS - TRANSFORMADO DESDE SCSS ===== */
+
+mostrar-mas {
+    width: 100%;
+}
+
+.mostrar-mas-componente {
+    display: flex;
+    flex-direction: column;
+}
+
+.mostrar-mas-componente .toggle-btn {
+    padding: 0;
+    margin-left: auto;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 1.17rem;
+    color: #0072ce;
+    font-weight: 500;
+    text-decoration: underline;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.mostrar-mas-componente .toggle-btn:hover {
+    text-decoration: underline;
+}
+
+.mostrar-mas-componente .contenido {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: #444;
+}

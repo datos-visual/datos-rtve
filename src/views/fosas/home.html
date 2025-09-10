@@ -1,6 +1,8 @@
 {% extends "./index.html" %}
 
 {% block morecss %}
+<link rel="stylesheet" href="/css/scrollButton.css">
+<link rel="stylesheet" href="/css/creditos.css">
 <style>
     li.active-result[data-option-array-index="0"] {
         display: none;
@@ -13,7 +15,33 @@
     
     <div class="container">
         <span class="nombre">HOME</span>
+        {%-include 'partials/scrollButton.html' with {
+            label: "Explora las fosas",
+            icon: "mouse", 
+            animated: "true"
+        } -%}
     </div>
 
+    {%-include 'partials/creditos.html' with {
+        title: "Créditos del Proyecto",
+        subtitle: "Fosas de la Guerra Civil",
+        text: "Proyecto desarrollado por el equipo de RTVE para la recuperación de la memoria histórica.",
+        editor: "Equipo RTVE",
+        content: "Este proyecto forma parte del compromiso de RTVE con la memoria histórica y la recuperación de la verdad sobre las víctimas de la Guerra Civil española."
+    } -%}
+
 </div>
+{% endblock %}
+
+{% block js %}
+<!-- build:template
+    <script data-main="{{jsUrl}}/pages/<%= distName %>/<%= version %>/js/config" src="{{jsUrl}}/pages/<%= distName %>/<%= version %>/js/vendor/require.js" ></script>
+    /build -->
+
+<!-- build:remove:dist /js/config -->
+    <script data-main="/js/config" src="/js/vendor/require.js"></script>
+<!-- /build -->
+<script src="/js/scrollButton.js"></script>
+<script src="/js/mostrarMas.js"></script>
+<script src="/js/creditos.js"></script>
 {% endblock %}
