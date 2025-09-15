@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mapa fosas</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <link
+      rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css"
+    />
+    <script
+      defer
+      src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"
+    ></script>
+
+    <link
+      rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css"
+    />
+    <script
+      defer
+      src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"
+    ></script>
+
+    <link rel="stylesheet" href="css/estilos.css" />
+  </head>
+
+  <body>
+    <div id="map"></div>
+    <div id="toolbar"></div>
+    <div id="recuento-fosas" class="toolbar-counter" hidden></div>
+    <div id="lista-fosas" class="fosas-laterales" hidden>
+      <h3>Fosas visibles</h3>
+      <ul id="lista-fosas-ul"></ul>
+    </div>
+
+    <!-- Overlay -->
+    <div id="ficha-overlay" hidden>
+      <div id="modal-content">
+        <button id="ficha-close" class="cerrar-x" title="Cerrar">×</button>
+        <iframe id="ficha-iframe"></iframe>
+      </div>
+    </div>
+    <!-- módulo ES -->
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

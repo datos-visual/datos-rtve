@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Ficha de la Fosa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #fff8dc;
+      }
+      .ficha {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+      }
+      .extra {
+        background-color: #fafafa;
+        padding: 1em;
+        border-radius: 6px;
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ficha">
+      <h2 id="titulo"></h2>
+      <p><b>Coordenadas:</b> <span id="coords"></span></p>
+      <p><b>Zoom:</b> <span id="zoom"></span></p>
+      <div class="extra">
+        <p><strong>Título:</strong> <span id="title"></span></p>
+        <p><strong>Municipio:</strong> <span id="municipio"></span></p>
+        <p><strong>Provincia:</strong> <span id="provincia"></span></p>
+      </div>
+    </div>
+    <script>
+      function getParam(name) {
+        return new URLSearchParams(window.location.search).get(name) || "";
+      }
+      function normId(val) {
+        return String(val).replace(/^0+/, "");
+      }
+      const id = getParam("id");
+      const zoom = getParam("zoom") || "—";
+      document.getElementById("zoom").textContent = zoom;
+
+      const JSON_URL = `https://raw.githubusercontent.com/datosrtve/opendata/refs/heads/main/2025/mapa-fosas/guia.json?${Date.now()}`;
+
+      fetch(JSON_URL)
+        .then((res) => res.json())
+        .then((fosas) => {
+          const fosa = fosas.find((f) => normId(f.id_datos) === normId(id));
+          if (fosa) {
+            document.getElementById(
+              "titulo"
+            ).textContent = `Ficha para ID=${id}`;
+            document.getElementById(
+              "coords"
+            ).textContent = `${fosa.lat}, ${fosa.lon}`;
+            document.getElementById("title").textContent = fosa.title || "—";
+            document.getElementById("municipio").textContent =
+              fosa.municipality || "—";
+            document.getElementById("provincia").textContent =
+              fosa.provincia || "—";
+          } else {
+            document.getElementById("titulo").textContent =
+              "Fosa no encontrada";
+          }
+        })
+        .catch((err) => {
+          document.getElementById("titulo").textContent =
+            "Error cargando datos";
+        });
+    </script>
+  </body>
+</html>
