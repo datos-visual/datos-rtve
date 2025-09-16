@@ -1,0 +1,117 @@
+@import "./variables";
+
+mapa-fosas-new {
+  width: 100%;
+}
+
+.buscador-mapa-fosas {
+  background-color: $color-white;
+  padding: 80px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &__title {
+    padding-block: 20px;
+    margin-block: 0;
+    margin-inline: 16px;
+    border-bottom: 1px solid #d1d1d1;
+    line-height: 1.2;
+
+    @media (min-width: 880px) {
+      padding-block: 0;
+      padding-left: 60px;
+      margin-block: 100px 30px;
+      border-bottom: none;
+    }
+
+    &--desktop {
+      color: #333333;
+      font-size: 1.25rem;
+      display: none;
+
+      @media (min-width: 880px) {
+        display: inline;
+      }
+    }
+
+    &--mobile {
+      color: #796060;
+      font-size: 1.125rem;
+      display: inline !important;
+
+      @media (min-width: 880px) {
+        display: none;
+      }
+    }
+  }
+
+  .buscador-intro {
+    width: 100%;
+    max-width: calc(#{$max-width-custom} + #{$gutter-custom});
+    margin: 160px auto 160px;
+    padding: 0 $gutter-custom;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    &__title {
+      font-family: $font-secondary, serif;
+      font-weight: 400;
+      color: $color-primary;
+      margin: 0 0 60px 0;
+
+      /* Responsive font sizing */
+      font-size: clamp(48px, 8vw, 90px);
+
+      /* Desktop exact dimensions */
+      @media (min-width: 1200px) {
+        font-size: toRem(90);
+      }
+    }
+
+    &__text {
+      font-family: $font-secondary, serif;
+      font-size: toRem(16);
+      font-weight: 400;
+      margin: 0;
+      line-height: 1.5;
+      color: $color-primary;
+      text-align: left;
+
+      @media (min-width: 1200px) {
+        font-size: toRem(22);
+      }
+
+      &:not(:first-of-type) {
+        margin-top: 30px;
+      }
+    }
+  }
+
+  .buscador-text {
+    width: 100%;
+    max-width: 838px;
+    margin: 160px auto;
+    padding: 0 2rem;
+    box-sizing: border-box;
+
+    p {
+      font-family: $font-secondary, serif;
+      font-weight: 400;
+      color: $color-primary;
+      text-align: center;
+
+      /* Responsive text sizing */
+      font-size: clamp(16px, 2.5vw, 22px);
+      line-height: clamp(24px, 3.8vw, 35px);
+
+      /* Desktop exact dimensions */
+      @media (min-width: 1200px) {
+        font-size: 22px;
+        line-height: 35px;
+      }
+    }
+  }
+}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Ficha de la Fosa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f9f9f9;
+      }
+      .ficha {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+      }
+      h2 {
+        margin-top: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ficha">
+      <h2 id="titulo"></h2>
+      <p id="idFosa"></p>
+      <p id="coords"></p>
+      <p id="zoom"></p>
+    </div>
+
+    <script>
+      // Función para extraer un parámetro de la URL
+      function getParam(name) {
+        const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+        const results = regex.exec(window.location.href);
+        if (!results) return null;
+        if (!results[2]) return "";
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+      }
+
+      // Obtener los parámetros
+      const id = getParam("id") || "1";
+      const lat = getParam("lat") || "40.66281";
+      const lon = getParam("lon") || "-3.76188";
+      const zoom = getParam("zoom") || "12";
+
+      // Mostrar los datos en la ficha
+      document.getElementById("titulo").innerText =
+        "Ficha de la Fosa (ID: " + id + ")";
+      document.getElementById("idFosa").innerText = "ID: " + id;
+      document.getElementById("coords").innerText =
+        "Coordenadas: " + lat + ", " + lon;
+      document.getElementById("zoom").innerText = "Zoom: " + zoom;
+    </script>
+  </body>
+</html>

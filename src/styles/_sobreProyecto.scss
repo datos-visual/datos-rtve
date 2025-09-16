@@ -1,0 +1,52 @@
+@import "./variables";
+
+sobre-proyecto {
+  width: 100%;
+}
+
+.sobre-proyecto {
+  width: 100%;
+  padding-inline: 16px;
+  margin-bottom: 60px;
+
+  .sobre-proyecto-wrapper {
+    max-width: 840px;
+    padding: 25px;
+    margin-inline: auto;
+    position: relative;
+    border: 5px solid $text-color-primary;
+
+    @media (min-width: 768px) {
+      padding: 60px;
+    }
+
+    .mostrar-flex {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+
+  &__title {
+    font-family: "Public Sans", sans-serif;
+    font-weight: 700;
+    font-size: toRem(18);
+    color: $text-color-secundary;
+    margin-block: 0 14px;
+
+    @media (min-width: 768px) {
+      font-size: toRem(20);
+    }
+  }
+
+  &__text {
+    font-family: "Public Sans", sans-serif;
+    font-weight: 400;
+    font-size: toRem(16);
+    color: #7b7b7b;
+    margin-block: 0 30px;
+
+    @media (min-width: 768px) {
+      font-size: toRem(18);
+    }
+  }
+}

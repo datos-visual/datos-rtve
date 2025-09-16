@@ -1,0 +1,274 @@
+@use "sass:math";
+
+// ===== VARIABLES GLOBALES SCSS - PROYECTO INFOGRAFÍAS RTVE =====
+// ===== COLORES PRINCIPALES =====
+$color-primary: #796060;
+$color-primary-transparent: #79606080;
+$text-color-primary: #f3efef;
+$text-color-secundary: #333333;
+$color-transparent: transparent;
+$color-overlay-dark: rgba(0, 0, 0, 0.4);
+$color-text-shadow: rgba(0, 0, 0, 0.5);
+$color-white: #ffffff;
+$color-black: #000000;
+$color-gray-light: #d7dbdc;
+$color-gray-medium: #888888;
+$color-gray-dark: #555555;
+$color-gray-dark-2: #7b7b7b;
+$color-gray-dark-3: #606060;
+
+$color-blue: #0077cc;
+$color-blue-dark: #0072ce;
+$color-white-08: rgba(255, 255, 255, 0.08);
+$color-white-15: rgba(255, 255, 255, 0.15);
+$color-white-18: rgba(255, 255, 255, 0.18);
+$color-white-25: rgba(255, 255, 255, 0.25);
+$color-white-26: rgba(255, 255, 255, 0.26);
+$color-white-90: rgba(255, 255, 255, 0.9);
+$color-black-15: rgba(0, 0, 0, 0.15);
+
+// ===== TIPOGRAFÍA =====
+$font-primary: "Public Sans", sans-serif;
+$font-secondary:"Merriweather", serif;
+$font-third: sans-serif;
+$font-mono: monospace;
+$font-weight-normal: 400;
+$font-weight-bold: 700;
+$font-weight-lighter: 300;
+$letter-spacing-tight: -0.33px;
+$line-height-normal: 1.3;
+$line-height-medium: 1.5;
+$line-height-large: 1.875;
+
+// Tamaños de fuente estándar
+$font-size-xs: 0.65rem;
+$font-size-sm: 0.75rem;
+$font-size-base: 12px;
+$font-size-md: 0.875rem;
+$font-size-lg: 1rem;
+$font-size-xl: 1.125rem;
+$font-size-xxl: 1.25rem;
+$font-size-xxxl: 1.375rem;
+$font-size-display: 1.5rem;
+$font-size-display-lgg: 2rem;
+$font-size-display-lg: 2.25rem;
+$font-size-display-xl: 2.375rem;
+$font-size-display-xxl: 2.5rem;
+
+// ===== DIMENSIONES PRINCIPALES =====
+// Cuadros (se usan múltiples veces)
+$cuadro-width: 240px;
+$cuadro-height: 360px;
+
+// Personaje especial
+$personaje-width: 320px;
+$personaje-height: 1200px;
+$personaje-width-tablet: 180px;
+$personaje-height-tablet: 720px;
+$personaje-left-desktop: 1050px;
+
+// Multitud
+$multitud-img-width: 120px;
+$multitud-img-height: 180px;
+$multitud-img-width-tablet: 90px;
+$multitud-img-height-tablet: 135px;
+
+// Contenedores responsive
+$container-max-width: 60%;
+$container-max-width-tablet: 70%;
+$container-max-width-mobile: 90%;
+
+// Alturas especiales
+$scroll-zone-height: 10000px;
+$full-viewport: 100vh;
+$full-width: auto;
+
+// ===== ESPACIADO ESTÁNDAR =====
+$spacing-xs: 6px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 20px;
+$spacing-xl: 30px;
+$spacing-xxl: 40px;
+$spacing-xxxl: 80px;
+
+// Gaps estándar
+$gap-sm: 12px;
+$gap-md: 15px;
+$gap-lg: 20px;
+
+// ===== CAPAS Z-INDEX =====
+$z-base: 1;
+$z-texto: 200;
+$z-personaje-especial: 8000;
+$z-monitor: 9000;
+$z-texto-mobile: 9000;
+
+// ===== BREAKPOINTS =====
+$breakpoint-mobile: 599.98px;
+$breakpoint-tablet: 767.98px;
+$breakpoint-tablet-medium-start: 769px;
+$breakpoint-tablet-medium-end: 1023.98px;
+$breakpoint-desktop-small: 1024px;
+$breakpoint-desktop-medium: 1200px;
+$breakpoint-desktop-large: 1400px;
+
+// ===== TRANSICIONES =====
+$transition-opacity: opacity 1s ease-in-out;
+$transition-filter: filter 0.3s ease;
+$transition-all: all 0.3s ease;
+$transition-smooth: 0.5s ease-in-out;
+$transition-transform: transform 0.4s ease-out, opacity 0.4s ease-out;
+
+// ===== BORDES Y SOMBRAS =====
+$border-radius-sm: 6px;
+$border-radius-md: 4px;
+$text-shadow-base: 2px 2px 4px $color-text-shadow;
+
+// ===== POSICIONAMIENTO BASE =====
+$position-offset-sm: 10px;
+$position-offset-md: 30px;
+$position-offset-xl: 80px;
+$piramide-offset-left: 0;
+
+// ===== TAMAÑOS RESPONSIVOS =====
+$titulo-font-size-responsive: clamp(36px, 5vw + 1rem, 80px);
+$titulo-line-height-responsive: clamp(39px, 5vw + 1.2rem, 90px);
+$titulo-width-responsive: clamp(324px, 45vw, 697px);
+$titulo-height-responsive: clamp(159px, 25vh, 453px);
+$font-size-responsive-sm: clamp(24px, 3.5vw, 40px);
+
+// Max widths que se repiten
+$max-width-text-mobile: 90%;
+$max-width-text-desktop: 450px;
+$max-width-text-tablet-small: 400px;
+
+// ===== INTRO SHARED (botones y navegación) =====
+$btn-height-mobile: 60px;
+$btn-height-small: 56px;
+$gap-categorias-fluid: clamp(#{$spacing-sm}, 2vw, #{$spacing-lg + 4px});
+$arrow-mobile: 12px;
+$arrow-mobile-small: 10px;
+
+// ===== MIXINS ÚTILES =====
+@mixin center-absolute {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// ===== UTILITY MIXINS (patrones comunes) =====
+@mixin text-fluid-sm {
+  font-size: var(--fluid-text-sm);
+  line-height: var(--fluid-line-sm);
+}
+
+@mixin text-fluid-base {
+  font-size: var(--fluid-text-base);
+  line-height: var(--fluid-line-base);
+}
+
+@mixin text-fluid-lg {
+  font-size: var(--fluid-text-lg);
+  line-height: 1.25;
+}
+
+@mixin text-fluid-xl {
+  font-size: var(--fluid-text-xl);
+  line-height: var(--fluid-line-lg);
+}
+
+@mixin container-fluid {
+  max-width: var(--container-fluid);
+  min-height: var(--container-height);
+  margin: 0 auto;
+}
+
+@mixin hide-mobile {
+  @include mobile {
+    display: none;
+  }
+}
+
+// ===== CSS CUSTOM PROPERTIES (valores repetidos optimizados) =====
+:root {
+  // Espaciados fluidos
+  --fluid-spacing-xs: clamp(#{$spacing-xs}, 1vw, #{$spacing-sm});
+  --fluid-spacing-sm: clamp(#{$spacing-sm}, 2vw, #{$spacing-md});
+  --fluid-spacing-md: clamp(#{$spacing-md}, 3vw, #{$spacing-lg});
+  --fluid-spacing-lg: clamp(#{$spacing-lg}, 4vw, #{$spacing-xl});
+  --fluid-spacing-xl: clamp(#{$spacing-xl}, 5vw, #{$spacing-xxl});
+
+  // Tipografía fluida
+  --fluid-text-sm: clamp(12px, 1.1vw, 14px);
+  --fluid-text-base: clamp(16px, 2vw + 0.5rem, 30px);
+  --fluid-text-lg: clamp(20px, 2.2vw, 32px);
+  --fluid-text-xl: clamp(50px, 11vw, 150px);
+
+  // Line heights fluidos
+  --fluid-line-sm: clamp(19px, 2vw, 24px);
+  --fluid-line-base: clamp(24px, 3vw + 0.8rem, 46px);
+  --fluid-line-lg: clamp(54px, 11.2vw, 156px);
+
+  // Contenedores responsive
+  --container-fluid: clamp(900px, 80vw, 1450px);
+  --container-height: clamp(300px, 40vh, 480px);
+  --text-width: clamp(85%, 80%, 1450px);
+}
+
+// ===== RESPONSIVE MIXINS (modernos con container queries) =====
+@mixin mobile {
+  @media (max-width: #{$breakpoint-mobile}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: #{$breakpoint-tablet}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{$breakpoint-desktop-small}) {
+    @content;
+  }
+}
+
+// Container queries modernos (cuando sea soportado)
+@mixin container-mobile {
+  @container (max-width: #{$breakpoint-mobile}) {
+    @content;
+  }
+}
+
+@mixin container-desktop {
+  @container (min-width: #{$breakpoint-desktop-small}) {
+    @content;
+  }
+}
+
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
+
+/* ==============  #TO REM  ============== */
+
+@function toRem($value, $base: 12) {
+  @return math.div($value, $base) * 1rem;
+}

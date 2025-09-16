@@ -1,0 +1,64 @@
+@import "./variables";
+
+creditos-section {
+  width: 100%;
+}
+
+.credits {
+  width: 100%;
+  height: auto;
+  padding-inline: 16px;
+  margin-bottom: 60px;
+  font-family: "Public Sans", sans-serif;
+
+  .credits-wrapper {
+    max-width: 840px;
+    margin-inline: auto;
+    background-color: $text-color-primary;
+    position: relative;
+    padding: 40px 20px;
+
+    @media (min-width: 768px) {
+      padding: 60px;
+    }
+
+    .mostrar-flex {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+
+  &__title {
+    font-weight: 700;
+    font-size: toRem(18);
+    color: $text-color-secundary;
+    margin-block: 0 20px;
+
+    @media (min-width: 768px) {
+      font-size: toRem(20);
+    }
+  }
+
+  &__subtitle {
+    font-weight: 400;
+    font-size: toRem(16);
+    line-height: 30px;
+    color: $text-color-secundary;
+    margin-block: 0;
+
+    @media (min-width: 768px) {
+      font-size: toRem(18);
+    }
+  }
+
+  &__text {
+    font-weight: 400;
+    font-size: toRem(16);
+    margin-block: 0 30px;
+    color: #7b7b7b;
+
+    @media (min-width: 768px) {
+      font-size: toRem(18);
+    }
+  }
+}

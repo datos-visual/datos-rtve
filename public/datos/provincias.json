@@ -1,0 +1,324 @@
+[{
+        "name": "Andalucía",
+        "id": 1,
+        "normalizedName": "andalucia",
+	 "short": "an",
+        "provincias": [{
+                "name": "Almería",
+                "id": 4,
+                "normalizedName": "almeria"
+            }, {
+                "name": "Cádiz",
+                "id": 11,
+                "normalizedName": "cadiz"
+            }, {
+                "name": "Córdoba",
+                "id": 14,
+                "normalizedName": "cordoba"
+            }, {
+                "name": "Granada",
+                "id": 18,
+                "normalizedName": "granada"
+            }, {
+                "name": "Huelva",
+                "id": 21,
+                "normalizedName": "huelva"
+            }, {
+                "name": "Jaén",
+                "id": 23,
+                "normalizedName": "jaen"
+            }, {
+                "name": "Málaga",
+                "id": 29,
+                "normalizedName": "malaga"
+            }, {
+                "name": "Sevilla",
+                "id": 41,
+                "normalizedName": "sevilla"
+            }]
+    }, {
+        "name": "Aragón",
+        "id": 2,
+        "normalizedName": "aragon",
+	 "short": "ar",
+        "provincias": [{
+                "name": "Huesca",
+                "id": 22,
+                "normalizedName": "huesca"
+            }, {
+                "name": "Teruel",
+                "id": 44,
+                "normalizedName": "teruel"
+            }, {
+                "name": "Zaragoza",
+                "id": 50,
+                "normalizedName": "zaragoza"
+            }]
+    }, {
+        "name": "Asturias",
+        "id": 3,
+        "normalizedName": "principado-de-asturias",
+	 "short": "as",
+        "provincias": [{
+                "name": "Asturias",
+                "id": 33,
+                "normalizedName": "asturias"
+            }]
+    }, {
+        "name": "Canarias",
+        "id": 5,
+        "normalizedName": "canarias",
+	 "short": "cn",
+        "provincias": [{
+                "name": "Las Palmas",
+                "id": 35,
+                "normalizedName": "las-palmas"
+            }, {
+                "name": "Santa Cruz de Tenerife",
+                "id": 38,
+                "normalizedName": "santa-cruz-de-tenerife"
+            }]
+    }, {
+        "name": "Cantabria",
+        "id": 6,
+        "normalizedName": "cantabria",
+	 "short": "cb",
+        "provincias": [{
+                "name": "Cantabria",
+                "id": 39,
+                "normalizedName": "cantabria"
+            }]
+    }, {
+        "name": "Castilla-La Mancha",
+        "id": 7,
+        "normalizedName": "castilla-la-mancha",
+	 "short": "cm",
+        "provincias": [{
+                "name": "Albacete",
+                "id": 2,
+                "normalizedName": "albacete"
+            }, {
+                "name": "Ciudad Real",
+                "id": 13,
+                "normalizedName": "ciudad-real"
+            }, {
+                "name": "Cuenca",
+                "id": 16,
+                "normalizedName": "cuenca"
+            }, {
+                "name": "Guadalajara",
+                "id": 19,
+                "normalizedName": "guadalajara"
+            }, {
+                "name": "Toledo",
+                "id": 45,
+                "normalizedName": "toledo"
+            }]
+    }, {
+        "name": "Castilla y León",
+        "id": 8,
+        "normalizedName": "castilla-y-leon",
+	 "short": "cl",
+        "provincias": [{
+                "name": "Ávila",
+                "id": 5,
+                "normalizedName": "avila"
+            }, {
+                "name": "Burgos",
+                "id": 9,
+                "normalizedName": "burgos"
+            }, {
+                "name": "León",
+                "id": 24,
+                "normalizedName": "leon"
+            }, {
+                "name": "Palencia",
+                "id": 34,
+                "normalizedName": "palencia"
+            }, {
+                "name": "Salamanca",
+                "id": 37,
+                "normalizedName": "salamanca"
+            }, {
+                "name": "Segovia",
+                "id": 40,
+                "normalizedName": "segovia"
+            }, {
+                "name": "Soria",
+                "id": 42,
+                "normalizedName": "soria"
+            }, {
+                "name": "Valladolid",
+                "id": 47,
+                "normalizedName": "valladolid"
+            }, {
+                "name": "Zamora",
+                "id": 49,
+                "normalizedName": "zamora"
+            }]
+    }, {
+        "name": "Cataluña",
+        "id": 9,
+        "normalizedName": "catalunya",
+	 "short": "ct",
+        "provincias": [{
+                "name": "Barcelona",
+                "id": 8,
+                "normalizedName": "barcelona"
+            }, {
+                "name": "Girona",
+                "id": 17,
+                "normalizedName": "girona"
+            }, {
+                "name": "Lleida",
+                "id": 25,
+                "normalizedName": "lleida"
+            }, {
+                "name": "Tarragona",
+                "id": 43,
+                "normalizedName": "tarragona"
+            }]
+    }, {
+        "name": "Ceuta",
+        "id": 18,
+        "normalizedName": "ciudad-de-ceuta",
+	 "short": "ce",
+        "provincias": [{
+                "name": "Ceuta",
+                "id": 51,
+                "normalizedName": "ceuta"
+            }]
+    }, {
+        "name": "Melilla",
+        "id": 19,
+        "normalizedName": "ciudad-de-melilla",
+	 "short": "ml",
+        "provincias": [{
+                "name": "Melilla",
+                "id": 52,
+                "normalizedName": "melilla"
+            }]
+    }, {
+        "name": "Comunidad Valenciana",
+        "id": 17,
+        "normalizedName": "comunitat-valenciana",
+	 "short": "vc",
+        "provincias": [{
+                "name": "Alicante/Alacant",
+                "id": 3,
+                "normalizedName": "alicante-alacant"
+            }, {
+                "name": "Castellón/Castelló",
+                "id": 12,
+                "normalizedName": "castellon-castello"
+            }, {
+                "name": "Valencia",
+                "id": 46,
+                "normalizedName": "valencia-valencia"
+            }]
+    },
+    {
+        "name": "Extremadura",
+        "id": 10,
+        "normalizedName": "extremadura",
+	 "short": "ex",
+        "provincias": [{
+                "name": "Badajoz",
+                "id": 6,
+                "normalizedName": "badajoz"
+            }, {
+                "name": "Cáceres",
+                "id": 10,
+                "normalizedName": "caceres"
+            }]
+    }, {
+        "name": "Galicia",
+        "id": 11,
+        "normalizedName": "galicia",
+	 "short": "ga",
+        "provincias": [{
+                "name": "A Coruña",
+                "id": 15,
+                "normalizedName": "a-coruna"
+            }, {
+                "name": "Lugo",
+                "id": 27,
+                "normalizedName": "lugo"
+            }, {
+                "name": "Ourense",
+                "id": 32,
+                "normalizedName": "ourense"
+            }, {
+                "name": "Pontevedra",
+                "id": 36,
+                "normalizedName": "pontevedra"
+            }]
+    }, {
+        "name": "Baleares",
+        "id": 4,
+        "normalizedName": "illes-balears",
+	 "short": "ib",
+        "provincias": [{
+                "name": "Baleares",
+                "id": 7,
+                "normalizedName": "illes-balears"
+            }]
+    }, {
+        "name": "La Rioja",
+        "id": 16,
+        "normalizedName": "la-rioja",
+	 "short": "ri",
+        "provincias": [{
+                "name": "La Rioja",
+                "id": 26,
+                "normalizedName": "la-rioja"
+            }]
+    }, {
+        "name": "Comunidad de Madrid",
+        "id": 12,
+        "normalizedName": "comunidad-de-madrid",
+	 "short": "md",
+        "provincias": [{
+                "name": "Madrid",
+                "id": 28,
+                "normalizedName": "madrid"
+            }]
+    }, {
+        "name": "Región de Murcia",
+        "id": 15,
+        "normalizedName": "region-de-murcia",
+	 "short": "mc",
+        "provincias": [{
+                "name": "Murcia",
+                "id": 30,
+                "normalizedName": "murcia"
+            }]
+    }, {
+        "name": "Navarra",
+        "id": 13,
+        "normalizedName": "comunidad-foral-de-navarra",
+	 "short": "nc",
+        "provincias": [{
+                "name": "Navarra",
+                "id": 31,
+                "normalizedName": "navarra"
+            }]
+    }, {
+        "name": "País Vasco",
+        "id": 14,
+        "normalizedName": "pais-vasco",
+	 "short": "pv",
+        "provincias": [{
+                "name": "Araba/Álava",
+                "id": 1,
+                "normalizedName": "araba-alava"
+            }, {
+                "name": "Gipuzkoa",
+                "id": 20,
+                "normalizedName": "gipuzkoa"
+            }, {
+                "name": "Bizkaia",
+                "id": 48,
+                "normalizedName": "bizkaia"
+            }]
+    }]

@@ -1,0 +1,46 @@
+/* ===== CONTENEDOR INTRO UNIFICADO ===== */
+@import "./variables";
+
+// intro-section (IntroUnified class)
+intro-section {
+  display: block;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  
+  // Fondo fijo con imagen de multitud
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100%;
+    max-width: 100vw;
+    height: 100vh;
+    background: url("/src/assets/bg-gente.jpg") center -150px / cover no-repeat;
+    background-color: $color-primary-transparent;
+    /*background-blend-mode: multiply;*/
+    filter: blur(0.5px);
+    transform: scale(1.02);
+    z-index: 0;
+    pointer-events: none;
+
+    @include mobile {
+      background: url("/src/assets/bg-gente-mbl.jpg")  center top / cover no-repeat;
+    }
+  }
+  
+  // Configuración para sistema de pasos
+  intro-screen1,
+  intro-screen2,
+  intro-screen3 {
+    display: block;
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+  }
+
+}

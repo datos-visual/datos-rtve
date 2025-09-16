@@ -1,0 +1,491 @@
+@import "./variables";
+
+// ===== VISTA FIGURA COMPONENT =====
+mapa-historias {
+  width: 100%;
+  max-width: 1800px;
+}
+
+mapa-fosas-new {
+  width: 100%;
+  max-width: 1800px;
+}
+
+.vista-figura {
+  margin: 0 auto;
+  position: relative;
+
+  .tabs {
+    display: flex;
+
+    .tab {
+      position: relative;
+      flex: 1;
+      text-align: center;
+      padding: 1rem;
+      color: $color-white;
+      cursor: pointer;
+
+      &.activa::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20%;
+        height: 3px;
+        background-color: $color-white;
+        border-radius: 2px;
+      }
+    }
+  }
+
+  .contenido {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    @media (min-width: 1024px) {
+      height: 900px;
+      flex-direction: row;
+    }
+
+    .toggle-btn {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid #7b7b7b;
+      padding: 10px 15px;
+      background-color: #ffffff;
+      border-radius: 50px;
+      bottom: 8px;
+      right: 8px;
+    }
+
+    .full,
+    .mitad {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: $color-gray-light;
+    }
+
+    // 🔽 NUEVO: layout para pestaña 2
+    .full-buscador {
+      display: flex;
+      height: 100%;
+      width: 100%;
+      position: relative; // 👈 importante para posicionar .toggle-panel
+
+      .panel-lateral {
+        width: 50%;
+        min-width: 300px;
+        max-width: 50%;
+        background-color: #f3efef;
+        overflow-y: auto;
+        transition: all 0.3s ease;
+
+        &.colapsado {
+          width: 0;
+          min-width: 0;
+          padding: 0;
+          overflow: hidden;
+        }
+
+        .lista-fosas {
+          padding: 2rem;
+        }
+      }
+
+      .panel-mapa {
+        flex: 1;
+        height: 100%;
+        position: relative;
+      }
+
+      .toggle-panel {
+        position: absolute;
+        top: 10px;
+        left: calc(50% - 15px); // 👈 justo en el borde del panel
+        z-index: 100;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+
+        &.cerrado {
+          left: 0;
+          transform: rotate(180deg);
+        }
+      }
+    }
+    .full-buscador {
+      display: flex;
+      height: 100%;
+      width: 100%;
+      position: relative;
+
+      .panel-lateral {
+        width: 50%;
+        min-width: 300px;
+        max-width: 50%;
+        background-color: #f3efef;
+        overflow-y: auto;
+        position: relative;
+        transition: all 0.3s ease;
+
+        &.colapsado {
+          width: 0;
+          min-width: 0;
+          padding: 0;
+          overflow: hidden;
+
+          .toggle-panel {
+            left: 0;
+            transform: rotate(180deg);
+          }
+        }
+
+        .toggle-panel {
+          position: absolute;
+          top: 10px;
+          right: -15px;
+          z-index: 10;
+          background: #eee;
+          border: none;
+          border-radius: 50%;
+          width: 30px;
+          height: 30px;
+          cursor: pointer;
+          box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .filtros-estado {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+
+          .filtros-title {
+            font-weight: 600;
+            font-size: toRem(18);
+            color: #333333;
+          }
+
+          .filtros-check {
+            display: flex;
+            gap: 16px;
+            color: #333333;
+
+            .custom-checkbox {
+              display: flex;
+              align-items: center;
+              cursor: pointer;
+              gap: 8px;
+
+              input {
+                display: none;
+              }
+
+              span {
+                width: 16px;
+                height: 16px;
+                border: 1px solid #c6c6c6;
+                border-radius: 4px;
+                display: inline-block;
+                position: relative;
+                background-color: transparent;
+                transition: all 0.2s ease;
+              }
+
+              input:checked + span {
+                background-color: #007bff;
+                border-color: #007bff;
+              }
+
+              input:checked + span::after {
+                content: "";
+                position: absolute;
+                top: 2px;
+                left: 5px;
+                width: 4px;
+                height: 8px;
+                border: solid white;
+                border-width: 0 2px 2px 0;
+                transform: rotate(45deg);
+              }
+            }
+          }
+        }
+
+        .lista-fosas {
+          padding: 2rem;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+
+          .fosa {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            border-bottom: 1px solid #c8c8c8;
+            padding-bottom: 1rem;
+            cursor: pointer;
+
+            @media screen and (min-width: 600px) {
+              flex-direction: row;
+              gap: 1rem;
+            }
+
+            img {
+              width: 100%;
+              max-height: 160px;
+              object-fit: cover;
+              border-radius: 4px;
+            }
+
+            .info {
+              .ubicacion {
+                font-size: $font-size-sm;
+                color: #777;
+              }
+
+              h3 {
+                margin: 0.2rem 0;
+                font-size: $font-size-lg;
+              }
+
+              .descripcion {
+                font-size: toRem(14);
+                color: #444;
+              }
+            }
+          }
+        }
+      }
+
+      .panel-mapa {
+        flex: 1;
+        height: 100%;
+      }
+    }
+
+    .mitad-texto {
+      width: 100%;
+      height: 100%;
+      padding: 16px;
+      background-color: #f3efef;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+
+      @media (min-width: 1024px) {
+        width: 50%;
+        max-height: none;
+        padding: 30px 60px;
+      }
+
+      &__intro {
+        font-weight: 400;
+        font-size: toRem(14);
+        color: #333333;
+      }
+
+      .contador {
+        padding-block: 16px;
+        font-family: $font-primary;
+        font-size: toRem(20);
+        font-weight: 700;
+        color: #333333;
+        display: block;
+        background-color: $text-color-primary;
+        position: sticky;
+        top: 0;
+
+        strong {
+          font-weight: 700;
+        }
+      }
+
+      .intro-fosas {
+        border: 4px solid $color-white;
+        padding: 26px;
+        overflow: hidden;
+        opacity: 1;
+        transition: max-height 0.4s ease, opacity 0.4s ease;
+
+        @media (min-width: 768px) {
+          border: 6px solid $color-white;
+          padding: 34px;
+        }
+
+        &.oculto {
+          .intro-fosas__text {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            text-overflow: ellipsis;
+
+            + .intro-fosas__text {
+              display: none;
+            }
+          }
+        }
+
+        &__title {
+          font-weight: 700;
+          font-size: toRem(20);
+          color: #333333;
+          margin-block: 0 12px;
+
+          @media (min-width: 768px) {
+            font-size: toRem(22);
+            margin-block: 0 20px;
+          }
+        }
+
+        &__text {
+          font-family: $font-primary;
+          font-weight: 400;
+          font-size: toRem(14);
+          color: #7b7b7b;
+          margin-block: 0 12px;
+
+          @media (min-width: 768px) {
+            font-size: toRem(16);
+          }
+        }
+      }
+
+      .toggle-intro {
+        background: none;
+        border: none;
+        color: #0072ce;
+        font-size: toRem(14);
+        cursor: pointer;
+        margin: 5px 0 10px;
+        text-align: left;
+
+        span {
+          text-decoration: underline;
+        }
+      }
+
+      .lista-fosas {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding-bottom: 2rem;
+        margin-top: 33px;
+        max-height: 650px;
+
+        @media (min-width: 650px) {
+          max-height: none;
+        }
+
+        .lista-narrativas {
+          @media (max-width: 649px) {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+          }
+          @media (min-width: 650px) {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+          }
+
+          @media (min-width: 800px) {
+            grid-template-columns: repeat(3, 1fr);
+          }
+
+          @media (min-width: 800px) {
+            grid-template-columns: repeat(3, 1fr);
+          }
+
+          @media (min-width: 1024px) {
+            grid-template-columns: repeat(2, 1fr);
+          }
+
+          @media (min-width: 1200px) {
+            grid-template-columns: repeat(3, 1fr);
+          }
+
+          @media (min-width: 1550px) {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
+      }
+      .hide-button {
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+
+    .mitad-figura {
+      width: 100%;
+      height: 300px;
+      background-color: $color-gray-light;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      @media (min-width: 1024px) {
+        width: 50%;
+        height: auto;
+      }
+    }
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+  }
+}
+
+.lista-fosas {
+  .ubicacion {
+    color: #606060;
+    font-size: toRem(14);
+    margin-block: 0;
+
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+
+    @media (min-width: 650px) {
+      margin-block: 16px 0;
+    }
+  }
+  .name {
+    color: #333333;
+    font-size: toRem(16);
+    font-weight: 700;
+    margin-block: 0;
+    line-height: 1.2;
+
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+  }
+
+  .descripcion {
+    color: #333333;
+    font-size: toRem(12);
+    font-weight: 400;
+    margin-block: 0;
+  }
+}

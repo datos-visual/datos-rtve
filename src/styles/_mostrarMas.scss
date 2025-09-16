@@ -1,0 +1,35 @@
+@import "./variables";
+
+mostrar-mas {
+  width: 100%;
+}
+
+.mostrar-mas-componente {
+  display: flex;
+  flex-direction: column;
+
+  .toggle-btn {
+    padding: 0;
+    margin-left: auto;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: toRem(14);
+    color: #0072ce;
+    font-weight: 500;
+    text-decoration: underline;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .contenido {
+    font-size: toRem(15);
+    line-height: 1.6;
+    color: #444;
+  }
+}
