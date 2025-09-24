@@ -13,11 +13,19 @@
   "dependencies": {
     "@mapbox/mapbox-gl-geocoder": "^5.1.2",
     "@turf/boolean-point-in-polygon": "^7.2.0",
+    "clone-response": "^2.0.0",
+    "decompress-response": "^9.0.0",
+    "defer-to-connect": "^2.0.1",
     "gsap": "^3.13.0",
+    "http-cache-semantics": "^4.2.0",
     "mapbox-gl": "^3.15.0",
     "next": "13.5.11",
+    "pump": "^3.0.3",
+    "quick-lru": "^7.2.0",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "resolve-alpn": "^1.2.1",
+    "sass": "^1.93.2"
   },
   "devDependencies": {
     "eslint": "^8",

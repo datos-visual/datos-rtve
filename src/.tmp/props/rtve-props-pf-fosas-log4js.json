@@ -1,0 +1,48 @@
+{
+    "appenders": {
+        "out": {
+            "type": "stdout",
+            "layout": {
+                "type": "basic"
+            }
+        },
+        "err": {
+            "type": "stderr",
+            "layout": {
+                "type": "basic"
+            }
+        },
+        "errors": {
+            "type": "logLevelFilter",
+            "level": "ERROR",
+            "appender": "err"
+        }
+    },
+    "categories": {
+        "default": {
+            "appenders": [
+                "out",
+                "errors"
+            ],
+            "level": "DEBUG"
+        },
+        "http": {
+            "appenders": [
+                "out"
+            ],
+            "level": "INFO"
+        },
+        "rtve": {
+            "appenders": [
+                "out",
+                "errors"
+            ],
+            "level": "DEBUG"
+        }
+    },
+    "pm2": true,
+    "disableClustering": false,
+    "options": {
+        "access_format": ":remote-addr - - \":method :url HTTP/:http-version\" :status :content-length \":referrer\" \":user-agent\" :response-time"
+    }
+}

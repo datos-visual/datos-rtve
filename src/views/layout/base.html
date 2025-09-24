@@ -1,0 +1,59 @@
+{% extends "./layout.html" %}
+
+{% block metas %}
+{% block title %}
+<title>Página final</title>
+{% endblock %}
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+{% endblock %}
+
+{% block css %}
+<link media="all" rel="stylesheet" href="{{cssUrl}}/css/rtve.2015/rtve.compacts/{{css_file||body_class}}.desktp.css" type="text/css" />
+{% endblock %}
+
+{% block auxheader %}
+<div class="wrapper fixer auxheader">
+  <!--navegacin auxiliar-->
+  <div class="container">
+    <span class="ico arrow above">
+      <a href="#bodyElem" title="Ir a principio de página">
+       <img alt="arriba" src="{{imgUrl}}/css/i/blank.gif" />
+       <span class="legend">Ir arriba</span>
+     </a>
+   </span>
+
+   <ul class="services">
+    <li id="bighead_users">
+      <span class="ico users slidB beoff">
+        <a href="#" title="[ventana emergente] acceder al área de usuarios">
+          <img alt="usuarios" src="{{imgUrl}}/css/i/blank.gif" />
+          <span class="legend">Área de usuarios</span>
+        </a>
+      </span>
+      <div class="blindBox"></div>
+    </li>
+    <li>
+      <span class="ico seekr search">
+       <a href="/buscador/" title="buscar en rtve.es">
+        <img alt="búsqueda" src="{{imgUrl}}/css/i/blank.gif" />
+
+        <span class="legend">Búsqueda</span>
+      </a>
+    </span>
+    <div class="blindBox"></div>
+  </li>
+</ul>
+
+</div>
+</div>
+{% endblock %}
+
+{% block js %}
+  <!-- build:template
+      <script data-main="{{jsUrl}}/pages/<%= distName %>/<%= version %>/js/config" src="{{jsUrl}}/pages/<%= distName %>/<%= version %>/js/vendor/require.js" ></script>
+      /build -->
+      <!-- build:remove:dist /js/config -->
+      <script data-main="/js/config" src="/js/vendor/require.js"></script>
+      <!-- /build -->
+      {% endblock %}

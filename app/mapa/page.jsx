@@ -11,7 +11,7 @@ import HamburgerMenu from "../../components/HamburgerMenu/HamburgerMenu";
 import MenuSwitch from "../../components/common/MenuSwitch";
 import VideoScroll from "../../components/VideoScroll/VideoScroll";
 import MapaBuscadorFosas from "../../components/MapaBuscadorFosas/MapaBuscadorFosas";
-import "../../app/styles/_historias.scss";
+import "../styles/_historias.scss";
 
 function FosasPageContent() {
   const [menuOpen, setMenuOpen] = useState(false);

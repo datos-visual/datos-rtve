@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import "../../app/styles/_mapaHistorias.scss";
 import MapaFosas from "../mapa/MapaFosas";
 import FichaFosa from "../FichaFosa/FichaFosa";
@@ -61,6 +61,7 @@ export default function MapaHistorias({
   const [introVisible, setIntroVisible] = useState(false);
   const [mostrarMapa, setMostrarMapa] = useState(false);
   const [selectedFosa, setSelectedFosa] = useState(initialSelectedFosa);
+  const mapaRef = useRef(null);
 
   // Cargar datos
   useEffect(() => {
@@ -120,8 +121,22 @@ export default function MapaHistorias({
   }, [fosas, categoriaSeleccionada, estadoSeleccionado]);
 
   const toggleVista = () => setMostrarMapa((prev) => !prev);
-  const abrirModalFosa = (fosa) => setSelectedFosa(fosa);
-  const cerrarModalFosa = () => setSelectedFosa(null);
+  const abrirModalFosa = (fosa) => {
+    setSelectedFosa(fosa);
+    
+    // Hacer zoom hacia la fosa seleccionada
+    if (mapaRef.current && mapaRef.current.focusFosa) {
+      mapaRef.current.focusFosa(fosa.id);
+    }
+  };
+  const cerrarModalFosa = () => {
+    setSelectedFosa(null);
+    
+    // Resetear zoom del mapa a la vista inicial para MapaHistorias
+    if (mapaRef.current && mapaRef.current.resetZoom) {
+      mapaRef.current.resetZoom();
+    }
+  };
 
   // Evita crash en build (no hay window)
   const isMobile =
@@ -162,9 +177,11 @@ export default function MapaHistorias({
           style={{ display: isMobile && !mostrarMapa ? "none" : undefined }}
         >
           <MapaFosas
+            ref={mapaRef}
             soloNarrativas
             categoria={categoriaSeleccionada}
             selectedFosa={selectedFosa}
+            onFosaSelect={abrirModalFosa}
           />
         </div>
 

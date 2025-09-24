@@ -5,9 +5,9 @@ import { cargarFosas } from "../mapa/js/datos.js";
 import MapaFosas from "../mapa/MapaFosas";
 import FichaFosa from "../FichaFosa/FichaFosa.jsx";
 import ListaFosasCompleta from "../ListaFosasCompleta/ListaFosasCompleta.jsx";
-import { useResponsive } from "../../app/hooks/useResponsive.js";
-import { useMobileSheetManager } from "../../app/hooks/useMobileSheetManager";
-import { useMapaBuscador } from "../../app/hooks/useMapaBuscador";
+import { useResponsive } from "../../src/hooks/useResponsive";
+import { useMobileSheetManager } from "../../src/hooks/useMobileSheetManager";
+import { useMapaBuscador } from "../../src/hooks/useMapaBuscador";
 import "../../app/styles/_mapaBuscadorFosas.scss";
 import "../../app/styles/_mobileSheet.scss";
 import "../../app/styles/_pagination.scss";
@@ -39,7 +39,7 @@ export default function MapaBuscadorFosas({
     estadosSeleccionados,
     statusPanelExpanded,
     fosasFiltradas,
-    fosasPaginadas, // ✅ NUEVO: Fosas paginadas
+    fosasPaginadas, // Fosas paginadas
     mapaRef,
     handleBusquedaChange,
     handleFormSubmit,
@@ -48,14 +48,14 @@ export default function MapaBuscadorFosas({
     handleCloseFosa,
     handleEstadoChange,
     handleToggleStatusPanel,
-    handleNextPage, // ✅ NUEVO: Paginación
-    handlePrevPage, // ✅ NUEVO: Paginación
-    handleGoToPage, // ✅ NUEVO: Paginación
+    handleNextPage, // Paginación
+    handlePrevPage,
+    handleGoToPage,
     aplicarFiltroUbicacion,
     totalFosas,
     totalFiltradas,
     hayFiltrosActivos,
-    paginationInfo, // ✅ NUEVO: Info de paginación
+    paginationInfo, // Info de paginación
   } = useMapaBuscador(fosas, isMobile);
 
   // === EFECTOS PRINCIPALES ===
@@ -63,7 +63,7 @@ export default function MapaBuscadorFosas({
   // Actualizar mobile sheet cuando cambien las fosas filtradas
   useEffect(() => {
     if (isMobile && mobileSheet.updateContent) {
-      // ✅ En móvil también usar paginación, pero con más elementos por página
+      // En móvil también usar paginación, pero con más elementos por página
       mobileSheet.updateContent(fosasPaginadas, paginationInfo);
     }
   }, [fosasPaginadas, paginationInfo, isMobile, mobileSheet]);
@@ -82,7 +82,7 @@ export default function MapaBuscadorFosas({
     return () => document.removeEventListener("fosa-click", handleFosaClick);
   }, [fosasFiltradas, handleFosaSelect]);
 
-  // ✅ Listener para paginación móvil
+  // Listener para paginación móvil
   useEffect(() => {
     const handleMobilePagination = (event) => {
       const { action } = event.detail;
@@ -413,13 +413,17 @@ export default function MapaBuscadorFosas({
                       </label>
                     </div>
                   </fieldset>
-                  <button
-                    type="button"
-                    id="aplicar-filtros"
-                    className="mapa-fosas-searcher__statusBtn"
-                  >
-                    Ver detalles
-                  </button>
+                  {/* Solo mostrar botón "Ver detalles" cuando la lista NO esté visible */}
+                  {!listaVisible && (
+                    <button
+                      type="button"
+                      id="aplicar-filtros"
+                      className="mapa-fosas-searcher__statusBtn"
+                      onClick={handleToggleClick}
+                    >
+                      Ver detalles
+                    </button>
+                  )}
                 </form>
               </section>
 
@@ -428,12 +432,12 @@ export default function MapaBuscadorFosas({
                 <>
                   <ListaFosasCompleta
                     contexto="mapaBuscadorFosas"
-                    lista={fosasPaginadas} // ✅ Usar fosas paginadas en lugar de todas
+                    lista={fosasPaginadas} // Usar fosas paginadas en lugar de todas
                     descripcion={`Se muestran ${paginationInfo.startItem}-${paginationInfo.endItem} de ${totalFiltradas} fosas encontradas`}
                     onItemClick={handleFosaSelect}
                   />
 
-                  {/* ✅ CONTROLES DE PAGINACIÓN */}
+                  {/* CONTROLES DE PAGINACIÓN */}
                   {paginationInfo.totalPages > 1 && (
                     <div className="pagination-controls">
                       <button

@@ -1,8 +1,8 @@
 import { MAPBOX_TOKEN, MAP_STYLE } from "./config.js";
 import mapboxgl from "mapbox-gl";
-import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
+// import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder"; // Comentado temporalmente
 import "mapbox-gl/dist/mapbox-gl.css";
-import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
+// import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css"; // Comentado temporalmente
 
 mapboxgl.accessToken = MAPBOX_TOKEN;
 
@@ -22,9 +22,14 @@ export function createMap(container) {
 }
 
 /**
- * GEOCODER
+ * GEOCODER - Temporalmente deshabilitado para evitar errores de dependencias
  */
 export function createGeocoder(map, localGeocoderFn) {
+  // Temporalmente deshabilitado hasta resolver problemas de dependencias
+  console.log("Geocoder temporalmente deshabilitado");
+  return null;
+  
+  /* Código original comentado:
   const geocoder = new MapboxGeocoder({
     accessToken: mapboxgl.accessToken,
     mapboxgl,
@@ -35,4 +40,5 @@ export function createGeocoder(map, localGeocoderFn) {
   });
   map.addControl(geocoder, "top-left");
   return geocoder;
+  */
 }

@@ -1,0 +1,26 @@
+{
+    "common": {
+        "generator": {
+            "defaultPageSize": 20,
+            "defaultNumPage": 1,
+            "xmlClasses": {
+                "view":"com.irtve.plataforma.rest.model.dto.ViewDTO",
+                "news": "com.irtve.plataforma.rest.model.dto.news.NewsDTO",
+                "video": "com.irtve.plataforma.rest.model.dto.multimedia.VideoDTO",
+                "audio": "com.irtve.plataforma.rest.model.dto.multimedia.AudioDTO",
+                "imagen": "com.irtve.plataforma.rest.model.dto.multimedia.ImageDTO"
+            },
+            "mimetypes":{
+                "json":"application/json",
+                "xml":"text/xml",
+                "rss":"application/rss+xml",
+                "mrss":"text/mrss",
+                "plist":"application/x-plist"
+            },
+            "defaultMimetype":"json"
+        }
+    },
+    "development": {},
+    "production": {},
+    "test": {}
+}
