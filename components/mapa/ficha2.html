@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Ficha 2</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f9f9f9;
+      }
+      .ficha {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        position: relative;
+      }
+      .cerrar-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: #eee;
+        color: #444;
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        font-size: 22px;
+        line-height: 32px;
+        cursor: pointer;
+        text-align: center;
+        font-weight: bold;
+        transition: background 0.2s;
+        z-index: 10;
+      }
+      .cerrar-btn:hover {
+        background: #f77;
+        color: #fff;
+      }
+      h1 {
+        margin-top: 0;
+      }
+      select {
+        font-size: 16px;
+        padding: 5px;
+        margin: 10px 0;
+      }
+      #info {
+        margin-top: 15px;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ficha">
+      <button
+        class="cerrar-btn"
+        onclick="volverAtras()"
+        title="Cerrar"
+        aria-label="Cerrar ficha"
+      >
+        ×
+      </button>
+      <h1>Ficha para ID=2</h1>
+      <p>Esta es la ficha específica para la fosa con ID=2.</p>
+      <!-- ... resto igual ... -->
+      <p><strong>Coordenadas:</strong> <span id="coords">Cargando...</span></p>
+      <p><strong>Zoom:</strong> <span id="zoom">N/A</span></p>
+      <label for="infoSelect">Elige información:</label>
+      <select id="infoSelect">
+        <option value="">-- Selecciona --</option>
+        <option value="info1">Información 1</option>
+        <option value="info2">Información 2</option>
+        <option value="info3">Información 3</option>
+      </select>
+      <div id="info"></div>
+    </div>
+    <script>
+      function getParam(name) {
+        const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+        const res = regex.exec(window.location.href);
+        if (!res) return null;
+        if (!res[2]) return "";
+        return decodeURIComponent(res[2].replace(/\+/g, " "));
+      }
+      const lat = getParam("lat") || "39.510355";
+      const lon = getParam("lon") || "-0.4407407";
+      const zoom = getParam("zoom") || "12";
+      document.getElementById("coords").innerText = lat + ", " + lon;
+      document.getElementById("zoom").innerText = zoom;
+
+      function volverAtras() {
+        // Llama al padre si existe
+        if (window.parent && window.parent !== window) {
+          if (typeof window.parent.cerrarOverlay === "function") {
+            window.parent.cerrarOverlay();
+            return;
+          }
+        }
+        // Si no, fallback
+        window.history.back();
+      }
+      window.volverAtras = volverAtras;
+
+      // ... resto del JS de infoSelect ...
+      const infoSelect = document.getElementById("infoSelect");
+      const infoDiv = document.getElementById("info");
+      infoSelect.addEventListener("change", () => {
+        const val = infoSelect.value;
+        switch (val) {
+          case "info1":
+            infoDiv.innerHTML = `<p><strong>Opción 1</strong>: ...</p>`;
+            break;
+          case "info2":
+            infoDiv.innerHTML = `<p><strong>Opción 2</strong>: ...</p>`;
+            break;
+          case "info3":
+            infoDiv.innerHTML = `<p><strong>Opción 3</strong>: ...</p>`;
+            break;
+          default:
+            infoDiv.innerHTML = "";
+            break;
+        }
+      });
+    </script>
+  </body>
+</html>

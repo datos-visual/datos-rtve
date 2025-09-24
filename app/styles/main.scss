@@ -1,0 +1,55 @@
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Public+Sans:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+
+@import "./variables.scss";
+@import "./layout";
+@import "./hamburger";
+@import "./scrollButton";
+@import "./introUnified";
+@import "./historias";
+@import "./botonesCategorias";
+@import "./sobreProyecto";
+@import "./mostrarMas";
+@import "./creditos";
+@import "./listadoSEO";
+@import "./moduloReportajes";
+@import "./moduloNoticias";
+@import "./menuSwitch";
+@import "./videoScroll";
+@import "./socialMenu";
+@import "./fichaFosa";
+@import "./modalCarrousel";
+@import "./mapaBuscadorFosas";
+@import "./listaFosasCompleta";
+@import "./buscadorFosas";
+@import "./mapaHistorias";
+
+// Estilo global
+html {
+  font-size: $font-size-base; /* Ese valor es la base (12px) del calculo de todas las dimensiones en rem */
+}
+
+body {
+  margin: 0;
+  font-family: Public, sans-serif;
+  background: $color-primary;
+  color: $text-color-primary;
+  overflow-x: hidden; /* Prevenir scroll horizontal */
+}
+
+html {
+  overflow-x: hidden; /* Prevenir scroll horizontal en html también */
+}
+
+* {
+  box-sizing: border-box; /* Asegurar que padding/border no cause overflow */
+}
+
+// Animaciones
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

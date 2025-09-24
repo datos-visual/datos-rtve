@@ -1,0 +1,53 @@
+@import "./variables";
+
+sobre-proyecto {
+  width: 100%;
+}
+
+.sobre-proyecto {
+  width: 100%;
+  padding-inline: 16px;
+  margin-bottom: 60px;
+
+  .sobre-proyecto-wrapper {
+    max-width: 840px;
+    padding: 25px;
+    margin-inline: auto;
+    position: relative;
+    border: 5px solid $text-color-primary;
+
+    @media (min-width: 768px) {
+      padding: 60px;
+    }
+
+    .mostrar-flex {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+
+  &__title {
+    font-family: $font-primary;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 24px;
+    color: $text-color-secundary;
+    margin-block: 0 14px;
+
+    @media (min-width: 768px) {
+      font-size: toRem(20);
+    }
+  }
+
+  &__text {
+    font-family: $font-primary;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 30px;
+    color: $color-gray-dark-2;
+
+    @media (min-width: 768px) {
+      font-size: toRem(18);
+    }
+  }
+}

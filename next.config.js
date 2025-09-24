@@ -1,4 +1,17 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "fotografias.larazon.es",
+      },
+      {
+        protocol: "https",
+        hostname: "www.rtve.es",
+      },
+    ],
+  },
+};
 
-module.exports = nextConfig
+export default nextConfig;

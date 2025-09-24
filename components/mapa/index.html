@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mapa fosas</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <link
+      rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css"
+    />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
+
+    <link rel="stylesheet" href="css/estilos.css" />
+  </head>
+
+  <body>
+    <div id="map"></div>
+    <div id="toolbar" hidden></div>
+
+    <!-- Overlay -->
+    <div id="ficha-overlay" hidden>
+      <div id="modal-content">
+        <button id="ficha-close" class="cerrar-x" title="Cerrar">×</button>
+        <iframe id="ficha-iframe"></iframe>
+      </div>
+    </div>
+    <!-- módulo ES -->
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

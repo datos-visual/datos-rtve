@@ -1,6 +1,8 @@
 {
   "name": "fosas",
   "version": "0.1.0",
+  "projectType": "pf",
+  "pfType": "next",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,9 +11,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mapbox/mapbox-gl-geocoder": "^5.1.2",
+    "@turf/boolean-point-in-polygon": "^7.2.0",
+    "gsap": "^3.13.0",
+    "mapbox-gl": "^3.15.0",
+    "next": "13.5.11",
     "react": "^18",
-    "react-dom": "^18",
-    "next": "13.5.11"
+    "react-dom": "^18"
   },
   "devDependencies": {
     "eslint": "^8",
