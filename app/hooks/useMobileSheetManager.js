@@ -17,7 +17,14 @@ export function useMobileSheetManager(isEnabled = false) {
   
   // Cargar GSAP dinámicamente con optimizaciones
   useEffect(() => {
+    console.log('🚀 useMobileSheetManager useEffect:', {
+      isEnabled,
+      windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'N/A',
+      shouldInit: isEnabled && typeof window !== 'undefined' && window.innerWidth <= 768
+    });
+    
     if (!isEnabled || typeof window === 'undefined' || window.innerWidth > 768) {
+      console.log('⏭️ useMobileSheetManager cancelado - condiciones no cumplidas');
       return;
     }
 
@@ -25,6 +32,25 @@ export function useMobileSheetManager(isEnabled = false) {
     
     const initMobileSheet = async () => {
       try {
+        console.log('🔧 Iniciando mobile sheet...');
+        
+        // Esperar a que el mapContainerRef esté disponible
+        let attempts = 0;
+        const maxAttempts = 20; // Aumentar intentos
+        
+        while (!mapContainerRef.current && attempts < maxAttempts) {
+          console.log(`⏳ Esperando mapContainerRef... intento ${attempts + 1}/${maxAttempts}`);
+          await new Promise(resolve => setTimeout(resolve, 200)); // Aumentar delay
+          attempts++;
+        }
+        
+        if (!mapContainerRef.current) {
+          console.error('❌ mapContainerRef no disponible después de', maxAttempts, 'intentos');
+          return;
+        }
+        
+        console.log('✅ mapContainerRef disponible:', mapContainerRef.current);
+
         // Cargar GSAP dinámicamente solo una vez
         const gsapModule = await import('gsap');
         const draggableModule = await import('gsap/Draggable');
@@ -43,11 +69,12 @@ export function useMobileSheetManager(isEnabled = false) {
       }
     };
 
-    // Inicializar inmediatamente
-    initMobileSheet();
+    // Inicializar con un pequeño delay para asegurar que el DOM esté listo
+    const timeoutId = setTimeout(initMobileSheet, 100);
 
     return () => {
       // Cleanup optimizado
+      clearTimeout(timeoutId);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
@@ -68,7 +95,8 @@ export function useMobileSheetManager(isEnabled = false) {
     console.log('🔧 Creando mobile sheet...', {
       mapContainerRef: mapContainerRef.current,
       isEnabled,
-      windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'N/A'
+      windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'N/A',
+      isInitialized: isInitializedRef.current
     });
     
     if (!mapContainerRef.current) {
@@ -232,10 +260,25 @@ export function useMobileSheetManager(isEnabled = false) {
 
   // Función para actualizar contenido con optimizaciones y paginación
   const updateContent = useCallback((fosas = [], paginationInfo = null) => {
-    if (!sheetRef.current || !isEnabled) return;
+    console.log('🔄 updateContent llamado:', {
+      fosas: fosas.length,
+      paginationInfo,
+      sheetRef: !!sheetRef.current,
+      isEnabled,
+      isOpen
+    });
+    
+    if (!sheetRef.current || !isEnabled) {
+      console.log('❌ updateContent cancelado:', {
+        sheetRef: !!sheetRef.current,
+        isEnabled
+      });
+      return;
+    }
 
     // Evitar actualizaciones innecesarias
     if (JSON.stringify(fosas) === JSON.stringify(fosasFiltradas)) {
+      console.log('⏭️ updateContent saltado - sin cambios');
       return;
     }
 
@@ -249,7 +292,7 @@ export function useMobileSheetManager(isEnabled = false) {
       return;
     }
 
-    // ✅ USAR PAGINACIÓN EN LUGAR DE LÍMITE FIJO
+    // USAR PAGINACIÓN EN LUGAR DE LÍMITE FIJO
     const fosasToShow = paginationInfo ? fosas : fosas; // Si hay paginación, usar todas las fosas de la página
     const totalFosas = paginationInfo ? paginationInfo.totalItems : fosas.length;
     const currentPage = paginationInfo ? paginationInfo.currentPage : 1;
@@ -370,11 +413,11 @@ export function useMobileSheetManager(isEnabled = false) {
     fosasList.removeEventListener('click', handleFosaClick);
     fosasList.addEventListener('click', handleFosaClick);
     
-    // ✅ AGREGAR EVENT LISTENERS PARA PAGINACIÓN MÓVIL
+    // AGREGAR EVENT LISTENERS PARA PAGINACIÓN MÓVIL
     attachMobilePaginationEvents();
   }, [isEnabled, renderFosaItem, fosasFiltradas]);
 
-  // ✅ FUNCIÓN PARA MANEJAR EVENTOS DE PAGINACIÓN MÓVIL
+  // FUNCIÓN PARA MANEJAR EVENTOS DE PAGINACIÓN MÓVIL
   const attachMobilePaginationEvents = useCallback(() => {
     const paginationButtons = document.querySelectorAll('.mobile-pagination-btn');
     

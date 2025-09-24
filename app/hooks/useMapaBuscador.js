@@ -118,7 +118,9 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     }
   }, []);
 
-  const handleCloseFosa = useCallback(() => setSelectedFosa(null), []);
+  const handleCloseFosa = useCallback(() => {
+    setSelectedFosa(null);
+  }, []);
 
   const handleEstadoChange = useCallback((estado) => {
     setEstadosSeleccionados((prev) => {
@@ -201,7 +203,7 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     estadosSeleccionados,
     statusPanelExpanded,
     fosasFiltradas,
-    fosasPaginadas, // ✅ NUEVO: Fosas paginadas para renderizado
+    fosasPaginadas, // Fosas paginadas para renderizado
     
     // Refs
     mapaRef,
@@ -215,7 +217,7 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     handleEstadoChange,
     handleToggleStatusPanel,
     
-    // ✅ NUEVOS: Handlers de paginación
+    // Handlers de paginación
     handleNextPage,
     handlePrevPage,
     handleGoToPage,
@@ -226,7 +228,7 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     totalFiltradas: fosasFiltradas.length,
     hayFiltrosActivos: estadosSeleccionados.length > 0 && !estadosSeleccionados.includes('todos') || busquedaTexto.trim(),
     
-    // ✅ NUEVO: Información de paginación
+    // Información de paginación
     paginationInfo
   };
 }

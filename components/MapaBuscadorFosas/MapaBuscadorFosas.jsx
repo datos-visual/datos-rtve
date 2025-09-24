@@ -5,9 +5,10 @@ import { cargarFosas } from "../mapa/js/datos.js";
 import MapaFosas from "../mapa/MapaFosas";
 import FichaFosa from "../FichaFosa/FichaFosa.jsx";
 import ListaFosasCompleta from "../ListaFosasCompleta/ListaFosasCompleta.jsx";
-import { useResponsive } from "../../src/hooks/useResponsive";
-import { useMobileSheetManager } from "../../src/hooks/useMobileSheetManager";
-import { useMapaBuscador } from "../../src/hooks/useMapaBuscador";
+import CheckIcon from "../common/CheckIcon";
+import { useResponsive } from "../../app/hooks/useResponsive";
+import { useMobileSheetManager } from "../../app/hooks/useMobileSheetManager";
+import { useMapaBuscador } from "../../app/hooks/useMapaBuscador";
 import "../../app/styles/_mapaBuscadorFosas.scss";
 import "../../app/styles/_mobileSheet.scss";
 import "../../app/styles/_pagination.scss";
@@ -62,6 +63,13 @@ export default function MapaBuscadorFosas({
 
   // Actualizar mobile sheet cuando cambien las fosas filtradas
   useEffect(() => {
+    console.log('📱 useEffect mobile sheet:', {
+      isMobile,
+      fosasPaginadas: fosasPaginadas.length,
+      paginationInfo,
+      hasUpdateContent: !!mobileSheet.updateContent
+    });
+    
     if (isMobile && mobileSheet.updateContent) {
       // En móvil también usar paginación, pero con más elementos por página
       mobileSheet.updateContent(fosasPaginadas, paginationInfo);
@@ -345,69 +353,57 @@ export default function MapaBuscadorFosas({
                       Filtrar por estado de las fosas
                     </legend>
                     <div className="mapa-fosas-searcher__statusItem">
-                      <input
-                        type="checkbox"
-                        id="todos"
-                        name="status"
-                        value="todos"
+                      <div 
                         className="mapa-fosas-searcher__statusCheck"
-                        checked={estadosSeleccionados.includes("todos")}
-                        onChange={() => handleEstadoChange("todos")}
-                      />
+                        onClick={() => handleEstadoChange("todos")}
+                      >
+                        {estadosSeleccionados.includes("todos") && <CheckIcon />}
+                      </div>
                       <label
                         className="mapa-fosas-searcher__statusLabel"
-                        htmlFor="todos"
+                        onClick={() => handleEstadoChange("todos")}
                       >
                         Todos
                       </label>
                     </div>
                     <div className="mapa-fosas-searcher__statusItem">
-                      <input
-                        type="checkbox"
-                        id="exhumados"
-                        name="status"
-                        value="exhumados"
+                      <div 
                         className="mapa-fosas-searcher__statusCheck"
-                        checked={estadosSeleccionados.includes("exhumados")}
-                        onChange={() => handleEstadoChange("exhumados")}
-                      />
+                        onClick={() => handleEstadoChange("exhumados")}
+                      >
+                        {estadosSeleccionados.includes("exhumados") && <CheckIcon />}
+                      </div>
                       <label
                         className="mapa-fosas-searcher__statusLabel"
-                        htmlFor="exhumados"
+                        onClick={() => handleEstadoChange("exhumados")}
                       >
                         Exhumados
                       </label>
                     </div>
                     <div className="mapa-fosas-searcher__statusItem">
-                      <input
-                        type="checkbox"
-                        id="no-exhumados"
-                        name="status"
-                        value="no-exhumados"
+                      <div 
                         className="mapa-fosas-searcher__statusCheck"
-                        checked={estadosSeleccionados.includes("no-exhumados")}
-                        onChange={() => handleEstadoChange("no-exhumados")}
-                      />
+                        onClick={() => handleEstadoChange("no-exhumados")}
+                      >
+                        {estadosSeleccionados.includes("no-exhumados") && <CheckIcon />}
+                      </div>
                       <label
                         className="mapa-fosas-searcher__statusLabel"
-                        htmlFor="no-exhumados"
+                        onClick={() => handleEstadoChange("no-exhumados")}
                       >
                         No exhumados
                       </label>
                     </div>
                     <div className="mapa-fosas-searcher__statusItem">
-                      <input
-                        type="checkbox"
-                        id="trasladada"
-                        name="status"
-                        value="trasladada"
+                      <div 
                         className="mapa-fosas-searcher__statusCheck"
-                        checked={estadosSeleccionados.includes("trasladada")}
-                        onChange={() => handleEstadoChange("trasladada")}
-                      />
+                        onClick={() => handleEstadoChange("trasladada")}
+                      >
+                        {estadosSeleccionados.includes("trasladada") && <CheckIcon />}
+                      </div>
                       <label
                         className="mapa-fosas-searcher__statusLabel"
-                        htmlFor="trasladada"
+                        onClick={() => handleEstadoChange("trasladada")}
                       >
                         Trasladada a Cuelgamuros
                       </label>

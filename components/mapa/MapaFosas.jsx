@@ -93,17 +93,6 @@ const MapaFosas = forwardRef(
         });
       }
     },
-    resetZoom: () => {
-      if (!map) return;
-      
-      // Resetear a vista inicial más amplia (España + Portugal + más territorio)
-      map.easeTo({
-        center: [-3.7492, 40.4637], // Centro de España
-        zoom: 5.5, // Zoom intermedio - más amplio que 6 pero no tanto como 4
-        duration: 1000,
-        essential: true
-      });
-    },
     map: map, // Exponer la instancia del mapa directamente
   }), [map, fosas, allFosas]);
 

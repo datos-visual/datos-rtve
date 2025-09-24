@@ -131,11 +131,6 @@ export default function MapaHistorias({
   };
   const cerrarModalFosa = () => {
     setSelectedFosa(null);
-    
-    // Resetear zoom del mapa a la vista inicial para MapaHistorias
-    if (mapaRef.current && mapaRef.current.resetZoom) {
-      mapaRef.current.resetZoom();
-    }
   };
 
   // Evita crash en build (no hay window)

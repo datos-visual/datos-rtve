@@ -268,12 +268,21 @@
       height: 18px;
       margin: 0;
       border: 2px solid $color-gray-dark-2;
-      appearance: none;
       border-radius: 2px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: transparent;
+      transition: all 0.2s ease;
 
-      &:checked {
-        background: url("/check-white.svg") center center / 100% auto no-repeat;
-        border: 0;
+      &:hover {
+        border-color: $color-primary;
+      }
+
+      svg {
+        width: 12px;
+        height: 12px;
       }
     }
 
@@ -497,12 +506,21 @@
       height: 18px;
       margin: 0;
       border: 2px solid $color-gray-dark-2;
-      appearance: none;
       border-radius: 2px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: transparent;
+      transition: all 0.2s ease;
 
-      &:checked {
-        background: url("/check-white.svg") center center / 100% auto no-repeat;
-        border: 0;
+      &:hover {
+        border-color: $color-primary;
+      }
+
+      svg {
+        width: 12px;
+        height: 12px;
       }
     }
 
