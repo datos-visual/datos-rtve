@@ -145,10 +145,10 @@ export default function IntroScreen2({ onNavigation }) {
                 aria-hidden="true"
               />
             </button>
-            <a href="/mapa" data-link="/mapa" className="text-link-btn">
-              <span>Saltar introducción</span>
-            </a>
           </div>
+          <a href="/mapa" data-link="/mapa" className="text-link-btn">
+            <span>Saltar introducción</span>
+          </a>
         </div>
 
         <div
@@ -189,8 +189,9 @@ export default function IntroScreen2({ onNavigation }) {
 
       <div className="info-footer">
         <p>
-          Un proyecto del equipo de RTVE Noticias. © Corporación de Radio y
-          Televisión Española 2025
+          Un proyecto de RTVE Noticias con el Archivo RTVE y la colaboración de
+          la Secretaría de Estado de Memoria Democrática. © Corporación de Radio
+          y Televisión Española 2025
         </p>
       </div>
     </section>

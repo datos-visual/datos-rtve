@@ -12,7 +12,7 @@
   overflow-x: hidden;
   background: transparent;
   flex-direction: column;
-  
+
   // .personaje-container
   .personaje-container {
     width: 100%;
@@ -37,46 +37,45 @@
       padding: 30px 20px 0 20px;
     }
 
-    .btn-volver{
-        color: $text-color-primary;
-        font-family: $font-primary;
-        font-size: 1.333rem;
-        font-weight:400;
-        line-height: 2.166rem;
-        text-decoration:none;
-        display: flex;
-        align-items: center;
-        gap: 8px;
+    .btn-volver {
+      color: $text-color-primary;
+      font-family: $font-primary;
+      font-size: 1.333rem;
+      font-weight: 400;
+      line-height: 2.166rem;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
 
-        @include mobile { 
-          font-size: 1rem;
-          line-height: 16px;
-        }
+      @include mobile {
+        font-size: 1rem;
+        line-height: 16px;
+      }
 
-        @media (min-width: 768px) {
-          margin-bottom: 5.4rem;
-        }
+      @media (min-width: 768px) {
+        margin-bottom: 5.4rem;
+      }
 
-        &:hover{
-          span{
-            text-decoration: underline;
-          }
+      &:hover {
+        span {
+          text-decoration: underline;
         }
+      }
     }
 
-    .row{
+    .row {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
       width: 100%;
-      gap:50px;
+      gap: 50px;
 
       @include mobile {
         flex-direction: column;
       }
     }
   }
-  
 
   // .mitad-izquierda (contenido desktop)
   .mitad-izquierda {
@@ -90,7 +89,7 @@
     position: relative;
 
     @media (min-width: 768px) {
-        width: 70%;
+      width: 70%;
     }
     @include desktop {
       width: 67%;
@@ -104,11 +103,11 @@
       text-transform: uppercase;
       font-size: 32px;
       font-weight: 400;
-      line-height:  40px; /* 125% */
+      line-height: 40px; /* 125% */
       margin-bottom: 60px;
       margin-top: 0;
 
-      @include mobile { 
+      @include mobile {
         color: $text-color-primary;
         font-size: 24px;
         font-weight: 400;
@@ -117,7 +116,7 @@
         margin-bottom: 0;
       }
     }
-    
+
     // h1.titulo-destacado (renderDesktopContent)
     .titulo-destacado {
       font-family: $font-secondary, serif;
@@ -128,15 +127,17 @@
       font-size: clamp(2.5rem, 1vw + 2rem, 3.333rem);
       line-height: clamp(2.667rem, 1.8vw + 1.767rem, 4.167rem);
 
-      @include tablet{
+      @include tablet {
         width: 100%;
       }
-        @media (min-width: 768px) {
-          width: 100%;
-        }
-      @include mobile { display: none; }
+      @media (min-width: 768px) {
+        width: 70%;
+      }
+      @include mobile {
+        display: none;
+      }
     }
-    
+
     // p.personaje-resumen (renderDesktopContent)
     .personaje-resumen {
       font-family: $font-primary;
@@ -146,11 +147,10 @@
       line-height: 40px;
       margin: 0 0 33px 0;
 
-      @media (min-width: 769px) { 
-        
+      @media (min-width: 769px) {
       }
 
-      @include mobile { 
+      @include mobile {
         display: none;
       }
     }
@@ -160,13 +160,15 @@
       width: 100%;
       @include mobile {
         position: fixed;
-        left: 0; right: 0; bottom: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         width: 100%;
         background: rgba(121, 96, 96, 0.75);
         backdrop-filter: blur(10px);
         border-top-left-radius: 20px;
         border-top-right-radius: 20px;
-        box-shadow: 0 -4px 20px rgba(0,0,0,0.25);
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
         height: 90vh;
         z-index: 100;
       }
@@ -185,12 +187,15 @@
           overflow-y: auto;
           -webkit-overflow-scrolling: touch;
         }
-        
+
         // .mobile-header (renderMobileContent)
         .mobile-header {
           display: none;
-          @include mobile { display: block; margin-bottom: 20px; }
-          
+          @include mobile {
+            display: block;
+            margin-bottom: 20px;
+          }
+
           // h1.titulo-destacado-mobile
           .titulo-destacado-mobile {
             font-family: $font-secondary, serif;
@@ -200,7 +205,7 @@
             line-height: 32px;
             margin: 0 0 12px 0;
           }
-          
+
           // .separador-linea-mobile
           .separador-linea-mobile {
             width: 100%;
@@ -209,7 +214,7 @@
             background: $text-color-primary;
             margin: #{$spacing-sm + 2px} 0;
           }
-          
+
           // p.personaje-resumen-mobile
           .personaje-resumen-mobile {
             font-family: $font-primary;
@@ -234,7 +239,7 @@
             line-height: 26px;
           }
         }
-        
+
         .historia-principal {
           color: $text-color-primary;
           margin: 0 0 clamp(8px, 2vw, #{$spacing-lg}) 0;
@@ -255,7 +260,7 @@
     flex-grow: 1;
     width: 100%;
     justify-content: center;
-  
+
     @media (min-width: 768px) {
       justify-content: end;
       width: 30%;
@@ -264,9 +269,9 @@
       align-items: center;
     }
 
-     @include desktop {
+    @include desktop {
       width: 33%;
-     }
+    }
 
     // .personaje-visual
     .personaje-visual {
@@ -274,12 +279,12 @@
       justify-content: right;
       width: auto;
 
-      @include mobile { 
-         height: calc(100vh - 100px);
+      @include mobile {
+        height: calc(100vh - 100px);
       }
 
-      @include desktop { 
-        width: 100%; 
+      @include desktop {
+        width: 100%;
         height: calc(100vh - 300px);
       }
 
@@ -291,12 +296,11 @@
         // Altura fluida con límites
         //height: clamp(340px, 45vh, 650px);
 
-        @include mobile { 
-              
+        @include mobile {
         }
       }
     }
-    
+
     // .categoria-mobile (updateTexts)
     .categoria-mobile {
       display: none;
@@ -315,7 +319,7 @@
         opacity: 0.9;
       }
     }
-    
+
     // .texto-flotante-mobile (updateTexts)
     .texto-flotante-mobile {
       display: none;
@@ -340,7 +344,7 @@
       }
     }
   }
-  
+
   // .continuar-historias (scroll-button)
   .continuar-historias {
     position: fixed;
@@ -352,9 +356,13 @@
     opacity: 1;
     z-index: 100;
     bottom: clamp(30px, 5vw, 60px);
-    @include mobile { display: none; }
+    @include mobile {
+      display: none;
+    }
   }
-  @include tablet { min-height: 100vh; }
+  @include tablet {
+    min-height: 100vh;
+  }
 }
 
 // scroll-button dentro de .continuar-historias
@@ -374,10 +382,12 @@
     width: 40px;
     height: 4px;
     border-radius: 2px;
-    background: rgba(255,255,255,0.4);
+    background: rgba(255, 255, 255, 0.4);
     margin: 25px auto;
     cursor: grab;
-    
-    &:active { cursor: grabbing; }
+
+    &:active {
+      cursor: grabbing;
+    }
   }
 }
