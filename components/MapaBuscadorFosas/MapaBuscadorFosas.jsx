@@ -11,8 +11,7 @@ import { useMobileSheetManager } from "../../app/hooks/useMobileSheetManager";
 import { useMapaBuscador } from "../../app/hooks/useMapaBuscador";
 import "../../app/styles/_mapaBuscadorFosas.scss";
 import "../../app/styles/_mobileSheet.scss";
-import "../../app/styles/_pagination.scss";
-import "../../app/styles/_mobilePagination.scss";
+import "../../app/styles/_infiniteScroll.scss";
 
 export default function MapaBuscadorFosas({
   ccaa,
@@ -40,8 +39,9 @@ export default function MapaBuscadorFosas({
     estadosSeleccionados,
     statusPanelExpanded,
     fosasFiltradas,
-    fosasPaginadas, // Fosas paginadas
+    fosasVisibles,
     mapaRef,
+    loadingTriggerRef,
     handleBusquedaChange,
     handleFormSubmit,
     handleToggleClick,
@@ -49,32 +49,23 @@ export default function MapaBuscadorFosas({
     handleCloseFosa,
     handleEstadoChange,
     handleToggleStatusPanel,
-    handleNextPage, // Paginación
-    handlePrevPage,
-    handleGoToPage,
+    loadMoreItems,
     aplicarFiltroUbicacion,
     totalFosas,
     totalFiltradas,
     hayFiltrosActivos,
-    paginationInfo, // Info de paginación
+    loadingInfo,
+    isLoadingMore
   } = useMapaBuscador(fosas, isMobile);
 
   // === EFECTOS PRINCIPALES ===
 
-  // Actualizar mobile sheet cuando cambien las fosas filtradas
+  // Actualizar mobile sheet cuando cambien las fosas visibles
   useEffect(() => {
-    console.log('📱 useEffect mobile sheet:', {
-      isMobile,
-      fosasPaginadas: fosasPaginadas.length,
-      paginationInfo,
-      hasUpdateContent: !!mobileSheet.updateContent
-    });
-    
     if (isMobile && mobileSheet.updateContent) {
-      // En móvil también usar paginación, pero con más elementos por página
-      mobileSheet.updateContent(fosasPaginadas, paginationInfo);
+      mobileSheet.updateContent(fosasVisibles, loadingInfo, isLoadingMore);
     }
-  }, [fosasPaginadas, paginationInfo, isMobile, mobileSheet]);
+  }, [fosasVisibles, loadingInfo, isLoadingMore, isMobile, mobileSheet]);
 
   // Listener para clicks en fosas desde mobile sheet
   useEffect(() => {
@@ -90,22 +81,104 @@ export default function MapaBuscadorFosas({
     return () => document.removeEventListener("fosa-click", handleFosaClick);
   }, [fosasFiltradas, handleFosaSelect]);
 
-  // Listener para paginación móvil
+  // Listener para scroll infinito móvil
   useEffect(() => {
-    const handleMobilePagination = (event) => {
-      const { action } = event.detail;
-
-      if (action === "next" && paginationInfo.hasNextPage) {
-        handleNextPage();
-      } else if (action === "prev" && paginationInfo.hasPrevPage) {
-        handlePrevPage();
+    const handleMobileLoadMore = (event) => {
+      if (isMobile && !isLoadingMore && loadingInfo.hasMore) {
+        loadMoreItems();
       }
     };
 
-    document.addEventListener("mobile-pagination", handleMobilePagination);
-    return () =>
-      document.removeEventListener("mobile-pagination", handleMobilePagination);
-  }, [handleNextPage, handlePrevPage, paginationInfo]);
+    document.addEventListener("mobile-load-more", handleMobileLoadMore);
+    return () => document.removeEventListener("mobile-load-more", handleMobileLoadMore);
+  }, [isMobile, isLoadingMore, loadingInfo.hasMore, loadMoreItems]);
+
+  // Sistema de scroll en lista-narrativas
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Solo configurar si hay más items
+    if (!loadingInfo.hasMore) {
+      return;
+    }
+
+    // Buscar el contenedor lista-narrativas con retry
+    let listaContainer = document.querySelector('.lista-narrativas');
+    
+    // Si no se encuentra inmediatamente, esperar un poco y reintentar
+    if (!listaContainer) {
+      const retryTimeout = setTimeout(() => {
+        listaContainer = document.querySelector('.lista-narrativas');
+        if (listaContainer) {
+          setupScrollListener(listaContainer);
+        }
+      }, 500);
+      
+      return () => clearTimeout(retryTimeout);
+    }
+    
+    // Función para configurar el listener de scroll
+    const setupScrollListener = (container) => {
+      let scrollTimeout = null;
+      let lastScrollTop = 0;
+
+      const handleScroll = () => {
+        if (isLoadingMore || !loadingInfo.hasMore) return;
+
+        const scrollTop = container.scrollTop;
+        const scrollHeight = container.scrollHeight;
+        const clientHeight = container.clientHeight;
+        
+        // Calcular si está cerca del final (dentro de 100px)
+        const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+
+        // Solo activar si está cerca del final y no está cargando
+        if (isNearBottom && !isLoadingMore) {
+          // Debounce para evitar múltiples llamadas
+          if (scrollTimeout) clearTimeout(scrollTimeout);
+          scrollTimeout = setTimeout(() => {
+            loadMoreItems();
+          }, 300);
+        }
+        
+        lastScrollTop = scrollTop;
+      };
+
+      // Agregar listener de scroll al contenedor
+      container.addEventListener('scroll', handleScroll, { passive: true });
+
+      // También usar Intersection Observer como respaldo
+      let observer = null;
+      if (loadingTriggerRef.current) {
+        observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting && !isLoadingMore) {
+              loadMoreItems();
+            }
+          });
+        },
+          {
+            threshold: 0.1,
+            rootMargin: '0px'
+          }
+        );
+        
+        observer.observe(loadingTriggerRef.current);
+      }
+
+      return () => {
+        container.removeEventListener('scroll', handleScroll);
+        if (scrollTimeout) clearTimeout(scrollTimeout);
+        if (observer && loadingTriggerRef.current) {
+          observer.unobserve(loadingTriggerRef.current);
+        }
+      };
+    };
+    
+    // Configurar el listener si el contenedor ya está disponible
+    return setupScrollListener(listaContainer);
+  }, [loadMoreItems, loadingInfo.hasMore, isLoadingMore, loadingInfo.totalItems, loadingInfo.loadedItems]);
 
   // Cargar datos
   useEffect(() => {
@@ -121,7 +194,6 @@ export default function MapaBuscadorFosas({
           const todasLasFosas = await cargarFosas();
           setFosas(todasLasFosas);
         } catch (error) {
-          console.error("Error cargando fosas:", error);
           setError(error);
         } finally {
           setLoading(false);
@@ -294,15 +366,9 @@ export default function MapaBuscadorFosas({
               >
                 Se muestran{" "}
                 <strong>
-                  {paginationInfo.startItem}-{paginationInfo.endItem}
+                  {loadingInfo.loadedItems}
                 </strong>{" "}
                 de <strong>{totalFiltradas}</strong> resultados
-                {paginationInfo.totalPages > 1 && (
-                  <span className="pagination-info">
-                    (Página {paginationInfo.currentPage} de{" "}
-                    {paginationInfo.totalPages})
-                  </span>
-                )}
               </div>
 
               {/* Filtros de estado - Estructura completa del proyecto original */}
@@ -423,49 +489,55 @@ export default function MapaBuscadorFosas({
                 </form>
               </section>
 
-              {/* Solo mostrar ListaFosasCompleta en desktop */}
+              {/* Lista con scroll infinito en desktop */}
               {listaVisible && isDesktop && (
                 <>
                   <ListaFosasCompleta
                     contexto="mapaBuscadorFosas"
-                    lista={fosasPaginadas} // Usar fosas paginadas en lugar de todas
-                    descripcion={`Se muestran ${paginationInfo.startItem}-${paginationInfo.endItem} de ${totalFiltradas} fosas encontradas`}
+                    lista={fosasVisibles}
+                    descripcion={`Página ${loadingInfo.currentPage} de ${loadingInfo.totalPages} - Mostrando ${loadingInfo.loadedItems} de ${totalFiltradas} fosas`}
                     onItemClick={handleFosaSelect}
+                    modoSimple={true}
                   />
-
-                  {/* CONTROLES DE PAGINACIÓN */}
-                  {paginationInfo.totalPages > 1 && (
-                    <div className="pagination-controls">
-                      <button
-                        onClick={handlePrevPage}
-                        disabled={!paginationInfo.hasPrevPage}
-                        className="pagination-btn prev"
-                        aria-label="Página anterior"
-                      >
-                        ← Anterior
-                      </button>
-
-                      <div className="pagination-info-detailed">
-                        <span>
-                          Página {paginationInfo.currentPage} de{" "}
-                          {paginationInfo.totalPages}
-                        </span>
-                        <span className="items-info">
-                          {paginationInfo.startItem}-{paginationInfo.endItem} de{" "}
-                          {paginationInfo.totalItems}
-                        </span>
-                      </div>
-
-                      <button
-                        onClick={handleNextPage}
-                        disabled={!paginationInfo.hasNextPage}
-                        className="pagination-btn next"
-                        aria-label="Página siguiente"
-                      >
-                        Siguiente →
-                      </button>
+                  
+                         {/* Trigger para cargar más */}
+                         {loadingInfo.hasMore ? (
+                           <div
+                             ref={loadingTriggerRef}
+                             className="loading-trigger"
+                           >
+                             {isLoadingMore ? (
+                               <div className="loading-content">
+                                 <p>Cargando más fosas...</p>
+                                 <p className="loading-details">
+                                   Cargando {loadingInfo.itemsRemaining > 50 ? 50 : loadingInfo.itemsRemaining} elementos más...
+                                 </p>
+                               </div>
+                             ) : (
+                               <div className="loading-content">
+                                 <p>Desplázate hacia abajo para cargar más</p>
+                                 <p className="loading-details">
+                                   ({loadingInfo.itemsRemaining} fosas restantes)
+                                 </p>
+                                 <button
+                                   onClick={() => {
+                                     loadMoreItems();
+                                   }}
+                                   disabled={isLoadingMore}
+                                   className="load-more-btn"
+                                 >
+                                   {isLoadingMore ? 'Cargando...' : 'Cargar 50 más'}
+                                 </button>
+                               </div>
+                             )}
+                           </div>
+                  ) : loadingInfo.isComplete && totalFiltradas > 0 ? (
+                    <div className="completion-message">
+                      <p>
+                        Se han cargado todas las fosas disponibles ({totalFiltradas} elementos)
+                      </p>
                     </div>
-                  )}
+                  ) : null}
                 </>
               )}
             </div>

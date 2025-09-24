@@ -70,7 +70,7 @@
 
   .sheet-content {
     height: calc(100% - 60px);
-    overflow-y: auto;
+    overflow-y: visible; // Quitar scroll del contenedor principal
     padding: 0;
     background: $text-color-primary;
     
@@ -162,6 +162,36 @@
 
         // Lista de narrativas/fosas (adaptada para móvil)
         .mobile-lista-narrativas {
+          // Configurar scroll solo en esta sección
+          max-height: 250px; // Reducido de 300px a 250px para dar espacio al trigger
+          overflow-y: auto; // Scroll vertical
+          overflow-x: hidden; // Sin scroll horizontal
+          margin-bottom: 80px; // Espacio para el trigger sticky
+          
+          // Optimizaciones de scroll
+          -webkit-overflow-scrolling: touch;
+          overscroll-behavior: contain;
+          contain: layout style paint;
+          
+          // Scrollbar personalizada
+          &::-webkit-scrollbar {
+            width: 6px;
+          }
+          
+          &::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+          }
+          
+          &::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+            
+            &:hover {
+              background: #a8a8a8;
+            }
+          }
+          
           .no-resultados {
             text-align: center;
             color: $color-gray-medium;
@@ -318,5 +348,72 @@
   // En móvil, asegurar que hay espacio para el panel
   @media (max-width: 768px) {
     min-height: 400px; // Altura mínima para que el panel tenga espacio
+  }
+}
+
+// ===== MOBILE LOADING CARDS =====
+.mobile-loading-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+  
+  .loading-skeleton {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    animation: skeleton-pulse 1.5s ease-in-out infinite alternate;
+    
+    .skeleton-img {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+      background-size: 200% 100%;
+      border-radius: 6px;
+      animation: skeleton-shimmer 1.5s ease-in-out infinite;
+    }
+    
+    .skeleton-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      
+      .skeleton-line {
+        height: 12px;
+        background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+        background-size: 200% 100%;
+        border-radius: 4px;
+        animation: skeleton-shimmer 1.5s ease-in-out infinite;
+        
+        &.short {
+          width: 60%;
+        }
+        
+        &.long {
+          width: 90%;
+        }
+      }
+    }
+  }
+}
+
+@keyframes skeleton-pulse {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
   }
 }

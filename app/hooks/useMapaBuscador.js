@@ -1,11 +1,10 @@
 /**
- * Hook optimizado para MapaBuscadorFosas - Versión minimalista
- * Solo lo esencial para máximo rendimiento
+ * Hook simplificado para MapaBuscadorFosas - Scroll infinito limpio
  */
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 
 export function useMapaBuscador(fosas = [], isMobile = false) {
-  // === ESTADO MÍNIMO ===
+  // === ESTADO BÁSICO ===
   const [loading, setLoading] = useState(true);
   const [selectedFosa, setSelectedFosa] = useState(null);
   const [error, setError] = useState(null);
@@ -13,16 +12,23 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
   const [busquedaTexto, setBusquedaTexto] = useState("");
   const [estadosSeleccionados, setEstadosSeleccionados] = useState(["todos"]);
   const [statusPanelExpanded, setStatusPanelExpanded] = useState(true);
-  
-  // === PAGINACIÓN PARA RENDIMIENTO ===
-  const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 50; // Elementos por página
 
-  // === REFS MÍNIMOS ===
+  
+  // === SCROLL INFINITO CON PAGINACIÓN DE 50 ===
+  const [loadedItems, setLoadedItems] = useState(50);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const ITEMS_PER_BATCH = 50; // Cargar de 50 en 50 tanto móvil como desktop
+  const INITIAL_ITEMS = 50;
+
+  // === REFS ===
   const mapaRef = useRef(null);
   const debounceTimeoutRef = useRef(null);
+  const loadingTriggerRef = useRef(null);
+  const lastLoadTimeRef = useRef(0);
+  const isLoadingRef = useRef(false);
+  const loadAttemptRef = useRef(0);
 
-  // === FUNCIONES AUXILIARES OPTIMIZADAS ===
+  // === FUNCIONES AUXILIARES ===
   const normalizeStatus = useCallback((status) => {
     const s = String(status || "").toLowerCase().trim();
     if (!s) return "";
@@ -37,15 +43,15 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     return campos.filter(Boolean).some((campo) => String(campo).toLowerCase().includes(busqueda));
   }, []);
 
-  // === FILTRADO ULTRA-OPTIMIZADO ===
+  // === FILTRADO ===
   const fosasFiltradas = useMemo(() => {
-    // Si no hay filtros activos, devolver todas las fosas
+    // Sin filtros activos
     if (estadosSeleccionados.includes("todos") && !busquedaTexto.trim()) {
       return fosas;
     }
 
     return fosas.filter((fosa) => {
-      // Filtros de estado (solo si no es "todos")
+      // Filtros de estado
       if (!estadosSeleccionados.includes("todos")) {
         const estadoNormalizado = normalizeStatus(fosa.status);
         const estadosDeseados = estadosSeleccionados.map((sel) => {
@@ -59,7 +65,7 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
         if (!estadosDeseados.includes(estadoNormalizado)) return false;
       }
 
-      // Filtro de texto (solo si hay búsqueda)
+      // Filtro de texto
       const busqueda = busquedaTexto.trim().toLowerCase();
       if (busqueda && !matchesSearchText(fosa, busqueda)) return false;
 
@@ -67,42 +73,63 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     });
   }, [fosas, busquedaTexto, estadosSeleccionados, normalizeStatus, matchesSearchText]);
 
-  // === PAGINACIÓN DE FOSAS FILTRADAS ===
-  const fosasPaginadas = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    return fosasFiltradas.slice(startIndex, endIndex);
-  }, [fosasFiltradas, currentPage, ITEMS_PER_PAGE]);
+  // === ITEMS VISIBLES ===
+  const fosasVisibles = useMemo(() => {
+    return fosasFiltradas.slice(0, loadedItems);
+  }, [fosasFiltradas, loadedItems]);
 
-  // === INFORMACIÓN DE PAGINACIÓN ===
-  const paginationInfo = useMemo(() => {
-    const totalPages = Math.ceil(fosasFiltradas.length / ITEMS_PER_PAGE);
-    const startItem = (currentPage - 1) * ITEMS_PER_PAGE + 1;
-    const endItem = Math.min(currentPage * ITEMS_PER_PAGE, fosasFiltradas.length);
+  // === INFORMACIÓN DE CARGA ===
+  const loadingInfo = useMemo(() => {
+    const totalItems = fosasFiltradas.length;
+    const hasMore = loadedItems < totalItems;
+    const itemsRemaining = Math.max(0, totalItems - loadedItems);
+    const currentPage = Math.ceil(loadedItems / ITEMS_PER_BATCH);
+    const totalPages = Math.ceil(totalItems / ITEMS_PER_BATCH);
     
     return {
+      loadedItems,
+      totalItems,
+      hasMore,
+      itemsRemaining,
       currentPage,
       totalPages,
-      startItem,
-      endItem,
-      totalItems: fosasFiltradas.length,
-      hasNextPage: currentPage < totalPages,
-      hasPrevPage: currentPage > 1
+      isComplete: !hasMore && totalItems > 0
     };
-  }, [currentPage, fosasFiltradas.length, ITEMS_PER_PAGE]);
+  }, [loadedItems, fosasFiltradas.length, ITEMS_PER_BATCH]);
 
-  // === HANDLERS OPTIMIZADOS ===
+  // === HANDLERS SIMPLES ===
   const handleBusquedaChange = useCallback((e) => {
     const value = e.target.value;
-    if (debounceTimeoutRef.current) clearTimeout(debounceTimeoutRef.current);
-    debounceTimeoutRef.current = setTimeout(() => setBusquedaTexto(value), 150);
-  }, []);
+    
+    setBusquedaTexto(value);
+    
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+    
+    // Resetear items cargados cuando se busca
+    setLoadedItems(INITIAL_ITEMS);
+    setIsLoadingMore(false);
+    isLoadingRef.current = false;
+    lastLoadTimeRef.current = 0;
+    loadAttemptRef.current = 0;
+  }, [INITIAL_ITEMS]);
 
   const handleFormSubmit = useCallback((e) => {
     e.preventDefault();
     const input = e.target.querySelector('input[name="busqueda"]');
-    if (input) setBusquedaTexto(input.value);
-  }, []);
+    if (input) {
+      const value = input.value;
+      setBusquedaTexto(value);
+      
+      // Resetear items cargados
+      setLoadedItems(INITIAL_ITEMS);
+      setIsLoadingMore(false);
+      isLoadingRef.current = false;
+      lastLoadTimeRef.current = 0;
+      loadAttemptRef.current = 0;
+    }
+  }, [INITIAL_ITEMS]);
 
   const handleToggleClick = useCallback(() => {
     setListaVisible((prev) => !prev);
@@ -138,26 +165,79 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     setStatusPanelExpanded((prev) => !prev);
   }, []);
 
-  // === HANDLERS DE PAGINACIÓN ===
-  const handleNextPage = useCallback(() => {
-    setCurrentPage((prev) => Math.min(prev + 1, Math.ceil(fosasFiltradas.length / ITEMS_PER_PAGE)));
-  }, [fosasFiltradas.length, ITEMS_PER_PAGE]);
+  // === SCROLL INFINITO ===
+  const loadMoreItems = useCallback(() => {
+    if (isLoadingRef.current || loadedItems >= fosasFiltradas.length) {
+      return false;
+    }
+    
+    const now = Date.now();
+    const timeSinceLastLoad = now - lastLoadTimeRef.current;
+    
+    // Debounce: evitar cargas muy rápidas
+    if (timeSinceLastLoad < 2000) {
+      return false;
+    }
+    
+    loadAttemptRef.current += 1;
+    
+    // Marcar como cargando
+    isLoadingRef.current = true;
+    lastLoadTimeRef.current = now;
+    setIsLoadingMore(true);
+    
+    // Simular carga asíncrona
+    setTimeout(() => {
+      setLoadedItems(prev => {
+        const nuevoTotal = Math.min(prev + ITEMS_PER_BATCH, fosasFiltradas.length);
+        
+        // Marcar como terminado
+        isLoadingRef.current = false;
+        setIsLoadingMore(false);
+        
+        return nuevoTotal;
+      });
+    }, 1000);
+    
+    return true;
+  }, [loadedItems, fosasFiltradas.length, ITEMS_PER_BATCH]);
 
-  const handlePrevPage = useCallback(() => {
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  // Reset cuando cambien los filtros
+  useEffect(() => {
+    setLoadedItems(INITIAL_ITEMS);
+    setIsLoadingMore(false);
+    isLoadingRef.current = false;
+    lastLoadTimeRef.current = 0;
+    loadAttemptRef.current = 0;
+  }, [busquedaTexto, estadosSeleccionados, INITIAL_ITEMS]);
+
+  // Inicialización al cargar los datos
+  useEffect(() => {
+    if (fosas.length > 0 && !loading) {
+      setLoadedItems(INITIAL_ITEMS);
+      setIsLoadingMore(false);
+      isLoadingRef.current = false;
+      lastLoadTimeRef.current = 0;
+      loadAttemptRef.current = 0;
+    }
+  }, [fosas.length, loading, INITIAL_ITEMS]);
+
+  // === EFECTOS ===
+  useEffect(() => {
+    if (mapaRef.current?.setFilteredFosas) {
+      mapaRef.current.setFilteredFosas(fosasFiltradas);
+    }
+  }, [fosasFiltradas]);
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
   }, []);
 
-  const handleGoToPage = useCallback((page) => {
-    const totalPages = Math.ceil(fosasFiltradas.length / ITEMS_PER_PAGE);
-    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
-  }, [fosasFiltradas.length, ITEMS_PER_PAGE]);
-
-  // Reset página cuando cambien los filtros
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [busquedaTexto, estadosSeleccionados]);
-
-  // === FUNCIÓN DE FILTRADO POR UBICACIÓN SIMPLIFICADA ===
+  // === FILTRADO POR UBICACIÓN ===
   const aplicarFiltroUbicacion = useCallback((fosasData, ccaa, provincia, municipio, fosaProp) => {
     if (!fosasData.length) return [];
 
@@ -172,24 +252,7 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     });
   }, []);
 
-  // === EFECTOS ===
-  // Actualizar mapa cuando cambien las fosas filtradas
-  useEffect(() => {
-    if (mapaRef.current?.setFilteredFosas) {
-      mapaRef.current.setFilteredFosas(fosasFiltradas);
-    }
-  }, [fosasFiltradas]);
-
-  // Cleanup del debounce
-  useEffect(() => {
-    return () => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  // === RETURN DEL HOOK ===
+  // === RETURN ===
   return {
     // Estado
     loading,
@@ -203,10 +266,9 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     estadosSeleccionados,
     statusPanelExpanded,
     fosasFiltradas,
-    fosasPaginadas, // Fosas paginadas para renderizado
-    
-    // Refs
+    fosasVisibles,
     mapaRef,
+    loadingTriggerRef,
     
     // Handlers
     handleBusquedaChange,
@@ -216,19 +278,14 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     handleCloseFosa,
     handleEstadoChange,
     handleToggleStatusPanel,
-    
-    // Handlers de paginación
-    handleNextPage,
-    handlePrevPage,
-    handleGoToPage,
+    loadMoreItems,
     
     // Utilidades
     aplicarFiltroUbicacion,
     totalFosas: fosas.length,
     totalFiltradas: fosasFiltradas.length,
     hayFiltrosActivos: estadosSeleccionados.length > 0 && !estadosSeleccionados.includes('todos') || busquedaTexto.trim(),
-    
-    // Información de paginación
-    paginationInfo
+    loadingInfo,
+    isLoadingMore
   };
 }

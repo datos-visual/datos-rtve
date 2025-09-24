@@ -15,16 +15,9 @@ export function useMobileSheetManager(isEnabled = false) {
   const animationFrameRef = useRef(null);
   const gsapRef = useRef(null);
   
-  // Cargar GSAP dinámicamente con optimizaciones
+  // Cargar GSAP dinámicamente
   useEffect(() => {
-    console.log('🚀 useMobileSheetManager useEffect:', {
-      isEnabled,
-      windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'N/A',
-      shouldInit: isEnabled && typeof window !== 'undefined' && window.innerWidth <= 768
-    });
-    
     if (!isEnabled || typeof window === 'undefined' || window.innerWidth > 768) {
-      console.log('⏭️ useMobileSheetManager cancelado - condiciones no cumplidas');
       return;
     }
 
@@ -32,36 +25,26 @@ export function useMobileSheetManager(isEnabled = false) {
     
     const initMobileSheet = async () => {
       try {
-        console.log('🔧 Iniciando mobile sheet...');
-        
         // Esperar a que el mapContainerRef esté disponible
         let attempts = 0;
-        const maxAttempts = 20; // Aumentar intentos
-        
-        while (!mapContainerRef.current && attempts < maxAttempts) {
-          console.log(`⏳ Esperando mapContainerRef... intento ${attempts + 1}/${maxAttempts}`);
-          await new Promise(resolve => setTimeout(resolve, 200)); // Aumentar delay
+        while (!mapContainerRef.current && attempts < 20) {
+          await new Promise(resolve => setTimeout(resolve, 200));
           attempts++;
         }
         
         if (!mapContainerRef.current) {
-          console.error('❌ mapContainerRef no disponible después de', maxAttempts, 'intentos');
+          console.error('mapContainerRef no disponible');
           return;
         }
-        
-        console.log('✅ mapContainerRef disponible:', mapContainerRef.current);
 
-        // Cargar GSAP dinámicamente solo una vez
+        // Cargar GSAP
         const gsapModule = await import('gsap');
         const draggableModule = await import('gsap/Draggable');
         gsap = gsapModule.gsap;
         Draggable = draggableModule.Draggable;
         gsap.registerPlugin(Draggable);
-
-        // Almacenar gsap en ref para uso posterior
         gsapRef.current = gsap;
         
-        // Crear el panel móvil
         createMobileSheet(gsap, Draggable);
         isInitializedRef.current = true;
       } catch (error) {
@@ -70,7 +53,7 @@ export function useMobileSheetManager(isEnabled = false) {
     };
 
     // Inicializar con un pequeño delay para asegurar que el DOM esté listo
-    const timeoutId = setTimeout(initMobileSheet, 100);
+    const timeoutId = setTimeout(initMobileSheet, 50);
 
     return () => {
       // Cleanup optimizado
@@ -92,62 +75,42 @@ export function useMobileSheetManager(isEnabled = false) {
   }, [isEnabled]);
 
   const createMobileSheet = (gsap, Draggable) => {
-    console.log('🔧 Creando mobile sheet...', {
-      mapContainerRef: mapContainerRef.current,
-      isEnabled,
-      windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'N/A',
-      isInitialized: isInitializedRef.current
-    });
-    
-    if (!mapContainerRef.current) {
-      console.warn('⚠️ mapContainerRef.current no está disponible');
-      return;
-    }
+    if (!mapContainerRef.current) return;
 
     const mapContainer = mapContainerRef.current;
     
     // Limpiar panel existente
     const existingPanel = mapContainer.querySelector('.mobile-fosas-sheet');
-    if (existingPanel) {
-      existingPanel.remove();
-    }
+    if (existingPanel) existingPanel.remove();
 
-    // Crear el HTML del panel (exactamente como en el proyecto original)
+    // Crear el HTML del panel
     const sheetHTML = `
       <div class="mobile-fosas-sheet">
         <div class="sheet-handle">
           <div class="handle-bar"></div>
         </div>
         <div class="sheet-content">
-          <div class="sheet-lista-container">
-            <!-- Aquí se insertará el contenido de lista-fosas-completa -->
-          </div>
+          <div class="sheet-lista-container"></div>
         </div>
       </div>
     `;
 
     mapContainer.insertAdjacentHTML('beforeend', sheetHTML);
-    
     const sheet = mapContainer.querySelector('.mobile-fosas-sheet');
     if (!sheet) return;
 
-    // Los estilos se aplican automáticamente desde _mobileSheet.scss
-    // Solo configuramos las dimensiones específicas
+    // Configurar dimensiones y posición inicial
     sheet.style.height = '80vh';
     sheet.style.maxHeight = '520px';
-
-    // Configurar posición inicial (cerrado)
-    const peekHeight = 60; // Altura visible cuando está cerrado
+    const peekHeight = 60;
     const closedY = sheet.offsetHeight - peekHeight;
-    
     gsap.set(sheet, { y: closedY });
 
-    // Crear Draggable con optimizaciones de rendimiento
+    // Crear Draggable
     draggableRef.current = Draggable.create(sheet, {
       type: 'y',
       bounds: { minY: 0, maxY: closedY },
       inertia: true,
-      // Usar requestAnimationFrame para mejor rendimiento
       onDrag: function() {
         if (animationFrameRef.current) {
           cancelAnimationFrame(animationFrameRef.current);
@@ -158,38 +121,25 @@ export function useMobileSheetManager(isEnabled = false) {
           const opacity = Math.max(0.3, progress);
           const content = sheet.querySelector('.sheet-content');
           if (content) {
-            // Usar transform en lugar de opacity para mejor rendimiento
-            gsap.set(content, { 
-              opacity: opacity,
-              willChange: 'opacity'
-            });
+            gsap.set(content, { opacity: opacity, willChange: 'opacity' });
           }
         });
       },
       onDragEnd: function() {
-        // Limpiar animation frame
         if (animationFrameRef.current) {
           cancelAnimationFrame(animationFrameRef.current);
         }
         
         const threshold = closedY * 0.4;
-        if (this.y < threshold) {
-          // Abrir con animación optimizada
-          gsap.to(sheet, { 
-            y: 0, 
-            duration: 0.3, 
-            ease: "power2.out",
-            onComplete: () => setIsOpen(true)
-          });
-        } else {
-          // Cerrar con animación optimizada
-          gsap.to(sheet, { 
-            y: closedY, 
-            duration: 0.3, 
-            ease: "power2.out",
-            onComplete: () => setIsOpen(false)
-          });
-        }
+        const isOpening = this.y < threshold;
+        const targetY = isOpening ? 0 : closedY;
+        
+        gsap.to(sheet, { 
+          y: targetY, 
+          duration: 0.2,
+          ease: "power2.out",
+          onComplete: () => setIsOpen(isOpening)
+        });
       }
     })[0];
 
@@ -200,52 +150,36 @@ export function useMobileSheetManager(isEnabled = false) {
         e.preventDefault();
         if (draggableRef.current) {
           const currentY = gsap.getProperty(sheet, 'y');
-          if (currentY > closedY * 0.5) {
-            // Abrir
-            gsap.to(sheet, { y: 0, duration: 0.3, ease: "power2.out" });
-            setIsOpen(true);
-          } else {
-            // Cerrar
-            gsap.to(sheet, { y: closedY, duration: 0.3, ease: "power2.out" });
-            setIsOpen(false);
-          }
+          const isOpening = currentY > closedY * 0.5;
+          const targetY = isOpening ? 0 : closedY;
+          
+          gsap.to(sheet, { y: targetY, duration: 0.2, ease: "power2.out" });
+          setIsOpen(isOpening);
         }
       });
     }
 
     sheetRef.current = sheet;
-    console.log('✅ Mobile sheet creado exitosamente:', {
-      sheet: sheet,
-      draggable: draggableRef.current,
-      isOpen: isOpen
-    });
   };
 
-  // Función para renderizar item de fosa optimizada
+  // Función para renderizar item de fosa
   const renderFosaItem = useCallback((fosa, index) => {
-    if (!fosa || !fosa.id) {
-      console.warn("⚠️ Fosa sin ID válido:", fosa);
-      return "";
-    }
+    if (!fosa || !fosa.id) return "";
 
-    // Lazy loading de imágenes para mejorar rendimiento
     const imageUrl = fosa.imagen || "https://fotografias.larazon.es/clipping/cmsimages02/2024/11/15/93DFFB09-1D04-4088-99A5-94DC549EE9EC/hallada-fosa-comun-cementerio-val-51-victimas-franquismo_98.jpg?crop=1200,675,x0,y113&width=1900&height=1069&optimize=low&format=webply";
-    
-    const ubicacion = [fosa.municipio, fosa.provincia]
-      .filter(Boolean)
-      .join(" / ");
-
+    const ubicacion = [fosa.municipio, fosa.provincia].filter(Boolean).join(" / ");
     const titulo = fosa.title?.trim() || `Fosa en ${fosa.municipio || "ubicación desconocida"}`;
 
     return `
-      <div class="fosa" data-id="${fosa.id}" data-index="${index}" style="contain: layout style paint;">
+      <div class="fosa scroll-item" data-id="${fosa.id}" data-index="${index}" style="
+        contain: layout style paint;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+        transition-delay: ${(index % 20) * 50}ms;
+      ">
         <div class="fosa__img">
-          <img 
-            src="${imageUrl}" 
-            alt="Fosa"
-            loading="lazy"
-            decoding="async"
-            style="will-change: transform;">
+          <img src="${imageUrl}" alt="Fosa" loading="lazy" decoding="async" style="will-change: transform;">
         </div>
         <div class="info">
           <p class="ubicacion ${fosa.status}">
@@ -258,27 +192,47 @@ export function useMobileSheetManager(isEnabled = false) {
     `;
   }, []);
 
-  // Función para actualizar contenido con optimizaciones y paginación
-  const updateContent = useCallback((fosas = [], paginationInfo = null) => {
-    console.log('🔄 updateContent llamado:', {
-      fosas: fosas.length,
-      paginationInfo,
-      sheetRef: !!sheetRef.current,
-      isEnabled,
-      isOpen
-    });
+  // Función para agregar nuevas fosas
+  const addNewFosas = useCallback((fosas = []) => {
+    if (!sheetRef.current || !isEnabled) return;
     
-    if (!sheetRef.current || !isEnabled) {
-      console.log('❌ updateContent cancelado:', {
-        sheetRef: !!sheetRef.current,
-        isEnabled
-      });
-      return;
+    const fosasList = sheetRef.current.querySelector('.sheet-lista-container');
+    const existingContainer = fosasList?.querySelector('.mobile-lista-fosas-completa');
+    const mobileLista = existingContainer?.querySelector('.mobile-lista-narrativas');
+    
+    if (!mobileLista) return;
+    
+    // Obtener fosas existentes y nuevas
+    const existingFosas = Array.from(mobileLista.querySelectorAll('.fosa')).map(el => el.getAttribute('data-id'));
+    const newFosas = fosas.filter(fosa => !existingFosas.includes(fosa.id));
+    
+    if (newFosas.length > 0) {
+      // Remover skeleton y agregar nuevas fosas
+      const skeleton = mobileLista.querySelector('.mobile-loading-cards');
+      if (skeleton) skeleton.remove();
+      
+      const newFosasHTML = newFosas.map((fosa, index) => renderFosaItem(fosa, fosas.indexOf(fosa))).filter(Boolean).join('');
+      mobileLista.insertAdjacentHTML('beforeend', newFosasHTML);
+      
+      // Animar nuevas fosas
+      setTimeout(() => {
+        const newItems = mobileLista.querySelectorAll('.scroll-item:not([style*="opacity: 1"])');
+        newItems.forEach((item, index) => {
+          setTimeout(() => {
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0)';
+          }, index * 20);
+        });
+      }, 50);
     }
+  }, [isEnabled, renderFosaItem]);
+
+  // Función para actualizar contenido
+  const updateContent = useCallback((fosas = [], loadingInfo = null, isLoadingMore = false) => {
+    if (!sheetRef.current || !isEnabled) return;
 
     // Evitar actualizaciones innecesarias
-    if (JSON.stringify(fosas) === JSON.stringify(fosasFiltradas)) {
-      console.log('⏭️ updateContent saltado - sin cambios');
+    if (JSON.stringify(fosas) === JSON.stringify(fosasFiltradas) && !isLoadingMore) {
       return;
     }
 
@@ -292,68 +246,157 @@ export function useMobileSheetManager(isEnabled = false) {
       return;
     }
 
-    // USAR PAGINACIÓN EN LUGAR DE LÍMITE FIJO
-    const fosasToShow = paginationInfo ? fosas : fosas; // Si hay paginación, usar todas las fosas de la página
-    const totalFosas = paginationInfo ? paginationInfo.totalItems : fosas.length;
-    const currentPage = paginationInfo ? paginationInfo.currentPage : 1;
-    const totalPages = paginationInfo ? paginationInfo.totalPages : 1;
+    // Datos para scroll infinito
+    const totalFosas = loadingInfo ? loadingInfo.totalItems : fosas.length;
+    const loadedItems = loadingInfo ? loadingInfo.loadedItems : fosas.length;
+    const hasMore = loadingInfo ? loadingInfo.hasMore : false;
 
-    // Usar DocumentFragment para mejor rendimiento DOM
+    // Generar HTML del contenedor
+    const generateContainerHTML = () => {
+      const skeletonHTML = isLoadingMore ? `
+        <div class="mobile-loading-cards">
+          <div class="loading-skeleton">
+            <div class="skeleton-img"></div>
+            <div class="skeleton-content">
+              <div class="skeleton-line short"></div>
+              <div class="skeleton-line long"></div>
+            </div>
+          </div>
+          <div class="loading-skeleton">
+            <div class="skeleton-img"></div>
+            <div class="skeleton-content">
+              <div class="skeleton-line short"></div>
+              <div class="skeleton-line long"></div>
+            </div>
+          </div>
+          <div class="loading-skeleton">
+            <div class="skeleton-img"></div>
+            <div class="skeleton-content">
+              <div class="skeleton-line short"></div>
+              <div class="skeleton-line long"></div>
+            </div>
+          </div>
+        </div>
+      ` : '';
+      
+      return `
+        <div class="mobile-contador">
+          <p class="contador-text">Se muestran ${loadedItems} de ${totalFosas} fosas</p>
+          ${hasMore ? 
+            `<p class="loading-info-mobile">Desplázate hacia abajo para cargar más (${totalFosas - loadedItems} restantes)...</p>` : 
+            `<p class="loading-info-mobile">Todas las fosas cargadas (${totalFosas} elementos)</p>`
+          }
+        </div>
+        
+        <div class="mobile-intro-fosas visible">
+          <h4 class="intro-fosas__title">Información de búsqueda</h4>
+          <p class="intro-fosas__text">Resultados de la búsqueda en el mapa de fosas.</p>
+          <div class="mobile-hide-button">
+            <button class="mobile-toggle-intro">
+              <span>Menos información</span>
+              <svg class="chevron-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M6 4l4 4H2l4-4z" fill="currentColor"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <div class="mobile-lista-narrativas">
+          ${skeletonHTML}
+          ${fosas.map((fosa, index) => renderFosaItem(fosa, index)).filter(Boolean).join('')}
+        </div>
+      `;
+    };
+
+    // Manejar actualizaciones según el estado de carga
+    const existingContainer = fosasList.querySelector('.mobile-lista-fosas-completa');
+    
+    if (existingContainer) {
+      if (isLoadingMore) {
+        // Solo actualizar contador y agregar skeleton
+        const contador = existingContainer.querySelector('.mobile-contador');
+        if (contador) {
+          contador.innerHTML = `
+            <p class="contador-text">Se muestran ${loadedItems} de ${totalFosas} fosas</p>
+            ${hasMore ? 
+              `<p class="loading-info-mobile">Desplázate hacia abajo para cargar más (${totalFosas - loadedItems} restantes)...</p>` : 
+              `<p class="loading-info-mobile">✅ Todas las fosas cargadas (${totalFosas} elementos)</p>`
+            }
+          `;
+        }
+
+        // Agregar skeleton si no existe
+        const mobileLista = existingContainer.querySelector('.mobile-lista-narrativas');
+        if (mobileLista && !mobileLista.querySelector('.mobile-loading-cards')) {
+          const skeletonHTML = `
+            <div class="mobile-loading-cards">
+              <div class="loading-skeleton">
+                <div class="skeleton-img"></div>
+                <div class="skeleton-content">
+                  <div class="skeleton-line short"></div>
+                  <div class="skeleton-line long"></div>
+                </div>
+              </div>
+              <div class="loading-skeleton">
+                <div class="skeleton-img"></div>
+                <div class="skeleton-content">
+                  <div class="skeleton-line short"></div>
+                  <div class="skeleton-line long"></div>
+                </div>
+              </div>
+              <div class="loading-skeleton">
+                <div class="skeleton-img"></div>
+                <div class="skeleton-content">
+                  <div class="skeleton-line short"></div>
+                  <div class="skeleton-line long"></div>
+                </div>
+              </div>
+            </div>
+          `;
+          mobileLista.insertAdjacentHTML('beforeend', skeletonHTML);
+        }
+        return;
+      } else {
+        // Agregar nuevas fosas y actualizar contador
+        addNewFosas(fosas, loadingInfo);
+        
+        const contador = existingContainer.querySelector('.mobile-contador');
+        if (contador) {
+          contador.innerHTML = `
+            <p class="contador-text">Se muestran ${loadedItems} de ${totalFosas} fosas</p>
+            ${hasMore ? 
+              `<p class="loading-info-mobile">Desplázate hacia abajo para cargar más (${totalFosas - loadedItems} restantes)...</p>` : 
+              `<p class="loading-info-mobile">Todas las fosas cargadas (${totalFosas} elementos)</p>`
+            }
+          `;
+        }
+        return;
+      }
+    }
+
+    // Crear contenedor completo
     const fragment = document.createDocumentFragment();
     const container = document.createElement('div');
     container.className = 'mobile-lista-fosas-completa';
     container.setAttribute('data-contexto', 'mapaBuscadorFosas');
-    
-    // Generar HTML de forma optimizada con paginación
-    container.innerHTML = `
-      <div class="mobile-contador">
-        <p class="contador-text">Se muestran ${paginationInfo ? `${paginationInfo.startItem}-${paginationInfo.endItem}` : fosasToShow.length} de ${totalFosas} fosas</p>
-        ${paginationInfo && paginationInfo.totalPages > 1 ? 
-          `<p class="pagination-info-mobile">Página ${currentPage} de ${totalPages}</p>` : 
-          ''
-        }
-      </div>
-      
-      <div class="mobile-intro-fosas visible">
-        <h4 class="intro-fosas__title">Información de búsqueda</h4>
-        <p class="intro-fosas__text">Resultados de la búsqueda en el mapa de fosas.</p>
-        <div class="mobile-hide-button">
-          <button class="mobile-toggle-intro">
-            <span>Menos información</span>
-            <svg class="chevron-icon" width="12" height="12" viewBox="0 0 12 12">
-              <path d="M6 4l4 4H2l4-4z" fill="currentColor"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-      
-      <div class="mobile-lista-narrativas">
-        ${fosasToShow.map((fosa, index) => renderFosaItem(fosa, index)).filter(Boolean).join('')}
-      </div>
-      
-      ${paginationInfo && paginationInfo.totalPages > 1 ? `
-        <div class="mobile-pagination-controls">
-          <button class="mobile-pagination-btn prev" ${!paginationInfo.hasPrevPage ? 'disabled' : ''} data-action="prev">
-            ← Anterior
-          </button>
-          <span class="mobile-pagination-info">
-            ${currentPage} / ${totalPages}
-          </span>
-          <button class="mobile-pagination-btn next" ${!paginationInfo.hasNextPage ? 'disabled' : ''} data-action="next">
-            Siguiente →
-          </button>
-        </div>
-      ` : ''}
-    `;
+    container.innerHTML = generateContainerHTML();
 
     fragment.appendChild(container);
     fosasList.innerHTML = '';
     fosasList.appendChild(fragment);
 
-    // Los estilos se aplican automáticamente desde _mobileSheet.scss
-    // No necesitamos aplicar estilos inline
+    // Animar items
+    setTimeout(() => {
+      const items = fosasList.querySelectorAll('.scroll-item');
+      items.forEach((item, index) => {
+        setTimeout(() => {
+          item.style.opacity = '1';
+          item.style.transform = 'translateY(0)';
+        }, index * 20);
+      });
+    }, 50);
 
-    // Adjuntar eventos para el toggle de información
+    // Adjuntar eventos
     const toggleBtn = fosasList.querySelector('.mobile-toggle-intro');
     if (toggleBtn) {
       toggleBtn.addEventListener('click', () => {
@@ -382,26 +425,26 @@ export function useMobileSheetManager(isEnabled = false) {
       });
     }
 
-    // Usar event delegation para mejor rendimiento
+    // Event delegation para fosas
     const handleFosaClick = (e) => {
       const fosaItem = e.target.closest('.fosa');
       if (!fosaItem) return;
       
       const fosaId = fosaItem.dataset.id;
       
-      // Cerrar panel con animación optimizada
+      // Cerrar panel
       if (sheetRef.current && draggableRef.current && gsapRef.current) {
         const peekHeight = 60;
         const closedY = sheetRef.current.offsetHeight - peekHeight;
         gsapRef.current.to(sheetRef.current, { 
           y: closedY, 
-          duration: 0.3, 
+          duration: 0.2,
           ease: "power2.out",
           onComplete: () => setIsOpen(false)
         });
       }
       
-      // Emitir evento para que el componente padre maneje la selección
+      // Emitir evento
       const event = new CustomEvent('fosa-click', { 
         detail: { id: fosaId },
         bubbles: true 
@@ -409,31 +452,70 @@ export function useMobileSheetManager(isEnabled = false) {
       document.dispatchEvent(event);
     };
 
-    // Usar event delegation en lugar de múltiples event listeners
+    // Event listeners
     fosasList.removeEventListener('click', handleFosaClick);
     fosasList.addEventListener('click', handleFosaClick);
     
-    // AGREGAR EVENT LISTENERS PARA PAGINACIÓN MÓVIL
-    attachMobilePaginationEvents();
+    attachMobileInfiniteScroll();
   }, [isEnabled, renderFosaItem, fosasFiltradas]);
 
-  // FUNCIÓN PARA MANEJAR EVENTOS DE PAGINACIÓN MÓVIL
-  const attachMobilePaginationEvents = useCallback(() => {
-    const paginationButtons = document.querySelectorAll('.mobile-pagination-btn');
-    
-    paginationButtons.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const action = btn.dataset.action;
-        
-        // Emitir evento personalizado para que el componente padre maneje la paginación
-        const event = new CustomEvent('mobile-pagination', { 
-          detail: { action },
-          bubbles: true 
-        });
-        document.dispatchEvent(event);
-      });
-    });
+  // Función para scroll infinito móvil
+  const attachMobileInfiniteScroll = useCallback(() => {
+    const mobileListContainer = document.querySelector('.mobile-lista-narrativas');
+    if (!mobileListContainer) return;
+
+    let scrollTimeout = null;
+
+    const handleMobileScroll = () => {
+      const scrollTop = mobileListContainer.scrollTop;
+      const scrollHeight = mobileListContainer.scrollHeight;
+      const clientHeight = mobileListContainer.clientHeight;
+      
+      // Verificar si está cerca del final
+      const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+
+      if (isNearBottom) {
+        // Debounce
+        if (scrollTimeout) clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          const event = new CustomEvent('mobile-load-more', { 
+            detail: { source: 'mobile-scroll' },
+            bubbles: true 
+          });
+          document.dispatchEvent(event);
+        }, 150);
+      }
+    };
+
+    // Agregar listeners
+    mobileListContainer.addEventListener('scroll', handleMobileScroll, { passive: true });
+
+    // Intersection Observer como respaldo
+    const loadMoreTrigger = document.querySelector('.mobile-loading-trigger');
+    if (loadMoreTrigger) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const event = new CustomEvent('mobile-load-more', { 
+                detail: { source: 'mobile-intersection' },
+                bubbles: true 
+              });
+              document.dispatchEvent(event);
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: '0px' }
+      );
+      
+      observer.observe(loadMoreTrigger);
+    }
+
+    // Cleanup
+    return () => {
+      mobileListContainer.removeEventListener('scroll', handleMobileScroll);
+      if (scrollTimeout) clearTimeout(scrollTimeout);
+    };
   }, []);
 
   return {
