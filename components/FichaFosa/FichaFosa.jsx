@@ -122,6 +122,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
 
           {/* Imagen destacada */}
           <div className="foto" onClick={() => setModalOpen(true)}>
+            <h2 class="datos__title">{title || "Sin título"}</h2>
             <Image
               src={
                 foto ||

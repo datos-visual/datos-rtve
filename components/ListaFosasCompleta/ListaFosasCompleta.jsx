@@ -143,7 +143,6 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
           </div>
           <div className="info">
             <p className="ubicacion">
-              <img src={pinLineaNarrativa.src ?? pinLineaNarrativa} alt="" />{" "}
               <strong>{fosa.municipio}</strong> / {fosa.provincia}
             </p>
             <p className="descripcion">{titulo}</p>
@@ -158,71 +157,72 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
   };
 
   return (
-    <div className="lista-fosas" data-contexto={contexto}>
-      {!config.modoSimple ? (
-        <>
-          <p
-            className="contador"
-            // mantener HTML si quieres <strong> etc
-            dangerouslySetInnerHTML={{ __html: mensajeContador }}
-          />
-          {contexto === "mapaHistorias" && (
-            <div
-              className={`intro-fosas ${introVisible ? "visible" : "oculto"}`}
-            >
-              <h4 className="intro-fosas__title">{tituloSeccion}</h4>
-              <p className="intro-fosas__text">{config.descripcionDefault}</p>
-              <div className="hide-button">
-                <button className="toggle-intro" onClick={toggleIntro}>
-                  <span>
-                    {introVisible ? "Menos información" : "Más información"}
-                  </span>
-                  <Image
-                    src={introVisible ? upChevron : downChevron}
-                    alt=""
-                    width={18}
-                    height={18}
-                  />
-                </button>
+    <>
+      <p
+        className="contador"
+        dangerouslySetInnerHTML={{ __html: mensajeContador }}
+      />
+      <div className="lista-fosas" data-contexto={contexto}>
+        {!config.modoSimple ? (
+          <>
+            {contexto === "mapaHistorias" && (
+              <div
+                className={`intro-fosas ${introVisible ? "visible" : "oculto"}`}
+              >
+                <h4 className="intro-fosas__title">{tituloSeccion}</h4>
+                <p className="intro-fosas__text">{config.descripcionDefault}</p>
+                <div className="hide-button">
+                  <button className="toggle-intro" onClick={toggleIntro}>
+                    <span>
+                      {introVisible ? "Menos información" : "Más información"}
+                    </span>
+                    <Image
+                      src={introVisible ? upChevron : downChevron}
+                      alt=""
+                      width={18}
+                      height={18}
+                    />
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
-        </>
-      ) : (
-        <p className="contador-simple">
-          Se muestran {descripcion || `${items.length} resultados`}
-        </p>
-      )}
-
-      <div className="lista-narrativas">
-        {items.length > 0 ? (
-          // si se pasó renderListaFosas usarla, sino fallback
-          renderListaFosas ? (
-            (() => {
-              console.log("🔧 Usando renderListaFosas personalizada");
-              const result = renderListaFosas(items, onItemClick);
-              console.log(
-                "🔧 Resultado de renderListaFosas:",
-                typeof result,
-                result
-              );
-              // Si es string HTML, convertir a JSX usando dangerouslySetInnerHTML
-              if (typeof result === "string") {
-                return <div dangerouslySetInnerHTML={{ __html: result }} />;
-              }
-              return result;
-            })()
-          ) : (
-            (() => {
-              console.log("🔧 Usando defaultRender");
-              return defaultRender(items, onItemClick);
-            })()
-          )
+            )}
+          </>
         ) : (
-          <p className="no-resultados">{mensajeVacio}</p>
+          <p className="contador-simple">
+            Se muestran {descripcion || `${items.length} resultados`}
+          </p>
         )}
+
+        <div className="lista-narrativas">
+          {items.length > 0 ? (
+            // si se pasó renderListaFosas usarla, sino fallback
+            renderListaFosas ? (
+              (() => {
+                console.log("🔧 Usando renderListaFosas personalizada");
+                const result = renderListaFosas(items, onItemClick);
+                console.log(
+                  "🔧 Resultado de renderListaFosas:",
+                  typeof result,
+                  result
+                );
+                // Si es string HTML, convertir a JSX usando dangerouslySetInnerHTML
+                if (typeof result === "string") {
+                  return <div dangerouslySetInnerHTML={{ __html: result }} />;
+                }
+                return result;
+              })()
+            ) : (
+              (() => {
+                console.log("🔧 Usando defaultRender");
+                return defaultRender(items, onItemClick);
+              })()
+            )
+          ) : (
+            <p className="no-resultados">{mensajeVacio}</p>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 });
 

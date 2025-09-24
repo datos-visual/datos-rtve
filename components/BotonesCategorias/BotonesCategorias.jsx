@@ -61,10 +61,10 @@ const BotonesCategorias = forwardRef(
         const activa = seleccionada === cat;
         const label =
           cat === "Exhumaciones"
-            ? "EXHUMACIONES TEMPRANAS"
+            ? "Exhumaciones Tempranas"
             : cat === "lugares"
-            ? "LUGARES DESTACADOS"
-            : capitalize(cat).toUpperCase();
+            ? "Lugares"
+            : cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase();
 
         return (
           <button
@@ -112,10 +112,10 @@ const BotonesCategorias = forwardRef(
         const activa = seleccionada === cat;
         const label =
           cat === "Exhumaciones"
-            ? "EXHUMACIONES TEMPRANAS"
+            ? "Exhumaciones Tempranas"
             : cat === "lugares"
-            ? "LUGARES DESTACADOS"
-            : capitalize(cat).toUpperCase();
+            ? "Lugares"
+            : cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase();
 
         return (
           <button

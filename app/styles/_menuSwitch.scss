@@ -75,12 +75,16 @@
       border: none;
       border-radius: 20px;
       background-color: transparent;
-      color: #f3efef;
+      color: #c6c6c6;
       font-weight: 700;
       cursor: pointer;
       text-transform: uppercase;
       position: relative;
       font-size: toRem(12);
+
+      &:hover {
+        text-decoration: underline;
+      }
 
       @media (min-width: 768px) {
         font-size: toRem(14);
@@ -97,6 +101,10 @@
       &.active {
         background: #f3efef;
         color: #333333;
+
+        &:hover {
+          text-decoration: none;
+        }
       }
     }
   }
