@@ -9,6 +9,7 @@ import SobreElProyecto from "../../components/common/SobreProyecto";
 import HamburgerMenu from "../../components/HamburgerMenu/HamburgerMenu";
 import MapaHistorias from "../../components/MapaHistorias/MapaHistorias";
 import "../../app/styles/_historias.scss";
+import ListadoSEO from "@/components/common/ListadoSEO";
 
 export default function HistoriasPage() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -42,6 +43,7 @@ export default function HistoriasPage() {
         <ModuloNoticias />
         <SobreElProyecto />
         <Creditos />
+        <ListadoSEO />
       </section>
     </main>
   );
