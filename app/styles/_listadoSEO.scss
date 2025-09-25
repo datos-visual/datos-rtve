@@ -52,6 +52,15 @@ listado-seo {
     color: $color-gray-dark-2;
     margin: 0;
 
+    & a {
+      font-family: $font-primary;
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 30px;
+      color: $color-gray-dark-2;
+      margin: 0;
+      text-decoration: none;
+    }
     @media (min-width: 768px) {
       font-size: toRem(18);
     }
