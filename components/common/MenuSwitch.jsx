@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../../app/styles/_menuSwitch.scss";
 
 import IconMenu from "../../app/assets/icon-menu.svg";
@@ -15,10 +15,23 @@ import IconSocialLink from "../../app/assets/icon-social-link.svg";
 export default function MenuSwitch({ onOpenMenu }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [active, setActive] = useState(
-    pathname.includes("/mapa") ? "fosas" : "historias"
-  );
+
+  // Determinar página activa basándose en la ruta
+  const getActivePageFromPath = () => {
+    if (pathname.includes("/mapa")) return "fosas";
+    if (pathname.includes("/historias")) return "historias";
+    // Si estamos en una página de CCAA, provincia, etc., también es "fosas"
+    if (pathname !== "/" && pathname !== "/historias") return "fosas";
+    return "historias";
+  };
+
+  const [active, setActive] = useState(getActivePageFromPath());
   const [shareOpen, setShareOpen] = useState(false);
+
+  // Actualizar estado activo cuando cambie la ruta
+  useEffect(() => {
+    setActive(getActivePageFromPath());
+  }, [pathname]);
 
   const handleNavigate = (page) => {
     setActive(page);

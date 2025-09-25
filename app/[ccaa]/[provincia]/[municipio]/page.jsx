@@ -11,6 +11,7 @@ import SobreProyecto from "../../../../components/common/SobreProyecto";
 import ListadoSEO from "../../../../components/common/ListadoSEO";
 import MapaBuscadorFosas from "../../../../components/MapaBuscadorFosas/MapaBuscadorFosas";
 import "../../../../app/styles/_historias.scss";
+import MenuSwitchClient from "@/components/MenuSwitchClient/MenuSwitchClient";
 
 export default function UbicacionPage() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -143,6 +144,7 @@ export default function UbicacionPage() {
       <JsonLdScript jsonLd={webPageJsonLd} />
       <main>
         <section className="buscador-mapa-fosas">
+          <MenuSwitchClient />
           <section style={{ width: "100%", marginBottom: "160px" }}>
             <MapaBuscadorFosas
               ccaa={urlParams.ccaa}

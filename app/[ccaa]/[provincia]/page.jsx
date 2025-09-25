@@ -2,12 +2,12 @@ import Creditos from "../../../components/common/Creditos";
 import { cargarFosas } from "../../../components/mapa/js/datos";
 import SobreElProyecto from "../../../components/common/SobreProyecto";
 import JsonLdScript from "../../../components/BreadcrumbJsonLd/BreadcrumbJsonLd";
-
 import MapaBuscadorFosas from "../../../components/MapaBuscadorFosas/MapaBuscadorFosas";
 import "../../../app/styles/_historias.scss";
 import ModuloReportajes from "../../../components/common/ModuloReportajes";
 import ModuloNoticias from "../../../components/common/ModuloNoticias";
 import ListadoSEO from "../../../components/common/ListadoSEO";
+import MenuSwitchClient from "../../../components/MenuSwitchClient/MenuSwitchClient";
 
 function slugify(text) {
   return text
@@ -95,6 +95,7 @@ export default async function ProvinciaPage({ params }) {
       <JsonLdScript jsonLd={webPageJsonLd} />
       <main>
         <section className="buscador-mapa-fosas">
+          <MenuSwitchClient />
           <section style={{ width: "100%", marginBottom: "160px" }}>
             <MapaBuscadorFosas
               ccaa={params.ccaa}
