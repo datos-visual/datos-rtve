@@ -159,7 +159,7 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
         dangerouslySetInnerHTML={{ __html: mensajeContador }}
       />
       <div className="lista-fosas" data-contexto={contexto}>
-        {!config.modoSimple ? (
+        {!config.modoSimple && (
           <>
             {contexto === "mapaHistorias" && (
               <div
@@ -183,10 +183,6 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
               </div>
             )}
           </>
-        ) : (
-          <p className="contador-simple">
-            Se muestran {descripcion || `${items.length} resultados`}
-          </p>
         )}
 
         <div className="lista-narrativas">
