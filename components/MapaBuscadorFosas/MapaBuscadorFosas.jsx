@@ -374,7 +374,7 @@ export default function MapaBuscadorFosas({
             <div className="mapa-fosas-searcher">
               <h2 className="mapa-fosas-searcher__title">Buscar en el mapa de fosas</h2>
               {SearchForm}
-              <div id="resultados" aria-live="polite" className="mapa-fosas-searcher__result">
+              <div id="resultados" aria-live="polite" className="mapa-fosas-searcher__result only_desktop">
                 Se muestran <strong>{loadingInfo.loadedItems}</strong> de <strong>{totalFiltradas}</strong> resultados
               </div>
               {StatusFilters}
