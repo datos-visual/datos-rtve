@@ -30,6 +30,10 @@ function getURLParts(pathname) {
 // Capitalizar la primera letra de cada palabra
 const capitalizar = (str) => str.replace(/\b\w/g, (l) => l.toUpperCase());
 
+// Capitalizar solo la primera letra del texto
+const capitalizarPrimera = (str) =>
+  str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+
 // Convertir nombre a formato URL (reemplazar espacios por guiones y minúsculas)
 const toUrlFormat = (str) => {
   return str
@@ -104,10 +108,14 @@ export default function ListadoSEO({ fosaSeleccionada = null, fosas = [] }) {
 
   // Obtener todas las comunidades autónomas únicas de los datos
   const todasCCAA =
-    fosasData && fosasData.length ? getUnicos(fosasData, "ccaa").sort() : [];
+    fosasData && fosasData.length
+      ? getUnicos(fosasData, "ccaa").sort((a, b) => a.localeCompare(b))
+      : [];
 
   // Obtener todas las provincias únicas y agruparlas por CCAA
   const provinciasAgrupadas = {};
+  const todasProvincias = [];
+
   if (fosasData && fosasData.length) {
     fosasData.forEach((fosa) => {
       if (fosa.ccaa && fosa.provincia) {
@@ -115,9 +123,14 @@ export default function ListadoSEO({ fosaSeleccionada = null, fosas = [] }) {
           provinciasAgrupadas[fosa.ccaa] = new Set();
         }
         provinciasAgrupadas[fosa.ccaa].add(fosa.provincia);
+        todasProvincias.push(fosa.provincia);
       }
     });
   }
+
+  const provinciasUnicas = [...new Set(todasProvincias)].sort((a, b) =>
+    a.localeCompare(b)
+  );
 
   return (
     <section className="listado-seo">
@@ -126,54 +139,44 @@ export default function ListadoSEO({ fosaSeleccionada = null, fosas = [] }) {
           Listado de <strong>Comunidades Autónomas</strong>
         </h3>
         <p className="listado-seo__text">
-          {loading ? (
-            "Cargando comunidades autónomas..."
-          ) : todasCCAA.length > 0 ? (
-            todasCCAA.map((ccaa, index) => (
-              <span key={ccaa}>
-                <Link href={`/${toUrlFormat(ccaa)}`}>{toUrlFormat(ccaa)}</Link>
-                {index < todasCCAA.length - 1 && " / "}
-              </span>
-            ))
-          ) : (
-            "No hay datos disponibles"
-          )}
+          {loading
+            ? "Cargando comunidades autónomas..."
+            : todasCCAA.length > 0
+            ? todasCCAA.map((ccaa, index) => (
+                <span key={ccaa}>
+                  <Link href={`/${toUrlFormat(ccaa)}`}>
+                    {capitalizarPrimera(ccaa)}
+                  </Link>
+                  {index < todasCCAA.length - 1 && " / "}
+                </span>
+              ))
+            : "No hay datos disponibles"}
         </p>
 
-        <h3 className="listado-seo__title">
+        <h3 className="listado-seo__title" style={{ marginTop: "32px" }}>
           Listado de <strong>Provincias</strong>
         </h3>
         <p className="listado-seo__text">
-          {loading ? (
-            "Cargando provincias..."
-          ) : Object.keys(provinciasAgrupadas).length > 0 ? (
-            Object.entries(provinciasAgrupadas)
-              .sort(([a], [b]) => a.localeCompare(b))
-              .map(([ccaa, provinciasSet]) =>
-                Array.from(provinciasSet)
-                  .sort()
-                  .map((provincia, index, arr) => (
-                    <span key={`${ccaa}-${provincia}`}>
-                      <Link
-                        href={`/${toUrlFormat(ccaa)}/${toUrlFormat(provincia)}`}
-                      >
-                        {toUrlFormat(provincia)}
-                      </Link>
-                      {index < arr.length - 1 && " / "}
-                    </span>
-                  ))
-              )
-              .flat()
-              .reduce((acc, item, index, array) => {
-                acc.push(item);
-                if (index < array.length - 1) {
-                  acc.push(<span key={`sep-${index}`}> / </span>);
-                }
-                return acc;
-              }, [])
-          ) : (
-            "No hay datos disponibles"
-          )}
+          {loading
+            ? "Cargando provincias..."
+            : provinciasUnicas.length > 0
+            ? provinciasUnicas.map((provincia, index) => {
+                // Encontrar la CCAA correspondiente a esta provincia
+                const ccaa = Object.keys(provinciasAgrupadas).find((c) =>
+                  provinciasAgrupadas[c].has(provincia)
+                );
+                return (
+                  <span key={provincia}>
+                    <Link
+                      href={`/${toUrlFormat(ccaa)}/${toUrlFormat(provincia)}`}
+                    >
+                      {capitalizarPrimera(provincia)}
+                    </Link>
+                    {index < provinciasUnicas.length - 1 && " / "}
+                  </span>
+                );
+              })
+            : "No hay datos disponibles"}
         </p>
       </div>
     </section>

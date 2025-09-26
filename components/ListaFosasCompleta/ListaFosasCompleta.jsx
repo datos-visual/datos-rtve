@@ -146,10 +146,6 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
               <strong>{fosa.municipio}</strong> / {fosa.provincia}
             </p>
             <p className="descripcion">{titulo}</p>
-            {/* opcional: descripción pequeña */}
-            <p className="descripcion-pequena" aria-hidden="true">
-              {descripcionItem}
-            </p>
           </div>
         </div>
       );
@@ -163,7 +159,7 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
         dangerouslySetInnerHTML={{ __html: mensajeContador }}
       />
       <div className="lista-fosas" data-contexto={contexto}>
-        {!config.modoSimple ? (
+        {!config.modoSimple && (
           <>
             {contexto === "mapaHistorias" && (
               <div
@@ -187,10 +183,6 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
               </div>
             )}
           </>
-        ) : (
-          <p className="contador-simple">
-            Se muestran {descripcion || `${items.length} resultados`}
-          </p>
         )}
 
         <div className="lista-narrativas">
