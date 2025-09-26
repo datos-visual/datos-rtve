@@ -1,106 +1,189 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import ScrollButton from "../ScrollButton/ScrollButton";
-import "../../app/styles/_videoScroll.scss";
+import { useRef, useEffect, useState } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import '../../app/styles/_videoScroll.scss';
 
-export default function VideoScroll({
-  srcDesktop,
-  srcMobile,
-  pixelsPerSecond = 800,
+// Registrar ScrollTrigger
+gsap.registerPlugin(ScrollTrigger);
+
+export default function VideoScroll({ 
+  children, 
+  duration = 23, 
+  pixelsPerSecond = 150,
+  cards = [] // Array de cards con timing
 }) {
   const videoRef = useRef(null);
-  const placeholderRef = useRef(null);
-  const scrollHintRef = useRef(null);
+  const containerRef = useRef(null);
+  const videoContainerRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const [src, setSrc] = useState(srcDesktop);
-
+  // Detectar si es móvil
   useEffect(() => {
-    // Detectar mobile/desktop al montar
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    setSrc(isMobile ? srcMobile : srcDesktop);
-  }, [srcDesktop, srcMobile]);
+    const checkMobile = () => {
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+      const isSmallScreen = window.innerWidth <= 768;
+      
+      setIsMobile(mobileRegex.test(userAgent) || isSmallScreen);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
-    const placeholder = placeholderRef.current;
-    const scrollHint = scrollHintRef.current;
-    if (!video || !placeholder || !scrollHint) return;
+    const container = containerRef.current;
+    const videoContainer = videoContainerRef.current;
+    
+    if (!video || !container || !videoContainer) return;
 
-    let rafId = null;
-    let duration = 0;
-    let totalScroll = 0;
+    // Calcular scroll total basado en duración y velocidad
+    const totalScrollHeight = duration * pixelsPerSecond;
 
-    const syncVideoToScroll = () => {
-      const rect = placeholder.getBoundingClientRect();
-      const scrolled = Math.min(Math.max(-rect.top, 0), totalScroll);
-      const frac = totalScroll === 0 ? 0 : scrolled / totalScroll;
-      video.currentTime = Math.min(duration, Math.max(0, duration * frac));
-    };
+    // Configurar video
+    video.pause();
+    video.currentTime = 0;
+    video.muted = true;
 
-    const onScroll = () => {
-      const scrolled = window.scrollY;
-      scrollHint.style.opacity = scrolled === 0 ? "1" : "0";
+    // Limpiar ScrollTriggers existentes
+    ScrollTrigger.getAll().forEach(trigger => trigger.kill());
 
-      if (rafId) return;
-      rafId = requestAnimationFrame(() => {
-        syncVideoToScroll();
-        rafId = null;
-      });
-    };
+    // Crear ScrollTrigger para controlar el video
+    const scrollTrigger = ScrollTrigger.create({
+      trigger: container,
+      start: "top top",
+      end: `+=${totalScrollHeight}`, // Scroll proporcional al video
+      scrub: 0, // Sincronización inmediata
+      pin: false,
+      onUpdate: (self) => {
+        // Control directo del video basado en progreso del scroll
+        const progress = self.progress; // 0 to 1
+        const targetTime = progress * duration;
+        
+        video.currentTime = targetTime;
+        
+        // Ocultar video cuando termine completamente
+        if (progress >= 1) {
+          videoContainer.style.display = 'none'; // Eliminar completamente del layout
+        } else {
+          videoContainer.style.display = 'block';
+          videoContainer.style.opacity = '1';
+          videoContainer.style.pointerEvents = 'none';
+          videoContainer.style.visibility = 'visible';
+        }
 
-    const onResize = () => {
-      if (duration) {
-        totalScroll = Math.round(duration * pixelsPerSecond);
-        placeholder.style.height = `${totalScroll + window.innerHeight}px`;
-        syncVideoToScroll();
-      }
-    };
+        // Controlar visibilidad de cards basado en timing
+        cards.forEach((card, index) => {
+          const cardElement = document.getElementById(`video-card-${index}`);
+          if (cardElement) {
+            const showTime = card.showAt || 0; // Tiempo en segundos cuando aparece
+            const hideTime = card.hideAt || duration; // Tiempo cuando desaparece
+            
+            if (targetTime >= showTime && targetTime < hideTime) {
+              cardElement.style.opacity = card.visible !== false ? '1' : '0';
+              cardElement.style.transform = 'translate(-50%, -50%)';
+            } else {
+              cardElement.style.opacity = '0';
+              cardElement.style.transform = 'translate(-50%, -50%)';
+            }
+          }
+        });
+        
+      },
+      onRefresh: () => {}
+    });
 
-    const onMetadata = () => {
-      duration = video.duration || 1;
-      totalScroll = Math.max(1, Math.round(duration * pixelsPerSecond));
-      placeholder.style.height = `${totalScroll + window.innerHeight}px`;
-      syncVideoToScroll();
-    };
 
-    video.addEventListener("loadedmetadata", onMetadata);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onResize);
-
+    // Cleanup
     return () => {
-      video.removeEventListener("loadedmetadata", onMetadata);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onResize);
-      if (rafId) cancelAnimationFrame(rafId);
+      scrollTrigger.kill();
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
-  }, [pixelsPerSecond]);
+  }, [duration, pixelsPerSecond, isMobile]);
 
   return (
-    <div className="video-scroll-portal" style={{ position: "relative" }}>
-      <div className="video-placeholder" ref={placeholderRef}></div>
-      <div className="video-fixed">
-        <video id="videoScroll" ref={videoRef} preload="auto" muted playsInline>
-          <source src={src} type="video/mp4" />
-        </video>
-
-        <div
-          ref={scrollHintRef}
+    <div ref={containerRef} className="video-scroll-container">
+      {/* Video fijo de fondo */}
+      <div 
+        ref={videoContainerRef}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100vh',
+          zIndex: 1,
+          transition: 'opacity 0.5s ease-out' // Transición suave al desaparecer
+        }}>
+        <video
+          ref={videoRef}
+          src={isMobile ? "/videos/VersionMobile.mp4" : "/videos/VersionDesktop.mp4"}
+          preload="auto"
+          muted
+          playsInline
+          disablePictureInPicture
+          controlsList="nodownload nofullscreen noremoteplayback"
           style={{
-            position: "absolute",
-            bottom: "100px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            opacity: 1,
-            transition: "opacity 0.5s",
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            pointerEvents: 'none'
+          }}
+          onLoadedMetadata={() => {}}
+          onError={(e) => {}}
+        />
+      </div>
+
+      {/* Cards controladas por VideoScroll */}
+      {cards.map((card, index) => (
+        <div
+          key={index}
+          id={`video-card-${index}`}
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: card.zIndex || 60,
+            opacity: '0',
+            transition: 'opacity 0.5s ease-out, transform 0.5s ease-out',
+            pointerEvents: card.interactive ? 'auto' : 'none',
+            maxWidth: card.maxWidth || '600px',
+            width: '90%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
           }}
         >
-          <ScrollButton
-            label="Scroll para más fosas"
-            animated={true}
-            icon="mouse"
-          />
+          <div style={{
+            padding: card.padding || '30px',
+            background: card.background || 'rgba(255,255,255,0.9)',
+            borderRadius: card.borderRadius || '10px',
+            backdropFilter: 'blur(10px)',
+            textAlign: card.textAlign || 'center',
+            fontSize: card.fontSize || '18px',
+            fontWeight: card.fontWeight || 'normal',
+            color: card.color || '#333'
+          }}>
+            {card.content}
+          </div>
         </div>
+      ))}
+
+      {/* Espaciador para crear el scroll necesario */}
+      <div style={{ 
+        height: `${duration * pixelsPerSecond}px`,
+        backgroundColor: 'transparent'
+      }} />
+
+      {/* Contenido que aparece después del video */}
+      <div className="content-after-video">
+        {children}
       </div>
     </div>
   );
