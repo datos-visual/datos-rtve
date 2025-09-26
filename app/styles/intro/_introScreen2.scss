@@ -54,7 +54,7 @@
 
 // .info-content
 .info-content {
-  max-width: min(1450px, 90vw);
+  //max-width: min(1450px, 90vw);
   width: 100%;
   text-align: center;
   box-sizing: border-box;
@@ -69,6 +69,44 @@
     flex-direction: column;
     justify-content: center;
   }
+
+
+  .vista-figura .botones-categorias .btn-cat {
+    .category-icon {
+      width: 100px;
+      height: 100px;
+      outline: 4px solid transparent;
+      border-radius: 50%;
+      outline-offset: 4px;
+      transition: .2s linear all;
+    }
+
+    .category-text {
+      color: $color-white;
+      margin-top: 24px;
+      text-transform: uppercase;
+    }
+
+    &:after {
+      width: 50px;
+      height: 4px;
+      background-color: transparent;
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      transition: .2s linear all;
+    }
+
+    &:hover {
+      .category-icon {
+        outline-color: $color-white;
+      }
+
+      &:after {
+        background-color: $color-white;
+      }
+    }
+  }
 }
 
 // .info-text-wrapper
@@ -80,15 +118,19 @@
 // p.info-text (párrafos de contexto histórico)
 .info-text {
   font-family: $font-secondary, serif;
-  font-weight: 300;
+  font-size: clamp(1.25rem, calc(7vw + 1rem), 1.875rem);
+  font-weight: 400;
   color: $text-color-primary;
-  margin: 0 auto;
   text-align: center;
-  @include text-fluid-base;
+  line-height: 1.4;
+
   max-width: var(--text-width);
+  margin: 0 auto;
+
   &:first-child {
     margin-bottom: var(--fluid-spacing-sm);
   }
+
   &:last-child {
     margin-bottom: var(--fluid-spacing-lg);
   }
@@ -99,7 +141,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 33px;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  @media (min-width: 768px) {
+    gap: 33px;
+  }
 
   button,
   .primary-btn {
@@ -140,11 +187,6 @@
   }
 
   @media (max-width: 767.98px) {
-    gap: 8px;
-    flex-direction: column;
-    justify-content: center;
-    flex-wrap: wrap;
-
     button,
     .primary-btn {
       height: 46px;
@@ -155,9 +197,9 @@
       text-align: center;
       white-space: nowrap;
       line-height: 30px;
-      width: 80%;
-      margin-bottom: 20px;
+      min-width: 28%;
       box-sizing: border-box;
+
       // Hover/active específico para móvil (mismo comportamiento, tamaños proporcionados)
       &:hover,
       &:active,
@@ -188,7 +230,11 @@
   line-height: 20px;
   text-decoration: underline;
   cursor: pointer;
-  margin: 60px auto;
+  margin-top: 30px;
+  
+  @media (min-width: 465px) {
+    margin-top: 0;
+  }
 
   &:hover {
     text-decoration: none;

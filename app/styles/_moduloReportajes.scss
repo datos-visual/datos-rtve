@@ -21,7 +21,7 @@
     }
 
     h3 {
-      font-family: "Public Sans", sans-serif;
+      font-family: $font-primary;
       font-size: toRem(20);
       margin: 0;
       font-weight: 700;
@@ -84,7 +84,7 @@
         }
 
         &__type {
-          font-family: "Public Sans", sans-serif;
+          font-family: $font-primary;
           font-weight: 500;
           font-size: toRem(14);
           line-height: 24px;
@@ -98,7 +98,7 @@
         }
 
         &__title {
-          font-family: "Merriweather", serif;
+          font-family: $font-secondary;
           font-weight: 700;
           font-size: toRem(22);
           line-height: 30px;
@@ -112,7 +112,7 @@
 
         &__text {
           display: block;
-          font-family: "Public Sans", sans-serif;
+          font-family: $font-primary;
           font-weight: 400;
           font-size: toRem(16);
           color: #7b7b7b;
