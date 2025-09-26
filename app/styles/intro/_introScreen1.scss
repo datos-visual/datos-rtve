@@ -33,7 +33,7 @@
 
   h1,
   &__title {
-    font-family: $font-secondary, serif;
+    font-family: $font-secondary;
     font-size: clamp(3.125rem, calc(7vw + 1rem), 9.375rem);
     line-height: 1;
     font-weight: 900;

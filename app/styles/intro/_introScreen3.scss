@@ -119,7 +119,7 @@
 
     // h1.titulo-destacado (renderDesktopContent)
     .titulo-destacado {
-      font-family: $font-secondary, serif;
+      font-family: $font-secondary;
       font-weight: 700;
       color: $text-color-primary;
       margin: 0 0 55px 0;
@@ -198,7 +198,7 @@
 
           // h1.titulo-destacado-mobile
           .titulo-destacado-mobile {
-            font-family: $font-secondary, serif;
+            font-family: $font-secondary;
             font-weight: 700;
             color: $text-color-primary;
             font-size: 24px;
