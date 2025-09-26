@@ -34,12 +34,20 @@
   h1,
   &__title {
     font-family: $font-secondary;
-    font-size: clamp(3.125rem, calc(7vw + 1rem), 9.375rem);
-    line-height: 1;
+    //font-size: clamp(3.125rem, calc(7vw + 1rem), 9.375rem);
+    //line-height: 1;
+    font-size: 54px;
+    line-height: 56px;
     font-weight: 900;
     width: min(960px, 70%);
     margin: 0;
     padding-top: 60px;
+
+    @media (min-width: 600px) { 
+       //font-size: clamp(3.125rem, calc(7vw + 1rem), 9.375rem);
+       font-size: clamp(4.5rem, 9.6vw - 0.3rem, 12.5rem); // 150 - 54
+       line-height: clamp(4.833rem, 9.8vw - 0.067rem, 13rem); // 156 - 566
+    }
   }
 
   // .intro-sub: "AQUÍ YACE LA HISTORIA"

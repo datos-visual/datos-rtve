@@ -27,7 +27,7 @@
     }
 
     &__title {
-      font-family: "Public Sans", sans-serif;
+      font-family: $font-primary;
       font-weight: 700;
       font-size: toRem(20);
       color: #333333;
