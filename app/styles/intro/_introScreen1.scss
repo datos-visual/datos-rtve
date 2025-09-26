@@ -37,9 +37,9 @@
     font-size: clamp(3.125rem, calc(7vw + 1rem), 9.375rem);
     line-height: 1;
     font-weight: 900;
-
-    width: min(750px, 70%);
+    width: min(960px, 70%);
     margin: 0;
+    padding-top: 60px;
   }
 
   // .intro-sub: "AQUÍ YACE LA HISTORIA"
