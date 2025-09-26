@@ -25,7 +25,8 @@
     "react": "^18",
     "react-dom": "^18",
     "resolve-alpn": "^1.2.1",
-    "sass": "^1.93.2"
+    "sass": "^1.93.2",
+    "scrolly-video": "^0.0.24"
   },
   "devDependencies": {
     "eslint": "^8",
