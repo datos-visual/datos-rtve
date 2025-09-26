@@ -276,19 +276,6 @@ export function useMobileSheetManager(isEnabled = false) {
         ${UTILS.contadorHTML(loadedItems, totalFosas, hasMore)}
       </div>
       
-      <div class="mobile-intro-fosas visible">
-        <h4 class="intro-fosas__title">Información de búsqueda</h4>
-        <p class="intro-fosas__text">Resultados de la búsqueda en el mapa de fosas.</p>
-        <div class="mobile-hide-button">
-          <button class="mobile-toggle-intro">
-            <span>Menos información</span>
-            <svg class="chevron-icon" width="12" height="12" viewBox="0 0 12 12">
-              <path d="M6 4l4 4H2l4-4z" fill="currentColor"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-      
       <div class="mobile-lista-narrativas">
         ${isLoadingMore ? UTILS.skeletonHTML() : ''}
         ${fosas.map((fosa, index) => renderFosaItem(fosa, index)).join('')}

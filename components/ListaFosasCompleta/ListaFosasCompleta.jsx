@@ -146,10 +146,6 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
               <strong>{fosa.municipio}</strong> / {fosa.provincia}
             </p>
             <p className="descripcion">{titulo}</p>
-            {/* opcional: descripción pequeña */}
-            <p className="descripcion-pequena" aria-hidden="true">
-              {descripcionItem}
-            </p>
           </div>
         </div>
       );
@@ -163,35 +159,6 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
         dangerouslySetInnerHTML={{ __html: mensajeContador }}
       />
       <div className="lista-fosas" data-contexto={contexto}>
-        {!config.modoSimple ? (
-          <>
-            {contexto === "mapaHistorias" && (
-              <div
-                className={`intro-fosas ${introVisible ? "visible" : "oculto"}`}
-              >
-                <h4 className="intro-fosas__title">{tituloSeccion}</h4>
-                <p className="intro-fosas__text">{config.descripcionDefault}</p>
-                <div className="hide-button">
-                  <button className="toggle-intro" onClick={toggleIntro}>
-                    <span>
-                      {introVisible ? "Menos información" : "Más información"}
-                    </span>
-                    <Image
-                      src={introVisible ? upChevron : downChevron}
-                      alt=""
-                      width={18}
-                      height={18}
-                    />
-                  </button>
-                </div>
-              </div>
-            )}
-          </>
-        ) : (
-          <p className="contador-simple">
-            Se muestran {descripcion || `${items.length} resultados`}
-          </p>
-        )}
 
         <div className="lista-narrativas">
           {items.length > 0 ? (
