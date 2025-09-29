@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, forwardRef } from "react";
+import React, { useState, useEffect, forwardRef, useRef } from "react";
+import { createPortal } from "react-dom";
 import "../../app/styles/_botonesCategorias.scss";
 
 import iconFiltro from "../../app/assets/iconFiltro.svg";
@@ -37,12 +38,28 @@ const BotonesCategorias = forwardRef(
     const [isMobile, setIsMobile] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
+    const toggleRef = useRef(null);
+    const menuRef = useRef(null);
+    const [menuRect, setMenuRect] = useState(null);
+
     useEffect(() => {
       const checkMobile = () => setIsMobile(window.innerWidth <= 768);
       checkMobile();
       window.addEventListener("resize", checkMobile);
       return () => window.removeEventListener("resize", checkMobile);
     }, []);
+
+    useEffect(() => {
+      // when opening, measure toggle button to position the menu
+      if (dropdownOpen && toggleRef.current) {
+        const rect = toggleRef.current.getBoundingClientRect();
+        setMenuRect({
+          top: rect.bottom + window.scrollY + 8,
+          left: rect.left + window.scrollX,
+          width: Math.max(rect.width, 200),
+        });
+      }
+    }, [dropdownOpen]);
 
     const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -169,7 +186,7 @@ const BotonesCategorias = forwardRef(
       );
     }
 
-    // Mobile (solo cuando NO es tooltip)
+    // MOBILE: render dropdown and overlay into document.body usando portal
     if (isMobile) {
       const iconoSeleccionado =
         ICONOS_POR_DEFECTO[seleccionada]?.src ||
@@ -182,14 +199,91 @@ const BotonesCategorias = forwardRef(
           ? "Lugares destacados"
           : capitalize(seleccionada);
 
+      const menu = (
+        <div
+          ref={menuRef}
+          id="dropdown-menu"
+          role="menu"
+          aria-hidden={!dropdownOpen}
+          style={{
+            position: "absolute",
+            top: menuRect ? menuRect.top : "auto",
+            left: menuRect ? menuRect.left : 0,
+            width: menuRect ? menuRect.width : "100%",
+            background: "#fff",
+            border: "1px solid #ccc",
+            borderRadius: 6,
+            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+            zIndex: 1000,
+            overflow: "hidden",
+            pointerEvents: "auto",
+          }}
+        >
+          {categorias.map((cat) => {
+            const label =
+              cat === "Exhumaciones"
+                ? "Exhumaciones tempranas"
+                : cat === "lugares"
+                ? "Lugares destacados"
+                : capitalize(cat);
+
+            return (
+              <div
+                key={cat}
+                className="dropdown-option"
+                data-cat={cat}
+                role="menuitem"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "8px 12px",
+                  cursor: "pointer",
+                  pointerEvents: "auto",
+                }}
+                onClick={() => handleSelect(cat)}
+              >
+                <img
+                  src={
+                    ICONOS_POR_DEFECTO[cat]?.src ||
+                    ICONOS_POR_DEFECTO[cat] ||
+                    ""
+                  }
+                  alt={cat}
+                  style={{ width: 20, height: 20, marginRight: 8 }}
+                />
+                <span>{label}</span>
+              </div>
+            );
+          })}
+        </div>
+      );
+
+      const overlay = (
+        <div
+          onClick={() => setDropdownOpen(false)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            zIndex: 900,
+          }}
+        />
+      );
+
       return (
-        <div className="categorias-dropdown custom-dropdown">
+        <div className="categorias-dropdown custom-dropdown" ref={ref}>
           <button
             id="dropdown-toggle"
+            ref={toggleRef}
             onClick={(e) => {
               e.stopPropagation();
-              setDropdownOpen(!dropdownOpen);
+              setDropdownOpen((s) => !s);
             }}
+            aria-haspopup="menu"
+            aria-expanded={dropdownOpen}
+            style={{ display: "flex", alignItems: "center", width: "100%" }}
           >
             <img
               src={iconoSeleccionado}
@@ -202,76 +296,21 @@ const BotonesCategorias = forwardRef(
             <span style={{ marginLeft: "auto" }}>&#9662;</span>
           </button>
 
-          {dropdownOpen && (
-            <div
-              id="dropdown-menu"
-              style={{
-                position: "absolute",
-                top: "110%",
-                left: 0,
-                width: "100%",
-                background: "#fff",
-                border: "1px solid #ccc",
-                borderRadius: 6,
-                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                zIndex: 10,
-              }}
-            >
-              {categorias.map((cat) => {
-                const label =
-                  cat === "Exhumaciones"
-                    ? "Exhumaciones tempranas"
-                    : cat === "lugares"
-                    ? "Lugares destacados"
-                    : capitalize(cat);
-
-                return (
-                  <div
-                    key={cat}
-                    className="dropdown-option"
-                    data-cat={cat}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      padding: "8px 12px",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => handleSelect(cat)}
-                  >
-                    <img
-                      src={
-                        ICONOS_POR_DEFECTO[cat]?.src ||
-                        ICONOS_POR_DEFECTO[cat] ||
-                        ""
-                      }
-                      alt={cat}
-                      style={{ width: 20, height: 20, marginRight: 8 }}
-                    />
-                    <span>{label}</span>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {dropdownOpen && (
-            <div
-              onClick={() => setDropdownOpen(false)}
-              style={{
-                position: "fixed",
-                top: 0,
-                left: 0,
-                width: "100vw",
-                height: "100vh",
-                zIndex: 5,
-              }}
-            />
-          )}
+          {/* Render portal only on client and when open */}
+          {typeof document !== "undefined" && dropdownOpen
+            ? createPortal(
+                <>
+                  {overlay}
+                  {menu}
+                </>,
+                document.body
+              )
+            : null}
         </div>
       );
     }
 
-    // Desktop - estructura normal (mapaHistorias)
+    // Desktop - estructura normal
     return (
       <div className="botones-categorias normal-version" ref={ref}>
         {renderNormalButtons()}

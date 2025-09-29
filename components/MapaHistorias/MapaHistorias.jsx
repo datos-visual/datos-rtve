@@ -135,7 +135,7 @@ export default function MapaHistorias({
     setSelectedFosa(null);
   };
 
-  // Don't render mobile-specific layout until hydrated to avoid hydration mismatch
+  // Evitar mismatch de hydration
   if (!isHydrated) {
     return (
       <div className="vista-figura">
@@ -192,11 +192,14 @@ export default function MapaHistorias({
               <p className="mitad-texto__intro">
                 Seleccionar una línea narrativa para explorar
               </p>
+
+              {/* dropdown na lista (lado esquerdo) */}
               <BotonesCategorias
                 categorias={CATEGORIAS}
                 seleccionada={categoriaSeleccionada}
                 onChange={setCategoriaSeleccionada}
               />
+
               <ListaFosasCompleta
                 contexto="mapaHistorias"
                 lista={fosasFiltradas}
@@ -210,8 +213,30 @@ export default function MapaHistorias({
 
         <div
           className="mitad-figura"
-          style={{ display: isMobile && !mostrarMapa ? "none" : undefined }}
+          style={{
+            display: isMobile && !mostrarMapa ? "none" : undefined,
+          }}
         >
+          {isMobile && (
+            <div
+              style={{
+                position: "absolute",
+                top: -50,
+                left: 12,
+                right: 12,
+                zIndex: 1200,
+                pointerEvents: "auto",
+                padding: "0 6px",
+              }}
+            >
+              <BotonesCategorias
+                categorias={CATEGORIAS}
+                seleccionada={categoriaSeleccionada}
+                onChange={setCategoriaSeleccionada}
+              />
+            </div>
+          )}
+
           <MapaFosas
             ref={mapaRef}
             soloNarrativas
