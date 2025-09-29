@@ -1,26 +1,27 @@
 /**
  * Hook minimalista para gestión responsive - Solo lo esencial
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 export function useResponsive() {
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== 'undefined' ? window.innerWidth <= 768 : false
-  );
+  const [isMobile, setIsMobile] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    setIsHydrated(true);
+    setIsMobile(window.innerWidth <= 768);
 
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return {
-    isMobile,
-    isDesktop: !isMobile
+    isMobile: isHydrated ? isMobile : false,
+    isDesktop: isHydrated ? !isMobile : true,
+    isHydrated,
   };
 }

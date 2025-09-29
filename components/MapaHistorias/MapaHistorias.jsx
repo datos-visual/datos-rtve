@@ -7,6 +7,7 @@ import FichaFosa from "../FichaFosa/FichaFosa";
 import BotonesCategorias from "../BotonesCategorias/BotonesCategorias";
 import ListaFosasCompleta from "../ListaFosasCompleta/ListaFosasCompleta";
 import { cargarFosas } from "../mapa/js/datos.js";
+import { useResponsive } from "../../app/hooks/useResponsive";
 import pinLineaNarrativa from "../../app/assets/pinUbicacionLineaNarrativa.svg";
 import mapIconButton from "../../app/assets/mapIconButton.svg";
 import listIconButton from "../../app/assets/listIconButton.svg";
@@ -62,6 +63,7 @@ export default function MapaHistorias({
   const [mostrarMapa, setMostrarMapa] = useState(false);
   const [selectedFosa, setSelectedFosa] = useState(initialSelectedFosa);
   const mapaRef = useRef(null);
+  const { isMobile, isHydrated } = useResponsive();
 
   // Cargar datos
   useEffect(() => {
@@ -123,7 +125,7 @@ export default function MapaHistorias({
   const toggleVista = () => setMostrarMapa((prev) => !prev);
   const abrirModalFosa = (fosa) => {
     setSelectedFosa(fosa);
-    
+
     // Hacer zoom hacia la fosa seleccionada
     if (mapaRef.current && mapaRef.current.focusFosa) {
       mapaRef.current.focusFosa(fosa.id);
@@ -133,9 +135,48 @@ export default function MapaHistorias({
     setSelectedFosa(null);
   };
 
-  // Evita crash en build (no hay window)
-  const isMobile =
-    typeof window !== "undefined" ? window.innerWidth <= 768 : false;
+  // Don't render mobile-specific layout until hydrated to avoid hydration mismatch
+  if (!isHydrated) {
+    return (
+      <div className="vista-figura">
+        <div className="contenido desktop">
+          <div className="mitad-texto">
+            {selectedFosa ? (
+              <FichaFosa fosa={selectedFosa} onClose={cerrarModalFosa} />
+            ) : (
+              <>
+                <p className="mitad-texto__intro">
+                  Seleccionar una línea narrativa para explorar
+                </p>
+                <BotonesCategorias
+                  categorias={CATEGORIAS}
+                  seleccionada={categoriaSeleccionada}
+                  onChange={setCategoriaSeleccionada}
+                />
+                <ListaFosasCompleta
+                  contexto="mapaHistorias"
+                  lista={fosasFiltradas}
+                  descripcion={descripcionCategoria}
+                  introVisibleDefault={introVisible}
+                  onItemClick={abrirModalFosa}
+                />
+              </>
+            )}
+          </div>
+
+          <div className="mitad-figura">
+            <MapaFosas
+              ref={mapaRef}
+              soloNarrativas
+              categoria={categoriaSeleccionada}
+              selectedFosa={selectedFosa}
+              onFosaSelect={abrirModalFosa}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="vista-figura">
@@ -180,14 +221,14 @@ export default function MapaHistorias({
           />
         </div>
 
-        {isMobile && (
+        {isMobile && isHydrated && (
           <button
             id="toggle-vista"
             className="toggle-btn"
             onClick={toggleVista}
           >
             <img
-              src={mostrarMapa ? listIconButton : mapIconButton}
+              src={mostrarMapa ? listIconButton.src : mapIconButton.src}
               alt="Icono"
             />
             {mostrarMapa ? "Mostrar lista" : "Mostrar mapa"}
