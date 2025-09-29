@@ -89,8 +89,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
             <div className="info-cabecera">
               <div className="info-ubicacion">
                 <p className="ubicacion">
-                  <Image src={pointIcon} alt="Point icon" />
-                  <strong>{municipio}</strong> / {provincia} / {ccaa}
+                  <strong>{municipio}</strong> | {provincia} |  {ccaa}
                 </p>
                 <h2 className="info-ubicacion__name">
                   {title || "Sin título"}
@@ -146,7 +145,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
         {/* Resumen */}
         <div className="resumen">
           <div className="resumen-datos">
-            <h3>Resumen / Descripción / Label</h3>
+            {/*<h3>Resumen / Descripción / Label</h3>*/}
             <p>{descripcion}</p>
 
             {fuenteInfo && (
@@ -158,13 +157,21 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
               </>
             )}
 
-            <h4 style={{ marginTop: "62.5px" }}>NOTAS RELACIONADAS</h4>
-            <ul>
-              <li>
-                <a href="#">Lo que quedó no se ve, pero pesa</a>
+            <h4>Notas relacionadas</h4>
+            <ul class="news-related">
+              <li class="news-related_list">
+                <img src=""/>
+                <div class="news-related_description">
+                  <a class="news-related_title" href="#">Lo que quedó no se ve, pero pesa</a>
+                  <p class="news-related_date">Fecha</p>
+                </div>
               </li>
-              <li>
-                <a href="#">Escribir para no perder lo que nunca se encontró</a>
+              <li class="news-related_list">
+                <img src=""/>
+                <div class="news-related_description">
+                  <a class="news-related_title" href="#">Escribir para no perder lo que nunca se encontró</a>
+                  <p class="news-related_date">Fecha</p>
+                </div>
               </li>
             </ul>
           </div>
@@ -179,7 +186,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                 }`}
                 onClick={() => setActiveTab("imagenes")}
               >
-                Imágenes <span className="badge">{fotos.length}</span>
+                Fotos <span className="badge">{fotos.length}</span>
               </button>
               <button
                 className={`tab-btn ${activeTab === "videos" ? "active" : ""}`}
@@ -198,6 +205,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
             <div className="multimedia-content">
               {activeTab === "imagenes" && (
                 <div className="tab-content active">
+                  <h4>Fotos</h4>
                   {fotos.length ? (
                     fotos.map((f, i) => (
                       <Image
@@ -215,6 +223,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
               )}
               {activeTab === "videos" && (
                 <div className="tab-content active">
+                  <h4>Videos</h4>
                   {videos.length ? (
                     videos.map((v, i) => (
                       <video key={i} controls src={v} width="100%" />
@@ -226,6 +235,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
               )}
               {activeTab === "audios" && (
                 <div className="tab-content active">
+                  <h4>Audios</h4>
                   {audios.length ? (
                     audios.map((a, i) => <audio key={i} controls src={a} />)
                   ) : (
@@ -234,6 +244,29 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                 </div>
               )}
             </div>
+          </div>
+
+          <div class="victimas">
+            <div class="victimas_header">
+              <h4>Victimas</h4>
+              <p><strong>Formato de los datos:</strong> Nombre y Apellido, edad, fecha de fusilamiento</p>
+            </div>
+
+            <div class="victimas_item">
+              <div class="victimas_item-title">
+                <h5><strong>Ricardo Gómex Alonso</strong>, 19 años, estudiantes</h5>
+                <a class="victimas_open">Más información</a>
+              </div>
+             
+
+              <p>Aprendió de manera práctica en hospitales de campaña improvisados. Pasaba noches enteras atendiendo heridos. Llevaba una libreta donde escribís los nombres de los que no sobrevivían, apara que no quedaran en el olvido.</p>
+            </div>
+            <div class="victimas_item">
+              <div class="victimas_item-title">
+                <h5><strong>Gregorio Muñoz García</strong>, 24 años, maestro</h5>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
