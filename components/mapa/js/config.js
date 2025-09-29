@@ -1,7 +1,7 @@
 export const MAPBOX_TOKEN =
   "pk.eyJ1IjoiZGF0b3NydHZlIiwiYSI6ImNrczV5YW9sdDI1azUyb3BqZW91ZGRhbzMifQ.0vdRqqdlTOWqrOtg7ldSNQ";
 
-export const MAP_STYLE = "mapbox://styles/datosrtve/cm8eck50f00a501r0hhdtg921";
+export const MAP_STYLE = "mapbox://styles/datosrtve/cmfuvuooo000501sb6z0ids6d";
 
 // wwww: https://www.rtve.es/datos-repo/test-fosas/guia-optimizado.json
 
