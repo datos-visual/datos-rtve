@@ -1,8 +1,8 @@
-/* js/datos.js --------------------------------------------------------- */
+/* lib/datos.js --------------------------------------------------------- */
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon"; // submódulo directo [web:25][web:40]
 import { point, polygon } from "@turf/helpers"; // helpers ESM soportados por Next [web:25][web:40]
-import { JSON_URL } from "./config.js"; // tu config local [web:38]
-import { fetchJSON, normId } from "./utils.js"; // tus utilidades locales [web:38]
+import { JSON_URL } from "../../components/mapa/js/config.js"; // config local [web:38]
+import { fetchJSON, normId } from "../../components/mapa/js/utils.js"; // utilidades locales [web:38]
 
 function normalizarLineasNarrativas(texto) {
   if (!texto) return []; // sin cambios lógicos [web:38]

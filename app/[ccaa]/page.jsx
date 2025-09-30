@@ -1,5 +1,5 @@
 import Creditos from "../../components/common/Creditos";
-import { cargarFosas } from "../../components/mapa/js/datos";
+import { cargarFosas } from "../lib/datos";
 import SobreElProyecto from "../../components/common/SobreProyecto";
 import JsonLdScript from "../../components/BreadcrumbJsonLd/BreadcrumbJsonLd";
 import MapaBuscadorFosas from "../../components/MapaBuscadorFosas/MapaBuscadorFosas";

@@ -9,7 +9,7 @@ import {
 } from "react";
 import mapboxgl from "mapbox-gl";
 import { createMap, createGeocoder } from "./js/initMap.js";
-import { cargarFosas } from "./js/datos.js";
+import { cargarFosas } from "../../app/lib/datos.js";
 import { montarCapaFosas, actualizarDatosFosas } from "./js/layers.js";
 import { abrirFicha } from "./js/overlay.js";
 import { getParam, normId } from "./js/utils.js";

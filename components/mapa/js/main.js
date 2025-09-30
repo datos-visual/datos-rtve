@@ -1,5 +1,5 @@
 import { createMap, createGeocoder } from "./initMap.js";
-import { cargarFosas } from "./datos.js";
+import { cargarFosas } from "../../../app/lib/datos.js";
 import { montarCapaFosas, actualizarDatosFosas } from "./layers.js";
 import { abrirFicha } from "./overlay.js";
 import { initToolbar } from "./filters.js";

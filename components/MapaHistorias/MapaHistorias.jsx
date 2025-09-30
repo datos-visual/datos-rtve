@@ -6,7 +6,7 @@ import MapaFosas from "../mapa/MapaFosas";
 import FichaFosa from "../FichaFosa/FichaFosa";
 import BotonesCategorias from "../BotonesCategorias/BotonesCategorias";
 import ListaFosasCompleta from "../ListaFosasCompleta/ListaFosasCompleta";
-import { cargarFosas } from "../mapa/js/datos.js";
+import { cargarFosas } from "../../app/lib/datos.js";
 import { useResponsive } from "../../app/hooks/useResponsive";
 import pinLineaNarrativa from "../../app/assets/pinUbicacionLineaNarrativa.svg";
 import mapIconButton from "../../app/assets/mapIconButton.svg";

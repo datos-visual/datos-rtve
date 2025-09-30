@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { cargarFosas } from "../mapa/js/datos.js";
+import { cargarFosas } from "../../app/lib/datos.js";
 import MapaFosas from "../mapa/MapaFosas";
 import FichaFosa from "../FichaFosa/FichaFosa.jsx";
 import ListaFosasCompleta from "../ListaFosasCompleta/ListaFosasCompleta.jsx";
