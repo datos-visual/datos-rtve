@@ -62,8 +62,26 @@ export default function MapaHistorias({
   const [introVisible, setIntroVisible] = useState(false);
   const [mostrarMapa, setMostrarMapa] = useState(false);
   const [selectedFosa, setSelectedFosa] = useState(initialSelectedFosa);
+  const [mapaInstance, setMapaInstance] = useState(null);
   const mapaRef = useRef(null);
   const { isMobile, isHydrated } = useResponsive();
+
+  // Obtener instancia del mapa cuando esté disponible
+  useEffect(() => {
+    const checkMapa = () => {
+      if (mapaRef.current?.map) {
+        setMapaInstance(mapaRef.current.map);
+      }
+    };
+
+    // Verificar inmediatamente
+    checkMapa();
+    
+    // Verificar periódicamente hasta que el mapa esté disponible
+    const interval = setInterval(checkMapa, 100);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   // Cargar datos
   useEffect(() => {
@@ -156,6 +174,7 @@ export default function MapaHistorias({
                 <ListaFosasCompleta
                   contexto="mapaHistorias"
                   lista={fosasFiltradas}
+                  map={mapaInstance}
                   descripcion={descripcionCategoria}
                   introVisibleDefault={introVisible}
                   onItemClick={abrirModalFosa}
@@ -203,6 +222,7 @@ export default function MapaHistorias({
               <ListaFosasCompleta
                 contexto="mapaHistorias"
                 lista={fosasFiltradas}
+                map={mapaInstance}
                 descripcion={descripcionCategoria}
                 introVisibleDefault={introVisible}
                 onItemClick={abrirModalFosa}

@@ -82,9 +82,14 @@ export default function MapaBuscadorFosas({
   }, [fosasVisibles, loadingInfo, isLoadingMore, isMobile, mobileSheet]);
 
   // === TRACKEAR FOSAS VISIBLES DEL MAPA ===
-  const handleFosasVisiblesChange = useCallback((nuevasFosasVisibles) => {
-    console.log("🗺️ Callback: fosas visibles cambiaron a:", nuevasFosasVisibles.length);
-    setFosasVisiblesEnMapa([...nuevasFosasVisibles]);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (mapaRef.current?.fosasVisibles) {
+        setFosasVisiblesEnMapa(mapaRef.current.fosasVisibles);
+      }
+    }, 500);
+    
+    return () => clearInterval(interval);
   }, []);
 
   // Event listeners optimizados
@@ -419,7 +424,6 @@ export default function MapaBuscadorFosas({
             sinGeocoder={true}
             onFosaSelect={handleFosaSelect}
             fosasFiltradas={fosasFiltradas}
-            onFosasVisiblesChange={handleFosasVisiblesChange}
           />
         </div>
       </div>

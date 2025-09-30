@@ -368,6 +368,23 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
     setModoViewportActivo((prev) => !prev);
   };
 
+  // === HANDLERS DE HOVER ===
+  const handleItemHover = useCallback((fosa) => {
+    if (!map) return;
+    
+    // Activar highlight en el mapa
+    map.setFilter("fosaHighlight", ["==", "id", String(fosa.id)]);
+    
+    console.log("🎯 Hover sobre fosa:", fosa.id, fosa.title);
+  }, [map]);
+
+  const handleItemLeave = useCallback(() => {
+    if (!map) return;
+    
+    // Limpiar highlight en el mapa
+    map.setFilter("fosaHighlight", ["==", "id", ""]);
+  }, [map]);
+
   // renderer por defecto — devuelve JSX
   const defaultRender = (listaItems = [], callback) => {
     if (!Array.isArray(listaItems) || listaItems.length === 0)
@@ -394,6 +411,8 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
           data-id={fosa.id}
           key={key}
           onClick={() => callback?.(fosa)}
+          onMouseEnter={() => handleItemHover(fosa)}
+          onMouseLeave={handleItemLeave}
           role="button"
           tabIndex={0}
           onKeyDown={(e) => {

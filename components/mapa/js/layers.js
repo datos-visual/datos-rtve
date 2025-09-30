@@ -170,9 +170,6 @@ export function montarCapaFosas(map, fosas) {
       hoveredId = null;
 
       map.setFilter("fosaHighlight", ["==", "id", ""]);
-      document
-        .querySelector(".fosas-laterales li.highlight")
-        ?.classList.remove("highlight");
     }
   });
 
