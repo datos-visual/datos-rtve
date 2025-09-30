@@ -14,9 +14,6 @@
   justify-content: center;
   gap: 10px;
 
-  span {
-  }
-
   &:hover,
   &:active,
   &.active {
@@ -54,7 +51,7 @@
 
 // .info-content
 .info-content {
-  //max-width: min(1450px, 90vw);
+  max-width: min(1450px, 90vw);
   width: 100%;
   text-align: center;
   box-sizing: border-box;
@@ -68,44 +65,6 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-  }
-
-
-  .vista-figura .botones-categorias .btn-cat {
-    .category-icon {
-      width: 100px;
-      height: 100px;
-      outline: 4px solid transparent;
-      border-radius: 50%;
-      outline-offset: 4px;
-      transition: .2s linear all;
-    }
-
-    .category-text {
-      color: $color-white;
-      margin-top: 24px;
-      text-transform: uppercase;
-    }
-
-    &:after {
-      width: 50px;
-      height: 4px;
-      background-color: transparent;
-      content: '';
-      position: absolute;
-      bottom: -10px;
-      transition: .2s linear all;
-    }
-
-    &:hover {
-      .category-icon {
-        outline-color: $color-white;
-      }
-
-      &:after {
-        background-color: $color-white;
-      }
-    }
   }
 }
 
@@ -265,48 +224,37 @@
     overflow-x: hidden;
   }
 
-  // botones-categorias (componente de categorías)
-  botones-categorias {
+  // botones-categorias (componente de categorías) - SOLO para tooltip
+  botones-categorias,
+  .botones-categorias.tooltip-version {
     display: block;
     margin-bottom: $spacing-lg;
     .botones-categorias {
       display: flex;
       justify-content: center;
-      align-items: flex-start;
+      align-items: center;
+      gap: #{$spacing-lg + 4px};
       flex-wrap: nowrap;
       overflow-x: auto;
-      padding: 14px 0;
+      padding: $spacing-sm 0;
       margin: 0;
-      flex-direction: row;
 
       @include desktop {
         justify-content: center;
         align-items: flex-start;
         overflow: visible;
-        gap: 28px;
+        gap: #{$spacing-lg + 4px};
+        padding: $spacing-sm 0;
       }
 
       @include mobile {
         justify-content: flex-start;
-        align-items: flex-start;
-        gap: 10px;
+        gap: clamp(8px, 3vw, 12px);
+        padding: 8px clamp(12px, 4vw, 20px);
         overflow-x: auto;
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
         @include hide-scrollbars;
-        width: calc(100% - 80px);
-        margin: 0 auto;
-        padding-left: 5px;
-      }
-
-      @media (min-width: 600px) {
-        gap: 0;
-        overflow: hidden;
-      }
-
-      @media (min-width: 768px) {
-        gap: 20px;
-        padding: 12px 0;
       }
 
       .btn-cat {
@@ -324,11 +272,14 @@
         text-decoration: none;
         gap: 0px;
         flex-shrink: 0;
-        max-width: 120px;
         box-sizing: content-box;
         position: relative;
 
+        min-width: clamp(90px, 10vw + 60px, $spacing-xxxl);
+        max-width: clamp(90px, 10vw + 60px, $spacing-xxxl);
         .category-icon {
+          width: clamp(66px, 4.5vw, 76px);
+          height: clamp(66px, 4.5vw, 76px);
           border-radius: 50%;
           display: block;
           object-fit: contain;
@@ -336,82 +287,37 @@
           margin: 0;
           box-shadow: none;
           transition: $transition-all;
-
-          @media (max-width: 599.98px) {
-            width: 60px;
-            height: 60px;
-          }
-
-          @media (min-width: 600px) {
-            /*991.98 - 600* | 80 -  61 */
-            width: 80px;
-            height: 80px;
-          }
-
-          @media (min-width: 992px) {
-            /*1600 - 992* | 90 - 80 */
-            width: clamp(6.667rem, 1.645vw + 5.307rem, 7.5rem);
-            height: clamp(6.667rem, 1.645vw + 5.307rem, 7.5rem);
-          }
         }
-
         .category-text {
           font-family: $font-primary;
-          font-size: 14px;
-          font-weight: 200;
-          color: #f3efef;
+          font-size: clamp(13px, 1.3vw, #{$font-size-base});
+          font-weight: 600;
+          color: $text-color-primary;
           text-transform: uppercase;
           text-align: center;
-          line-height: 16px;
-          margin-top: 18px;
-
-          @media (min-width: 992px) {
-            font-size: 16px;
-            line-height: 20px;
-          }
+          line-height: clamp(1.1, 1.2, 1.2);
+          margin-top: clamp(8px, 1vw, 10px);
+          white-space: normal;
+          display: block;
+          position: relative;
         }
-
         .category-text::after {
           content: "";
           display: block;
-          width: 50px;
-          height: 6px;
+          width: 42px;
+          height: 4px;
           margin: 8px auto 0 auto; /* misma línea base para todos */
           background: $text-color-primary;
           opacity: 0;
           transition: $transition-opacity;
-        }
-
-        &:hover {
-          &:before {
-            position: absolute;
-            content: "";
-            z-index: 2;
-            border: solid 6px #ffffff;
-            border-radius: 50%;
-
-            @media (max-width: 599.98px) {
-              width: 70px;
-              height: 70px;
-              top: -10px;
-            }
-
-            @media (min-width: 600px) {
-              width: 88px;
-              height: 88px;
-              top: -9px;
-            }
-
-            @media (min-width: 992px) {
-              // 100 - 90
-              width: clamp(7.5rem, 1.645vw + 6.14rem, 8.333rem);
-              height: clamp(7.5rem, 1.645vw + 6.14rem, 8.333rem);
-              top: -10px;
-            }
-          }
+          border-radius: 2px;
         }
 
         /* Hover y activa (columna inferior de tu maqueta) */
+        &:hover .category-icon,
+        &.activa .category-icon {
+          box-shadow: 0 0 0 3px #fff, 0 0 0 7px rgba(255, 255, 255, 0.35);
+        }
         &:hover .category-text::after,
         &.activa .category-text::after {
           opacity: 1;
