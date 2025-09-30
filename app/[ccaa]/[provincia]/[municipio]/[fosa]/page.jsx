@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { cargarFosas } from "../../../../../components/mapa/js/datos";
+import { cargarFosas } from "../../../../lib/datos";
 import JsonLdScript from "../../../../../components/BreadcrumbJsonLd/BreadcrumbJsonLd";
 import Creditos from "../../../../../components/common/Creditos";
 import ModuloNoticias from "../../../../../components/common/ModuloNoticias";

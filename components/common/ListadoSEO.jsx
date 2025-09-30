@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { cargarFosas } from "../mapa/js/datos";
+import { cargarFosas } from "../../app/lib/datos";
 import "../../app/styles/_listadoSEO.scss";
 
 // Utilidad para obtener valores únicos de un campo

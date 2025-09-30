@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { cargarFosas } from "../../../../components/mapa/js/datos";
+import { cargarFosas } from "../../../lib/datos";
 import { useRouter, useParams } from "next/navigation";
 import JsonLdScript from "../../../../components/BreadcrumbJsonLd/BreadcrumbJsonLd";
 import Creditos from "../../../../components/common/Creditos";
