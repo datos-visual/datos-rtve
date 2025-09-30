@@ -35,6 +35,7 @@ const MapaFosas = forwardRef(
       sinGeocoder = true,
       onFosaSelect,
       fosasFiltradas,
+      onFosasVisiblesChange,
     },
     ref
   ) => {
@@ -53,7 +54,7 @@ const MapaFosas = forwardRef(
       listaRef,
       ulRef,
       actualizarRecuento
-    } = useMapaRecuento(map, fosas);
+    } = useMapaRecuento(map, fosas, onFosasVisiblesChange);
 
   // Exponer métodos para el componente padre
   useImperativeHandle(ref, () => ({
@@ -106,7 +107,8 @@ const MapaFosas = forwardRef(
       }
     },
     map: map, // Exponer la instancia del mapa directamente
-  }), [map, fosas, allFosas]);
+    fosasVisibles: fosasVisibles, // Exponer las fosas visibles desde useMapaRecuento
+  }), [map, fosas, allFosas, fosasVisibles]);
 
     // Cargar fosas y crear mapa
     useEffect(() => {

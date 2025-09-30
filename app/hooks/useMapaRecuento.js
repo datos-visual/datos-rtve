@@ -2,9 +2,13 @@
  * Hook para manejar el contador de fosas visibles y la lista lateral
  * Basado en la funcionalidad del proyecto infografiasRTVE-mapa-fosas
  */
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from "react";
 
-export function useMapaRecuento(map, fosasFiltradas) {
+export function useMapaRecuento(
+  map,
+  fosasFiltradas,
+  onFosasVisiblesChange = null
+) {
   const [fosasVisibles, setFosasVisibles] = useState([]);
   const [contadorVisible, setContadorVisible] = useState(false);
   const contadorRef = useRef(null);
@@ -20,7 +24,7 @@ export function useMapaRecuento(map, fosasFiltradas) {
     }
 
     const bounds = map.getBounds();
-    
+
     // Solo fosas dentro del viewport
     const visibles = fosasFiltradas.filter((f) => {
       return (
@@ -33,6 +37,11 @@ export function useMapaRecuento(map, fosasFiltradas) {
 
     setFosasVisibles(visibles);
     setContadorVisible(true);
+
+    // Notificar cambios a componente padre si hay callback
+    if (onFosasVisiblesChange && typeof onFosasVisiblesChange === "function") {
+      onFosasVisiblesChange(visibles);
+    }
 
     // Actualizar contador en DOM
     if (contadorRef.current) {
@@ -53,7 +62,7 @@ export function useMapaRecuento(map, fosasFiltradas) {
         .sort((a, b) => (a.title || "").localeCompare(b.title || ""));
 
       ulRef.current.innerHTML = ""; // limpia
-      
+
       datosOrdenados.forEach((f) => {
         const li = document.createElement("li");
         li.textContent = `${f.title || "(Sin título)"}`;
@@ -121,7 +130,7 @@ export function useMapaRecuento(map, fosasFiltradas) {
       map.off("zoomend", handleMapEvents);
       map.off("resize", handleMapEvents);
     };
-  }, [map, actualizarRecuento]);
+  }, [map, actualizarRecuento, onFosasVisiblesChange]);
 
   // Actualizar cuando cambien las fosas filtradas
   useEffect(() => {
@@ -134,6 +143,6 @@ export function useMapaRecuento(map, fosasFiltradas) {
     contadorRef,
     listaRef,
     ulRef,
-    actualizarRecuento
+    actualizarRecuento,
   };
 }

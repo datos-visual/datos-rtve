@@ -25,6 +25,7 @@ export default function MapaBuscadorFosas({
 
   // Estado de datos
   const [fosas, setFosas] = useState(fosasProp || []);
+  const [fosasVisiblesEnMapa, setFosasVisiblesEnMapa] = useState([]);
 
   // Hook consolidado para toda la lógica
   const {
@@ -79,6 +80,12 @@ export default function MapaBuscadorFosas({
       mobileSheet.updateContent(fosasVisibles, loadingInfo, isLoadingMore);
     }
   }, [fosasVisibles, loadingInfo, isLoadingMore, isMobile, mobileSheet]);
+
+  // === TRACKEAR FOSAS VISIBLES DEL MAPA ===
+  const handleFosasVisiblesChange = useCallback((nuevasFosasVisibles) => {
+    console.log("🗺️ Callback: fosas visibles cambiaron a:", nuevasFosasVisibles.length);
+    setFosasVisiblesEnMapa([...nuevasFosasVisibles]);
+  }, []);
 
   // Event listeners optimizados
   useEffect(() => {
@@ -388,6 +395,12 @@ export default function MapaBuscadorFosas({
                     descripcion={`Página ${loadingInfo.currentPage} de ${loadingInfo.totalPages} - Mostrando ${loadingInfo.loadedItems} de ${totalFiltradas} fosas`}
                     onItemClick={handleFosaSelect}
                     modoSimple={true}
+                    // Habilitar filtro por viewport con toggle
+                    map={mapaRef.current?.map}
+                    filtrarPorViewport={true}
+                    permitirCambioViewport={true}
+                    // Usar fosas visibles desde useMapaRecuento para consistencia
+                    fosasVisiblesExternas={fosasVisiblesEnMapa}
                   />
                   {LoadingTrigger}
                 </>
@@ -406,6 +419,7 @@ export default function MapaBuscadorFosas({
             sinGeocoder={true}
             onFosaSelect={handleFosaSelect}
             fosasFiltradas={fosasFiltradas}
+            onFosasVisiblesChange={handleFosasVisiblesChange}
           />
         </div>
       </div>
