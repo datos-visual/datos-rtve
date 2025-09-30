@@ -56,14 +56,23 @@ export default function MapaHistorias({
   initialSelectedFosa = null,
 }) {
   const [fosas, setFosas] = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState(null);
   const [categoriaSeleccionada, setCategoriaSeleccionada] =
     useState(initialCategoria);
+  
+  // Actualizar categoría cuando cambie la prop initialCategoria
+  useEffect(() => {
+    console.log('🏷️ MapaHistorias - initialCategoria cambió a:', initialCategoria);
+    setCategoriaSeleccionada(initialCategoria);
+  }, [initialCategoria]);
   const [estadoSeleccionado, setEstadoSeleccionado] = useState("todos");
   const [introVisible, setIntroVisible] = useState(false);
   const [mostrarMapa, setMostrarMapa] = useState(false);
   const [selectedFosa, setSelectedFosa] = useState(initialSelectedFosa);
   const [mapaInstance, setMapaInstance] = useState(null);
   const mapaRef = useRef(null);
+  const cargaIniciadaRef = useRef(false);
   const { isMobile, isHydrated } = useResponsive();
 
   // Obtener instancia del mapa cuando esté disponible
@@ -83,18 +92,31 @@ export default function MapaHistorias({
     return () => clearInterval(interval);
   }, []);
 
-  // Cargar datos
+  // Cargar datos (una sola vez)
   useEffect(() => {
+    // Evitar doble carga en React StrictMode
+    if (cargaIniciadaRef.current) return;
+    cargaIniciadaRef.current = true;
+
     const cargar = async () => {
+      console.log("📦 MapaHistorias: Iniciando carga de datos...");
+      setCargando(true);
+      setError(null);
+
       try {
         const todas = await cargarFosas();
+        console.log(`✅ MapaHistorias: ${todas.length} fosas cargadas`);
+
         const filtradas = todas.filter(
           (f) =>
             typeof f.linea_narrativa === "string" &&
             f.linea_narrativa.trim() &&
             f.linea_narrativa.trim().toLowerCase() !== "null"
         );
+        console.log(`🎯 MapaHistorias: ${filtradas.length} fosas con línea narrativa`);
+
         setFosas(filtradas);
+        setCargando(false);
 
         // Si nos pasan una fosa inicial pero aún no está en state, fijarla
         if (initialSelectedFosa) {
@@ -104,11 +126,14 @@ export default function MapaHistorias({
           if (encontrada) setSelectedFosa(encontrada);
         }
       } catch (err) {
-        console.error("Error al cargar fosas:", err);
+        console.error("❌ Error al cargar fosas:", err);
+        setError(err.message || "Error al cargar datos");
+        setCargando(false);
       }
     };
+
     cargar();
-  }, [initialSelectedFosa]);
+  }, []); // Sin dependencias para cargar solo una vez
 
   // Descripción de categoría
   const descripcionCategoria = useMemo(
@@ -153,6 +178,28 @@ export default function MapaHistorias({
     setSelectedFosa(null);
   };
 
+  // Mostrar estado de carga
+  if (cargando) {
+    return (
+      <div className="vista-figura">
+        <div className="contenido desktop" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+          <p style={{ color: 'white', fontSize: '18px' }}>Cargando datos del mapa...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Mostrar error si hay
+  if (error) {
+    return (
+      <div className="vista-figura">
+        <div className="contenido desktop" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+          <p style={{ color: '#ff6b6b', fontSize: '18px' }}>Error: {error}</p>
+        </div>
+      </div>
+    );
+  }
+
   // Evitar mismatch de hydration
   if (!isHydrated) {
     return (
@@ -190,6 +237,7 @@ export default function MapaHistorias({
               categoria={categoriaSeleccionada}
               selectedFosa={selectedFosa}
               onFosaSelect={abrirModalFosa}
+              fosasFiltradas={fosasFiltradas}
             />
           </div>
         </div>
@@ -263,6 +311,7 @@ export default function MapaHistorias({
             categoria={categoriaSeleccionada}
             selectedFosa={selectedFosa}
             onFosaSelect={abrirModalFosa}
+            fosasFiltradas={fosasFiltradas}
           />
         </div>
 

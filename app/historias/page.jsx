@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Creditos from "../../components/common/Creditos";
 import MenuSwitch from "../../components/common/MenuSwitch";
 import ModuloNoticias from "../../components/common/ModuloNoticias";
@@ -13,6 +14,16 @@ import ListadoSEO from "@/components/common/ListadoSEO";
 
 export default function HistoriasPage() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const searchParams = useSearchParams();
+  const [categoriaInicial, setCategoriaInicial] = useState("todas");
+
+  useEffect(() => {
+    const categoriaFromUrl = searchParams.get("categoria");
+    if (categoriaFromUrl) {
+      console.log('📍 HistoriasPage - Categoría desde URL:', categoriaFromUrl);
+      setCategoriaInicial(categoriaFromUrl);
+    }
+  }, [searchParams]);
 
   return (
     <main>
@@ -21,7 +32,7 @@ export default function HistoriasPage() {
         <HamburgerMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
 
         <section style={{ width: "100%" }}>
-          <MapaHistorias initialCategoria="todas" />
+          <MapaHistorias key={categoriaInicial} initialCategoria={categoriaInicial} />
         </section>
         <div className="historias-intro">
           <h2 className="historias-intro__title">Historias</h2>
