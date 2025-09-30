@@ -43,7 +43,6 @@ export default function HistoriasPage() {
         <ModuloNoticias />
         <SobreElProyecto />
         <Creditos />
-        <ListadoSEO />
       </section>
     </main>
   );
