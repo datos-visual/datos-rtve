@@ -87,6 +87,11 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
   const videos = Array.isArray(video) ? video : video ? [video] : [];
   const audios = Array.isArray(audio) ? audio : audio ? [audio] : [];
 
+  // Videos embed de RTVE para el modal
+  const videosEmbed = [
+    "https://secure-embed.rtve.es/drmn/embed/video/16750775",
+  ];
+
   return (
     <div className="ficha-fosa inline">
       {/* Cerrar */}
@@ -100,7 +105,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
             <div className="info-cabecera">
               <div className="info-ubicacion">
                 <p className="ubicacion">
-                  <strong>{municipio}</strong> | {provincia} |  {ccaa}
+                  <strong>{municipio}</strong> | {provincia} | {ccaa}
                 </p>
                 <h2 className="info-ubicacion__name">
                   {title || "Sin título"}
@@ -132,7 +137,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
 
           {/* Imagen destacada */}
           <div className="foto" onClick={handleOpenModal}>
-            <h2 class="datos__title">{title || "Sin título"}</h2>
+            <h2 className="datos__title">{title || "Sin título"}</h2>
             <Image
               src={
                 foto ||
@@ -148,6 +153,8 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
           <ModalCarrousel
             ref={modalRef}
             imagenes={fotos}
+            videos={videosEmbed}
+            contentType="videos"
             onClose={handleCloseModal}
           />
         </div>
@@ -168,19 +175,23 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
             )}
 
             <h4>Notas relacionadas</h4>
-            <ul class="news-related">
-              <li class="news-related_list">
-                <img src=""/>
-                <div class="news-related_description">
-                  <a class="news-related_title" href="#">Lo que quedó no se ve, pero pesa</a>
-                  <p class="news-related_date">Fecha</p>
+            <ul className="news-related">
+              <li className="news-related_list">
+                <img src="" />
+                <div className="news-related_description">
+                  <a className="news-related_title" href="#">
+                    Lo que quedó no se ve, pero pesa
+                  </a>
+                  <p className="news-related_date">Fecha</p>
                 </div>
               </li>
-              <li class="news-related_list">
-                <img src=""/>
-                <div class="news-related_description">
-                  <a class="news-related_title" href="#">Escribir para no perder lo que nunca se encontró</a>
-                  <p class="news-related_date">Fecha</p>
+              <li className="news-related_list">
+                <img src="" />
+                <div className="news-related_description">
+                  <a className="news-related_title" href="#">
+                    Escribir para no perder lo que nunca se encontró
+                  </a>
+                  <p className="news-related_date">Fecha</p>
                 </div>
               </li>
             </ul>
@@ -256,27 +267,37 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
             </div>
           </div>
 
-          <div class="victimas">
-            <div class="victimas_header">
+          <div className="victimas">
+            <div className="victimas_header">
               <h4>Victimas</h4>
-              <p><strong>Formato de los datos:</strong> Nombre y Apellido, edad, fecha de fusilamiento</p>
+              <p>
+                <strong>Formato de los datos:</strong> Nombre y Apellido, edad,
+                fecha de fusilamiento
+              </p>
             </div>
 
-            <div class="victimas_item">
-              <div class="victimas_item-title">
-                <h5><strong>Ricardo Gómex Alonso</strong>, 19 años, estudiantes</h5>
-                <a class="victimas_open">Más información</a>
+            <div className="victimas_item">
+              <div className="victimas_item-title">
+                <h5>
+                  <strong>Ricardo Gómex Alonso</strong>, 19 años, estudiantes
+                </h5>
+                <a className="victimas_open">Más información</a>
               </div>
-             
 
-              <p>Aprendió de manera práctica en hospitales de campaña improvisados. Pasaba noches enteras atendiendo heridos. Llevaba una libreta donde escribís los nombres de los que no sobrevivían, apara que no quedaran en el olvido.</p>
+              <p>
+                Aprendió de manera práctica en hospitales de campaña
+                improvisados. Pasaba noches enteras atendiendo heridos. Llevaba
+                una libreta donde escribís los nombres de los que no
+                sobrevivían, apara que no quedaran en el olvido.
+              </p>
             </div>
-            <div class="victimas_item">
-              <div class="victimas_item-title">
-                <h5><strong>Gregorio Muñoz García</strong>, 24 años, maestro</h5>
+            <div className="victimas_item">
+              <div className="victimas_item-title">
+                <h5>
+                  <strong>Gregorio Muñoz García</strong>, 24 años, maestro
+                </h5>
               </div>
             </div>
-
           </div>
         </div>
       </div>

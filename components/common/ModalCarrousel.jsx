@@ -9,7 +9,7 @@ import {
 } from "react";
 
 const ModalCarrousel = forwardRef(function ModalCarrousel(
-  { imagenes = [], onClose, startIndex = 0 },
+  { imagenes = [], videos = [], onClose, startIndex = 0, contentType = "imagenes" },
   ref
 ) {
   const [visible, setVisible] = useState(false);
@@ -29,10 +29,11 @@ const ModalCarrousel = forwardRef(function ModalCarrousel(
     if (onClose) onClose();
   };
 
-  // Navegar entre imágenes
+  // Navegar entre imágenes/videos
   const mostrar = (i) => {
-    if (!imagenes.length) return;
-    const newIdx = (i + imagenes.length) % imagenes.length;
+    const content = contentType === "videos" ? videos : imagenes;
+    if (!content.length) return;
+    const newIdx = (i + content.length) % content.length;
     setIdx(newIdx);
   };
 
@@ -44,7 +45,7 @@ const ModalCarrousel = forwardRef(function ModalCarrousel(
       close,
       mostrar,
     }),
-    [imagenes]
+    [imagenes, videos, contentType]
   );
 
   // Exponer métodos para compatibilidad con Web Component
@@ -54,7 +55,7 @@ const ModalCarrousel = forwardRef(function ModalCarrousel(
       modalRef.current.close = close;
       modalRef.current.mostrar = mostrar;
     }
-  }, [imagenes]);
+  }, [imagenes, videos, contentType]);
 
   // Manejar teclas de navegación y scroll
   useEffect(() => {
@@ -224,19 +225,41 @@ const ModalCarrousel = forwardRef(function ModalCarrousel(
           >
             &#8592;
           </button>
-          <img
-            src={imagenes[idx]}
-            alt="Imagen carrusel"
-            style={{
-              maxWidth: "70vw",
-              maxHeight: "70vh",
-              borderRadius: 8,
-              boxShadow: "0 0 20px #000",
-              transition: "opacity 0.3s ease-in-out",
-              cursor: "pointer",
-            }}
-            onClick={() => mostrar(idx + 1)}
-          />
+          
+          {contentType === "videos" ? (
+            <iframe
+              src={videos[idx]}
+              style={{
+                width: "80vw",
+                height: "45vw",
+                maxWidth: "1200px",
+                maxHeight: "675px",
+                minWidth: "320px",
+                minHeight: "180px",
+                border: "none",
+                borderRadius: 8,
+                boxShadow: "0 0 20px #000",
+              }}
+              allowFullScreen
+              frameBorder="0"
+              title="Video RTVE"
+            />
+          ) : (
+            <img
+              src={imagenes[idx]}
+              alt="Imagen carrusel"
+              style={{
+                maxWidth: "70vw",
+                maxHeight: "70vh",
+                borderRadius: 8,
+                boxShadow: "0 0 20px #000",
+                transition: "opacity 0.3s ease-in-out",
+                cursor: "pointer",
+              }}
+              onClick={() => mostrar(idx + 1)}
+            />
+          )}
+          
           <button
             style={{
               fontSize: "2rem",
@@ -262,7 +285,7 @@ const ModalCarrousel = forwardRef(function ModalCarrousel(
           }}
         >
           <div>
-            {idx + 1} / {imagenes.length}
+            {idx + 1} / {contentType === "videos" ? videos.length : imagenes.length}
           </div>
           <div
             style={{

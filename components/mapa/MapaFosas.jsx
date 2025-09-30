@@ -47,59 +47,66 @@ const MapaFosas = forwardRef(
     // Hook para calcular fosas visibles en viewport
     const { fosasVisibles, actualizarRecuento } = useMapaRecuento(map, fosas);
 
-  // Exponer métodos para el componente padre
-  useImperativeHandle(ref, () => ({
-    setFilteredFosas: (fosasSubset) => {
-      if (!map || !map.isStyleLoaded()) {
-        setPendingSubset(fosasSubset);
-        return;
-      }
-      const newFosas = Array.isArray(fosasSubset) ? fosasSubset : [];
-      setFosas(newFosas);
-    },
-    filtrarPorCategoria: (cat) => {
-      if (cat === "todas") {
-        setFosas(allFosas);
-      } else {
-        const filtradas = allFosas.filter((f) =>
-          f.linea_narrativa?.toLowerCase().includes(cat.toLowerCase())
-        );
-        setFosas(filtradas);
-      }
-    },
-    localGeocoder: (q) => {
-      const txt = q.toLowerCase();
-      return fosas
-        .filter(
-          (f) =>
-            (f.id || "").toLowerCase().includes(txt) ||
-            (f.title || "").toLowerCase().includes(txt) ||
-            (f.municipio || "").toLowerCase().includes(txt)
-        )
-        .slice(0, 10)
-        .map((f) => ({
-          type: "Feature",
-          geometry: { type: "Point", coordinates: [f.lon || 0, f.lat || 0] },
-          place_name: `Fosa: ${f.title || f.id} — ${f.municipio}`,
-          place_type: ["fosa"],
-          center: [f.lon || 0, f.lat || 0],
-          properties: { id: f.id },
-        }));
-    },
-    focusFosa: (fosaId) => {
-      if (!map) return;
-      
-      const fosa = fosas.find(f => f.id === fosaId);
-      if (fosa && fosa.lon && fosa.lat) {
-        map.flyTo({
-          center: [fosa.lon, fosa.lat],
-          zoom: 15
-        });
-      }
-    },
-    map: map, // Exponer la instancia del mapa directamente
-    fosasVisibles: fosasVisibles, // Exponer las fosas visibles desde useMapaRecuento
-  }), [map, fosas, allFosas, fosasVisibles]);
+    // Exponer métodos para el componente padre
+    useImperativeHandle(
+      ref,
+      () => ({
+        setFilteredFosas: (fosasSubset) => {
+          if (!map || !map.isStyleLoaded()) {
+            setPendingSubset(fosasSubset);
+            return;
+          }
+          const newFosas = Array.isArray(fosasSubset) ? fosasSubset : [];
+          setFosas(newFosas);
+        },
+        filtrarPorCategoria: (cat) => {
+          if (cat === "todas") {
+            setFosas(allFosas);
+          } else {
+            const filtradas = allFosas.filter((f) =>
+              f.linea_narrativa?.toLowerCase().includes(cat.toLowerCase())
+            );
+            setFosas(filtradas);
+          }
+        },
+        localGeocoder: (q) => {
+          const txt = q.toLowerCase();
+          return fosas
+            .filter(
+              (f) =>
+                (f.id || "").toLowerCase().includes(txt) ||
+                (f.title || "").toLowerCase().includes(txt) ||
+                (f.municipio || "").toLowerCase().includes(txt)
+            )
+            .slice(0, 10)
+            .map((f) => ({
+              type: "Feature",
+              geometry: {
+                type: "Point",
+                coordinates: [f.lon || 0, f.lat || 0],
+              },
+              place_name: `Fosa: ${f.title || f.id} — ${f.municipio}`,
+              place_type: ["fosa"],
+              center: [f.lon || 0, f.lat || 0],
+              properties: { id: f.id },
+            }));
+        },
+        focusFosa: (fosaId) => {
+          if (!map) return;
+
+          const fosa = fosas.find((f) => f.id === fosaId);
+          if (fosa && fosa.lon && fosa.lat) {
+            map.flyTo({
+              center: [fosa.lon, fosa.lat],
+              zoom: 15,
+            });
+          }
+        },
+        map: map, // Exponer la instancia del mapa directamente
+        fosasVisibles: fosasVisibles, // Exponer las fosas visibles desde useMapaRecuento
+      }),
+      [map, fosas, allFosas, fosasVisibles]
+    );
 
     // Cargar fosas y crear mapa
     useEffect(() => {
@@ -284,7 +291,7 @@ const MapaFosas = forwardRef(
         const mun = slugify(fosa.municipio_seo);
         const fosaSeo = slugify(fosa.title_seo);
         const nuevaUrl = `/${ccaa}/${prov}/${mun}/${fosaSeo}/`;
-        
+
         // Usar window.history para actualizar URL sin recargar página
         window.history.pushState({}, "", nuevaUrl);
 
@@ -306,7 +313,7 @@ const MapaFosas = forwardRef(
             .setLngLat([e.lon, e.lat])
             .setHTML(
               `
-            <div class="popup-fosa">
+            <div className="popup-fosa">
               <strong>${fosa?.title || "Sin título"}</strong><br/>
               ${[fosa?.municipio, fosa?.provincia].filter(Boolean).join(" / ")}
             </div>
@@ -325,7 +332,7 @@ const MapaFosas = forwardRef(
     return (
       <div style={{ width: "100%", height: "100%", position: "relative" }}>
         <div ref={mapContainer} style={{ width: "100%", height: "100%" }} />
-        
+
         <div id="ficha-overlay" hidden>
           <div id="modal-content">
             <button
