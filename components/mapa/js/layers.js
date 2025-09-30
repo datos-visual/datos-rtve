@@ -31,11 +31,15 @@ let hoveredId = null;
  * Añade capas al mapa y conecta tooltip + eventos (sólo sobre puntos visibles).
  * @param {mapboxgl.Map} map
  * @param {Array<Object>} fosas
+ * @param {boolean} soloNarrativas - si true → puntos naranjas, si false → puntos rojos
  */
-export function montarCapaFosas(map, fosas) {
+export function montarCapaFosas(map, fosas, soloNarrativas = false) {
   const geo = toGeoJSON(fosas);
   if (!map.getSource("fosas")) {
     map.addSource("fosas", { type: "geojson", data: geo });
+  } else {
+    // Si ya existe la fuente, actualizar los datos
+    map.getSource("fosas").setData(geo);
   }
 
   // Capa sombra
@@ -64,7 +68,7 @@ export function montarCapaFosas(map, fosas) {
         source: "fosas",
         paint: {
           "circle-radius": 5,
-          "circle-color": "#796060",
+          "circle-color": soloNarrativas ? "#D69F1A" : "#796060", // naranja si narrativas, rojo si no
           "circle-stroke-color": "rgba(0,0,0,.6)",
           "circle-stroke-width": 0.5,
           "circle-blur": 0.4,
@@ -205,6 +209,13 @@ export function montarCapaFosas(map, fosas) {
 
 /* refrescar los datos */
 export function actualizarDatosFosas(map, fosasFiltradas) {
+  // 1. Actualizar la fuente de datos (crítico para que aparezcan los puntos)
+  const src = map.getSource("fosas");
+  if (src) {
+    src.setData(toGeoJSON(fosasFiltradas));
+  }
+
+  // 2. Aplicar filtros por IDs (para ocultar puntos no filtrados)
   const ids = fosasFiltradas.map((f) => String(f.id));
   if (!map.getLayer("fosasLayer")) return;
 
