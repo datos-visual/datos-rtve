@@ -1,98 +1,254 @@
-/* lib/datos.js --------------------------------------------------------- */
-import apiClient from "./axios.js";
-import booleanPointInPolygon from "@turf/boolean-point-in-polygon"; // submódulo directo [web:25][web:40]
-import { point, polygon } from "@turf/helpers"; // helpers ESM soportados por Next [web:25][web:40]
-import { JSON_URL } from "../../components/mapa/js/config.js"; // config local [web:38]
-import { normId } from "../../components/mapa/js/utils.js"; // utilidades locales [web:38]
+/**
+ * @fileoverview Módulo para la carga y procesamiento de datos de fosas
+ * Incluye validación geoespacial y normalización de datos
+ */
 
-function normalizarLineasNarrativas(texto) {
-  if (!texto) return []; // sin cambios lógicos [web:38]
+import apiClient from "./axios.js";
+import { 
+  GEO_CONFIG, 
+  NARRATIVE_MAPPINGS, 
+  REQUIRED_FIELDS,
+  LOG_CONFIG,
+  DATA_ERROR_MESSAGES,
+  DEFAULT_STATS 
+} from "./constants.js";
+import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
+import { point, polygon } from "@turf/helpers";
+import { JSON_URL } from "../../components/mapa/js/config.js";
+import { normId } from "../../components/mapa/js/utils.js";
+
+/**
+ * Normaliza las líneas narrativas desde texto separado por comas
+ * @param {string} texto - Texto con líneas narrativas separadas por comas
+ * @returns {string[]} Array de líneas narrativas normalizadas
+ */
+const normalizarLineasNarrativas = (texto) => {
+  if (!texto) return [];
+
   return String(texto)
     .toLowerCase()
     .split(",")
-    .map((s) => s.trim())
-    .map((s) => {
-      if (s.includes("exhumación") || s.includes("exhumaciones"))
-        return "exhumación temprana"; // mapping específico [web:38]
-      if (s === "represaliado" || s === "represaliados") return "represión"; // mapping específico [web:38]
-      if (s === "lugares") return "lugares"; // mapping específico [web:38]
-      if (s === "objetos") return "objetos"; // mapping específico [web:38]
-      if (s === "mujeres") return "mujeres"; // mapping específico [web:38]
-      if (s === "personajes") return "personajes"; // mapping específico [web:38]
-      return s; // fallback [web:38]
-    })
-    .filter(Boolean); // limpia vacíos [web:38]
-}
+    .map((linea) => linea.trim())
+    .map((linea) => NARRATIVE_MAPPINGS[linea] || linea)
+    .filter(Boolean);
+};
 
-export async function cargarFosas() {
-  try {
-    const response = await apiClient.get(JSON_URL);
-    const raw = response.data;
+/**
+ * Valida si las coordenadas están dentro de España
+ * @param {number} lat - Latitud
+ * @param {number} lon - Longitud
+ * @returns {boolean} True si está dentro de España
+ */
+const esCoordenadasValidas = (lat, lon) => {
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+    return false;
+  }
 
-    const { arrayOfArrays, propertiesMapping } = raw || {}; // desestructura con guardas [web:38]
-    if (!Array.isArray(arrayOfArrays) || !Array.isArray(propertiesMapping)) {
-      throw new Error("Formato inesperado en guia-optimizado.json"); // validación de esquema [web:38]
-    }
+  const spain = polygon([GEO_CONFIG.SPAIN_BOUNDS]);
+  const punto = point([lon, lat]);
+  
+  return booleanPointInPolygon(punto, spain);
+};
 
-    const rows = arrayOfArrays.map((fila) => {
-      const obj = {}; // reconstrucción por mapping [web:38]
-      propertiesMapping.forEach((key, i) => {
-        obj[key] = fila[i] ?? null; // asignación segura [web:38]
-      });
-      return obj; // objeto por fila [web:38]
+/**
+ * Normaliza coordenadas reemplazando comas por puntos
+ * @param {string|number} coord - Coordenada a normalizar
+ * @returns {number} Coordenada normalizada o NaN si es inválida
+ */
+const normalizarCoordenada = (coord) => {
+  if (coord == null) return NaN;
+  return Number(String(coord).replace(",", "."));
+};
+
+/**
+ * Crea el objeto base de una fosa con todas las propiedades necesarias
+ * @param {Object} rawData - Datos crudos de la fosa
+ * @returns {Object} Objeto fosa normalizado
+ */
+const crearObjetoFosa = (rawData) => {
+  const id = normId(rawData.id_datos ?? rawData.code);
+  const municipio = rawData.municipality?.trim();
+
+  if (!id || !municipio) {
+    return null; // Datos insuficientes
+  }
+
+  return {
+    id,
+    municipio,
+    municipio_seo: rawData.municipality_seo ?? null,
+    provincia: rawData.provincia?.trim() ?? null,
+    provincia_seo: rawData.provincia_seo ?? null,
+    ccaa: rawData.ccaa?.trim() ?? null,
+    ccaa_seo: rawData.ccaa_seo ?? null,
+    title: rawData.title?.trim() ?? null,
+    title_seo: rawData.title_seo ?? null,
+    event_date: rawData.event_date ?? null,
+    event_date_end: rawData.event_date_end ?? null,
+    status: rawData.status_filtro?.trim() ?? null,
+    linea_narrativa: rawData.linea_narrativa?.trim() ?? null,
+    lineas: normalizarLineasNarrativas(rawData.linea_narrativa),
+    n_buried: rawData.n_buried,
+    detalle_linea_narrativa: rawData.detalle_linea_narrativa,
+    fuente_info: rawData.fuente_info,
+    fuente_enlace: rawData.fuente_enlace,
+    url_ficha: "",
+    isInDedalo: Boolean(rawData.isInDedalo),
+    section_id: rawData.section_id ?? null,
+    deposit_type: rawData.deposit_type ?? null,
+  };
+};
+
+/**
+ * Procesa una fila de datos y añade coordenadas si son válidas
+ * @param {Object} rawFosa - Datos crudos de una fosa
+ * @returns {Object|null} Objeto fosa procesado o null si es inválido
+ */
+const procesarFosa = (rawFosa) => {
+  const fosaSin = crearObjetoFosa(rawFosa);
+  
+  if (!fosaSin) {
+    return null; // Datos insuficientes
+  }
+
+  const lat = normalizarCoordenada(rawFosa.lat);
+  const lon = normalizarCoordenada(rawFosa.lon);
+
+  // Si las coordenadas son válidas y están en España, las añadimos
+  if (esCoordenadasValidas(lat, lon)) {
+    return { ...fosaSin, lat, lon };
+  }
+
+  return fosaSin; // Devolver sin coordenadas si no son válidas
+};
+
+/**
+ * Valida la estructura del JSON recibido
+ * @param {Object} data - Datos recibidos del API
+ * @throws {Error} Si la estructura es inválida
+ */
+const validarEstructuraJSON = (data) => {
+  const { arrayOfArrays, propertiesMapping } = data || {};
+  
+  if (!Array.isArray(arrayOfArrays) || !Array.isArray(propertiesMapping)) {
+    throw new Error(DATA_ERROR_MESSAGES.INVALID_STRUCTURE);
+  }
+
+  if (arrayOfArrays.length === 0) {
+    console.warn(`⚠️ ${DATA_ERROR_MESSAGES.EMPTY_ARRAYS}`);
+  }
+
+  if (propertiesMapping.length === 0) {
+    throw new Error(DATA_ERROR_MESSAGES.EMPTY_MAPPING);
+  }
+};
+
+/**
+ * Convierte el formato optimizado (array de arrays) a objetos
+ * @param {Array[]} arrayOfArrays - Array de arrays con los datos
+ * @param {string[]} propertiesMapping - Mapeo de propiedades
+ * @returns {Object[]} Array de objetos con las propiedades mapeadas
+ */
+const convertirArraysAObjetos = (arrayOfArrays, propertiesMapping) => {
+  return arrayOfArrays.map((fila) => {
+    const objeto = {};
+    propertiesMapping.forEach((propiedad, indice) => {
+      objeto[propiedad] = fila[indice] ?? null;
     });
+    return objeto;
+  });
+};
 
-    // Polígono simple de España para sanity-check geo
-    const spain = polygon([
-      [
-        [-9.392, 43.791],
-        [3.339, 43.757],
-        [4.361, 36.0],
-        [-8.684, 35.941],
-        [-9.392, 43.791],
-      ],
-    ]); // helpers de Turf para GeoJSON [web:25]
+/**
+ * Calcula estadísticas del procesamiento
+ * @param {Object[]} fosasProcesadas - Array de fosas procesadas
+ * @returns {Object} Estadísticas del procesamiento
+ */
+const calcularEstadisticas = (fosasProcesadas) => {
+  const fosasConCoordenadas = fosasProcesadas.filter(fosa => fosa.lat && fosa.lon).length;
+  const fosasSinCoordenadas = fosasProcesadas.length - fosasConCoordenadas;
 
-    return rows.flatMap((r) => {
-      const id = normId(r.id_datos ?? r.code); // id estable [web:38]
-      const mun = r.municipality?.trim(); // municipio requerido [web:38]
-      if (!id || !mun) return []; // descarta entradas inválidas [web:38]
+  return {
+    total: fosasProcesadas.length,
+    conCoordenadas: fosasConCoordenadas,
+    sinCoordenadas: fosasSinCoordenadas,
+    procesados: fosasProcesadas.length,
+    descartados: 0, // Se calcula en el proceso
+  };
+};
 
-      const lat = r.lat != null ? Number(String(r.lat).replace(",", ".")) : NaN; // normaliza latitud [web:38]
-      const lon = r.lon != null ? Number(String(r.lon).replace(",", ".")) : NaN; // normaliza longitud [web:38]
+/**
+ * Logger condicional basado en configuración
+ */
+const logger = {
+  processing: (...args) => {
+    if (LOG_CONFIG.ENABLE_PROCESSING_LOGS) {
+      console.log(...args);
+    }
+  },
+  
+  performance: (...args) => {
+    if (LOG_CONFIG.ENABLE_PERFORMANCE_LOGS) {
+      console.log(...args);
+    }
+  },
+  
+  error: (...args) => {
+    console.error(...args);
+  },
+  
+  warn: (...args) => {
+    console.warn(...args);
+  },
+};
 
-      const base = {
-        id,
-        municipio: mun,
-        municipio_seo: r.municipality_seo ?? null,
-        provincia: r.provincia?.trim() ?? null,
-        provincia_seo: r.provincia_seo ?? null,
-        ccaa: r.ccaa?.trim() ?? null,
-        ccaa_seo: r.ccaa_seo ?? null,
-        title: r.title?.trim() ?? null,
-        title_seo: r.title_seo ?? null,
-        event_date: r.event_date ?? null,
-        event_date_end: r.event_date_end ?? null,
-        status: r.status_filtro?.trim() ?? null,
-        linea_narrativa: r.linea_narrativa?.trim() ?? null,
-        lineas: normalizarLineasNarrativas(r.linea_narrativa),
-        n_buried: r.n_buried,
-        detalle_linea_narrativa: r.detalle_linea_narrativa,
-        fuente_info: r.fuente_info,
-        fuente_enlace: r.fuente_enlace,
-        url_ficha: "",
-        isInDedalo: Boolean(r.isInDedalo),
-        section_id: r.section_id ?? null,
-        deposit_type: r.deposit_type ?? null,
-      }; // conserva shape esperado por la app [web:38]
+/**
+ * Función principal para cargar y procesar los datos de fosas
+ * @returns {Promise<Object[]>} Array de objetos fosa procesados
+ * @throws {Error} Si hay error en la carga o procesamiento
+ */
+export async function cargarFosas() {
+  const startTime = performance.now();
+  
+  try {
+    logger.processing("🚀 Iniciando carga de datos de fosas...");
+    
+    const response = await apiClient.get(JSON_URL);
+    const rawData = response.data;
 
-      if (!Number.isFinite(lat) || !Number.isFinite(lon)) return base; // sin coords válidas, devuelve base [web:38]
+    // Validar estructura
+    validarEstructuraJSON(rawData);
 
-      const dentro = booleanPointInPolygon(point([lon, lat]), spain); // test geoespacial puntual [web:25]
-      return dentro ? { ...base, lat, lon } : base; // añade coords si pasa el filtro [web:25]
-    }); // devuelve array normalizado [web:38]
+    // Extraer datos
+    const { arrayOfArrays, propertiesMapping } = rawData;
+    
+    // Convertir a objetos
+    const fosasRaw = convertirArraysAObjetos(arrayOfArrays, propertiesMapping);
+    
+    logger.processing(`📊 Procesando ${fosasRaw.length} registros de fosas...`);
+
+    // Procesar cada fosa
+    const fosasProcesadas = fosasRaw
+      .map(procesarFosa)
+      .filter(Boolean); // Eliminar nulos
+
+    // Calcular estadísticas
+    const stats = calcularEstadisticas(fosasProcesadas);
+    const endTime = performance.now();
+    const processingTime = (endTime - startTime).toFixed(2);
+
+    logger.performance(`✅ Procesamiento completado en ${processingTime}ms:`, stats);
+
+    return fosasProcesadas;
+
   } catch (error) {
-    console.error("Error al cargar fosas:", error);
-    throw new Error(`Error al cargar datos: ${error.message}`);
+    logger.error("❌ Error al cargar fosas:", error);
+    
+    // Re-lanzar con contexto adicional
+    const detailedError = new Error(`Error al cargar datos de fosas: ${error.message}`);
+    detailedError.originalError = error;
+    detailedError.url = JSON_URL;
+    
+    throw detailedError;
   }
 }
