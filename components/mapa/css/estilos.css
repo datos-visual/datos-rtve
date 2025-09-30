@@ -132,3 +132,61 @@ body {
 .mapboxgl-popup-tip {
   display: none;
 }
+
+/* Contador de fosas visibles */
+.toolbar-counter {
+  position: absolute;
+  top: 10px;
+  left: 300px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  z-index: 999;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Lista lateral de fosas visibles */
+.fosas-laterales {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 260px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 10px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  z-index: 900;
+}
+
+.fosas-laterales h3 {
+  margin-top: 0;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.fosas-laterales ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.fosas-laterales li {
+  padding: 6px 4px;
+  border-bottom: 1px solid #ccc;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.fosas-laterales li:hover {
+  background-color: #f0f0f0;
+}
+
+.fosas-laterales li.highlight {
+  background-color: #ffe599 !important;
+  font-weight: bold;
+}

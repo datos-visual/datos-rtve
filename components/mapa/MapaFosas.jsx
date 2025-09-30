@@ -14,6 +14,8 @@ import { montarCapaFosas, actualizarDatosFosas } from "./js/layers.js";
 import { abrirFicha } from "./js/overlay.js";
 import { getParam, normId } from "./js/utils.js";
 import { MAPBOX_TOKEN } from "./js/config.js";
+import { useMapaRecuento } from "../../app/hooks/useMapaRecuento.js";
+import MapaRecuento from "./MapaRecuento.jsx";
 import "./css/estilos.css";
 
 // Normalizar nombres para la URL
@@ -42,6 +44,16 @@ const MapaFosas = forwardRef(
     const [allFosas, setAllFosas] = useState([]);
     const [capaMontada, setCapaMontada] = useState(false);
     const [pendingSubset, setPendingSubset] = useState(null);
+
+    // Hook para contador y lista lateral
+    const {
+      fosasVisibles,
+      contadorVisible,
+      contadorRef,
+      listaRef,
+      ulRef,
+      actualizarRecuento
+    } = useMapaRecuento(map, fosas);
 
   // Exponer métodos para el componente padre
   useImperativeHandle(ref, () => ({
@@ -320,6 +332,15 @@ const MapaFosas = forwardRef(
     return (
       <div style={{ width: "100%", height: "100%", position: "relative" }}>
         <div ref={mapContainer} style={{ width: "100%", height: "100%" }} />
+        
+        {/* Contador y lista lateral de fosas visibles */}
+        <MapaRecuento 
+          contadorVisible={contadorVisible}
+          contadorRef={contadorRef}
+          listaRef={listaRef}
+          ulRef={ulRef}
+        />
+        
         <div id="ficha-overlay" hidden>
           <div id="modal-content">
             <button
