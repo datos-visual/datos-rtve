@@ -1,8 +1,17 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 
-export default function ModalCarrousel({ imagenes = [], onClose, startIndex = 0 }) {
+const ModalCarrousel = forwardRef(function ModalCarrousel(
+  { imagenes = [], onClose, startIndex = 0 },
+  ref
+) {
   const [visible, setVisible] = useState(false);
   const [idx, setIdx] = useState(0);
   const modalRef = useRef(null);
@@ -27,6 +36,17 @@ export default function ModalCarrousel({ imagenes = [], onClose, startIndex = 0 
     setIdx(newIdx);
   };
 
+  // Exponer métodos via ref
+  useImperativeHandle(
+    ref,
+    () => ({
+      open,
+      close,
+      mostrar,
+    }),
+    [imagenes]
+  );
+
   // Exponer métodos para compatibilidad con Web Component
   useEffect(() => {
     if (modalRef.current) {
@@ -42,13 +62,13 @@ export default function ModalCarrousel({ imagenes = [], onClose, startIndex = 0 
 
     const handleKeyDown = (e) => {
       switch (e.key) {
-        case 'Escape':
+        case "Escape":
           close();
           break;
-        case 'ArrowLeft':
+        case "ArrowLeft":
           mostrar(idx - 1);
           break;
-        case 'ArrowRight':
+        case "ArrowRight":
           mostrar(idx + 1);
           break;
       }
@@ -107,18 +127,20 @@ export default function ModalCarrousel({ imagenes = [], onClose, startIndex = 0 
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('wheel', handleWheel, { passive: false });
-    document.addEventListener('touchstart', handleTouchStart, { passive: true });
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
-    document.addEventListener('touchend', handleTouchEnd, { passive: true });
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("wheel", handleWheel, { passive: false });
+    document.addEventListener("touchstart", handleTouchStart, {
+      passive: true,
+    });
+    document.addEventListener("touchmove", handleTouchMove, { passive: false });
+    document.addEventListener("touchend", handleTouchEnd, { passive: true });
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('wheel', handleWheel);
-      document.removeEventListener('touchstart', handleTouchStart);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("wheel", handleWheel);
+      document.removeEventListener("touchstart", handleTouchStart);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleTouchEnd);
     };
   }, [visible, idx]);
 
@@ -132,13 +154,13 @@ export default function ModalCarrousel({ imagenes = [], onClose, startIndex = 0 
   // Prevenir scroll del body cuando el modal está abierto
   useEffect(() => {
     if (visible) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
 
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [visible]);
 
@@ -172,15 +194,15 @@ export default function ModalCarrousel({ imagenes = [], onClose, startIndex = 0 
       >
         {/* Botón cerrar */}
         <button
-          style={{ 
-            position: "absolute", 
-            top: 10, 
-            right: 10, 
+          style={{
+            position: "absolute",
+            top: 10,
+            right: 10,
             fontSize: "2rem",
             background: "none",
             border: "none",
             color: "white",
-            cursor: "pointer"
+            cursor: "pointer",
           }}
           onClick={close}
         >
@@ -189,15 +211,15 @@ export default function ModalCarrousel({ imagenes = [], onClose, startIndex = 0 
 
         {/* Carrusel */}
         <div style={{ display: "flex", alignItems: "center" }}>
-          <button 
-            style={{ 
+          <button
+            style={{
               fontSize: "2rem",
               background: "none",
               border: "none",
               color: "white",
               cursor: "pointer",
-              margin: "0 12px"
-            }} 
+              margin: "0 12px",
+            }}
             onClick={() => mostrar(idx - 1)}
           >
             &#8592;
@@ -211,19 +233,19 @@ export default function ModalCarrousel({ imagenes = [], onClose, startIndex = 0 
               borderRadius: 8,
               boxShadow: "0 0 20px #000",
               transition: "opacity 0.3s ease-in-out",
-              cursor: "pointer"
+              cursor: "pointer",
             }}
             onClick={() => mostrar(idx + 1)}
           />
-          <button 
-            style={{ 
+          <button
+            style={{
               fontSize: "2rem",
               background: "none",
               border: "none",
               color: "white",
               cursor: "pointer",
-              margin: "0 12px"
-            }} 
+              margin: "0 12px",
+            }}
             onClick={() => mostrar(idx + 1)}
           >
             &#8594;
@@ -231,22 +253,28 @@ export default function ModalCarrousel({ imagenes = [], onClose, startIndex = 0 
         </div>
 
         {/* Indicador */}
-        <div style={{ 
-          color: "white", 
-          marginTop: 12,
-          textAlign: "center",
-          fontSize: "14px"
-        }}>
-          <div>{idx + 1} / {imagenes.length}</div>
-          <div style={{ 
-            fontSize: "12px", 
-            opacity: 0.7, 
-            marginTop: "4px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "8px"
-          }}>
+        <div
+          style={{
+            color: "white",
+            marginTop: 12,
+            textAlign: "center",
+            fontSize: "14px",
+          }}
+        >
+          <div>
+            {idx + 1} / {imagenes.length}
+          </div>
+          <div
+            style={{
+              fontSize: "12px",
+              opacity: 0.7,
+              marginTop: "4px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+            }}
+          >
             <span>🖱️ Scroll</span>
             <span>👆 Swipe</span>
             <span>⌨️ Flechas</span>
@@ -255,4 +283,6 @@ export default function ModalCarrousel({ imagenes = [], onClose, startIndex = 0 
       </div>
     </div>
   );
-}
+});
+
+export default ModalCarrousel;

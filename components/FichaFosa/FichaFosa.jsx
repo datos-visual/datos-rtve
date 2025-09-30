@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import "../../app/styles/_fichaFosa.scss";
 
@@ -30,6 +30,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
   const [fichaExtra, setFichaExtra] = useState(null);
   const [activeTab, setActiveTab] = useState("imagenes");
   const [modalOpen, setModalOpen] = useState(false);
+  const modalRef = useRef(null);
 
   useEffect(() => {
     if (fosa?.id_datos) {
@@ -41,6 +42,16 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
         .catch((e) => console.error("Error fetching ficha extra:", e));
     }
   }, [fosa]);
+
+  const handleOpenModal = useCallback(() => {
+    if (modalRef.current && modalRef.current.open) {
+      modalRef.current.open(0);
+    }
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setModalOpen(false);
+  }, []);
 
   if (!fosa) return null;
 
@@ -120,7 +131,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
           </div>
 
           {/* Imagen destacada */}
-          <div className="foto" onClick={() => setModalOpen(true)}>
+          <div className="foto" onClick={handleOpenModal}>
             <h2 class="datos__title">{title || "Sin título"}</h2>
             <Image
               src={
@@ -134,12 +145,11 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
           </div>
 
           {/* ModalCarrousel */}
-          {modalOpen && (
-            <ModalCarrousel
-              imagenes={fotos}
-              onClose={() => setModalOpen(false)}
-            />
-          )}
+          <ModalCarrousel
+            ref={modalRef}
+            imagenes={fotos}
+            onClose={handleCloseModal}
+          />
         </div>
 
         {/* Resumen */}
