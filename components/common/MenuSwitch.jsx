@@ -28,6 +28,58 @@ export default function MenuSwitch({ onOpenMenu }) {
   const [active, setActive] = useState(getActivePageFromPath());
   const [shareOpen, setShareOpen] = useState(false);
 
+  // Funciones para generar URLs de compartir
+  const getCurrentUrl = () => {
+    return typeof window !== "undefined" ? window.location.href : "";
+  };
+
+  const getPageTitle = () => {
+    if (typeof document !== "undefined") {
+      return document.title || "Mapa de Fosas - RTVE";
+    }
+    return "Mapa de Fosas - RTVE";
+  };
+
+  const shareUrls = {
+    facebook: () => {
+      const url = encodeURIComponent(getCurrentUrl());
+      return `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+    },
+    twitter: () => {
+      const url = encodeURIComponent(getCurrentUrl());
+      const text = encodeURIComponent(getPageTitle());
+      return `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
+    },
+    whatsapp: () => {
+      const url = encodeURIComponent(getCurrentUrl());
+      const text = encodeURIComponent(`${getPageTitle()} ${getCurrentUrl()}`);
+      return `https://wa.me/?text=${text}`;
+    },
+    bluesky: () => {
+      const url = encodeURIComponent(getCurrentUrl());
+      const text = encodeURIComponent(`${getPageTitle()} ${getCurrentUrl()}`);
+      return `https://bsky.app/intent/compose?text=${text}`;
+    },
+  };
+
+  const handleSocialShare = (platform) => {
+    const url = shareUrls[platform]();
+    window.open(url, "_blank", "width=600,height=400");
+    setShareOpen(false);
+  };
+
+  const handleCopyLink = async (e) => {
+    e.preventDefault();
+    try {
+      await navigator.clipboard.writeText(getCurrentUrl());
+      // Opcional: mostrar feedback visual
+      alert("Enlace copiado al portapapeles");
+    } catch (err) {
+      console.error("Error al copiar enlace:", err);
+    }
+    setShareOpen(false);
+  };
+
   // Actualizar estado activo cuando cambie la ruta
   useEffect(() => {
     setActive(getActivePageFromPath());
@@ -77,43 +129,99 @@ export default function MenuSwitch({ onOpenMenu }) {
           <div className="social-menu-container">
             <ul className="social-menu">
               <li>
-                <a className="social-menu__btn" href="#" target="_blank">
+                <button
+                  className="social-menu__btn"
+                  onClick={() => handleSocialShare("facebook")}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    cursor: "pointer",
+                    width: "100%",
+                    textAlign: "left",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
                   <img src={IconSocialFacebook.src} alt="Facebook" />
                   <span>Facebook</span>
-                </a>
+                </button>
               </li>
               <li>
-                <a className="social-menu__btn" href="#" target="_blank">
+                <button
+                  className="social-menu__btn"
+                  onClick={() => handleSocialShare("twitter")}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    cursor: "pointer",
+                    width: "100%",
+                    textAlign: "left",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
                   <img src={IconSocialX.src} alt="X-Twitter" />
                   <span>X - Twitter</span>
-                </a>
+                </button>
               </li>
               <li>
-                <a className="social-menu__btn" href="#" target="_blank">
+                <button
+                  className="social-menu__btn"
+                  onClick={() => handleSocialShare("whatsapp")}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    cursor: "pointer",
+                    width: "100%",
+                    textAlign: "left",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
                   <img src={IconSocialWhatsApp.src} alt="WhatsApp" />
                   <span>WhatsApp</span>
-                </a>
+                </button>
               </li>
               <li>
-                <a className="social-menu__btn" href="#" target="_blank">
+                <button
+                  className="social-menu__btn"
+                  onClick={() => handleSocialShare("bluesky")}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    cursor: "pointer",
+                    width: "100%",
+                    textAlign: "left",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
                   <img src={IconSocialBluesky.src} alt="Bluesky" />
                   <span>Bluesky</span>
-                </a>
+                </button>
               </li>
               <li>
-                <a
+                <button
                   className="social-menu__btn"
-                  href={
-                    typeof window !== "undefined" ? window.location.href : "#"
-                  }
-                  onClick={(e) => {
-                    e.preventDefault();
-                    navigator.clipboard.writeText(window.location.href);
+                  onClick={handleCopyLink}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    cursor: "pointer",
+                    width: "100%",
+                    textAlign: "left",
+                    display: "flex",
+                    alignItems: "center",
                   }}
                 >
                   <img src={IconSocialLink.src} alt="Enlace" />
-                  <span>Enlace</span>
-                </a>
+                  <span>Copiar enlace</span>
+                </button>
               </li>
             </ul>
           </div>
