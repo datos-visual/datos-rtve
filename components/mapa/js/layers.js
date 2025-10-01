@@ -7,7 +7,9 @@ const toGeoJSON = (filas) => ({
   features: filas
     .filter((f) => {
       const n = parseInt(f?.id, 10);
-      return Number.isFinite(n) && Number.isFinite(f?.lat) && Number.isFinite(f?.lon);
+      return (
+        Number.isFinite(n) && Number.isFinite(f?.lat) && Number.isFinite(f?.lon)
+      );
     })
     .map((f) => ({
       type: "Feature",
@@ -21,9 +23,11 @@ const toGeoJSON = (filas) => ({
         status: f.status,
         url_ficha: f.url_ficha,
         linea_narrativa: f.linea_narrativa,
-        tieneLineaNarrativa: !!(f.linea_narrativa && 
-          f.linea_narrativa.toLowerCase() !== 'null' && 
-          f.linea_narrativa.trim() !== ''),
+        tieneLineaNarrativa: !!(
+          f.linea_narrativa &&
+          f.linea_narrativa.toLowerCase() !== "null" &&
+          f.linea_narrativa.trim() !== ""
+        ),
       },
     })),
 });
@@ -45,6 +49,9 @@ export function montarCapaFosas(map, fosas, soloNarrativas = false) {
     // Si ya existe la fuente, actualizar los datos
     map.getSource("fosas").setData(geo);
   }
+
+  // Agregar leyenda si no existe
+  agregarLeyenda(map);
 
   // Capa sombra
   if (!map.getLayer("fosasShadow")) {
@@ -76,7 +83,7 @@ export function montarCapaFosas(map, fosas, soloNarrativas = false) {
             "case",
             ["==", ["get", "tieneLineaNarrativa"], true],
             "#D69F1A", // Color dorado para fosas con línea narrativa
-            "#796060"  // Color gris/marrón para fosas sin línea narrativa
+            "#796060", // Color gris/marrón para fosas sin línea narrativa
           ],
           "circle-stroke-color": "rgba(0,0,0,.6)",
           "circle-stroke-width": 0.5,
@@ -230,7 +237,7 @@ export function actualizarDatosFosas(map, fosasFiltradas) {
       "case",
       ["==", ["get", "tieneLineaNarrativa"], true],
       "#D69F1A", // Color dorado para fosas con línea narrativa
-      "#796060"  // Color gris/marrón para fosas sin línea narrativa
+      "#796060", // Color gris/marrón para fosas sin línea narrativa
     ]);
   }
 
@@ -249,4 +256,69 @@ export function actualizarDatosFosas(map, fosasFiltradas) {
     map.setFilter("fosasHit", ["in", "id", ...ids]);
     // fosaHighlight se actualiza solo desde hover
   }
+}
+
+/**
+ * Agrega una leyenda al mapa en la esquina superior derecha
+ * @param {mapboxgl.Map} map
+ */
+function agregarLeyenda(map) {
+  // Verificar si ya existe la leyenda
+  if (document.getElementById("mapa-leyenda")) {
+    return;
+  }
+
+  // Crear el contenedor de la leyenda
+  const leyenda = document.createElement("div");
+  leyenda.id = "mapa-leyenda";
+  leyenda.style.cssText = `
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    justify-content: center;
+    top: 10px;
+    right: 50px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 8px 20px;
+    border-radius: 50px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    z-index: 1000;
+    border: 1px solid #ddd;
+  `;
+
+  // Crear el contenido de la leyenda
+  leyenda.innerHTML = `
+    <div style="display:flex; align-items: center; justify-content: center; gap: 20px;">
+      <div style="display: flex; align-items: center;">
+        <div style="
+          width: 12px; 
+          height: 12px; 
+          background-color: #D69F1A; 
+          border-radius: 50%; 
+          margin-right: 8px;
+          border: 1px solid rgba(0,0,0,0.2);
+        "></div>
+        <span style="color: #333; font-weight: 500;">Historias destacadas</span>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <div style="
+          width: 12px; 
+          height: 12px; 
+          background-color: #796060; 
+          border-radius: 50%; 
+          margin-right: 8px;
+          border: 1px solid rgba(0,0,0,0.2);
+        "></div>
+        <span style="color: #333; font-weight: 500;">Fosas</span>
+      </div>
+    </div>
+  `;
+
+  // Agregar la leyenda al contenedor del mapa
+  const mapContainer = map.getContainer();
+  mapContainer.style.position = "relative";
+  mapContainer.appendChild(leyenda);
 }
