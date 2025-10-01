@@ -54,12 +54,23 @@
         flex-wrap: nowrap;
       }
 
-      .reportajes-card {
+      .reportajes-card-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
         width: 100%;
 
         @media (min-width: 460px) {
           max-width: 280px;
         }
+
+        &:hover {
+          text-decoration: none;
+        }
+      }
+
+      .reportajes-card {
+        width: 100%;
 
         .card-image {
           margin-inline: auto;
