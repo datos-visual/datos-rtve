@@ -14,7 +14,7 @@ lista-fosas-completa {
   margin-top: 33px;
   padding-right: 16px;
   margin-top: 0;
-  max-height: 69%;
+  max-height: 400px;
   width: 100%;
   box-sizing: border-box;
 
@@ -108,11 +108,10 @@ lista-fosas-completa {
     display: grid;
     position: relative;
     z-index: 999999;
-    overflow-y: auto;
+    overflow-y: hidden;
     overflow-x: hidden;
     width: 100%;
     box-sizing: border-box;
-    max-height: 400px;
     padding-right: 8px;
     gap: 1rem;
 

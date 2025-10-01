@@ -94,8 +94,8 @@ const BotonesCategorias = forwardRef(
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "flex-start",
-              minWidth: "clamp(90px, 10vw + 60px, 120px)",
-              maxWidth: "clamp(90px, 10vw + 60px, 120px)",
+              minWidth: "clamp(90px, 10vw + 60px, 32%)",
+              maxWidth: "clamp(90px, 10vw + 60px, 32%)",
               flexShrink: 0,
               gap: "0px",
               background: "transparent",
@@ -161,7 +161,11 @@ const BotonesCategorias = forwardRef(
     };
 
     // Tooltip styles - SIEMPRE usar iconos circulares (tanto desktop como móvil)
-    if (useTooltipStyles) {
+    
+
+    // MOBILE: render dropdown and overlay into document.body usando portal
+    if (isMobile) {
+      if (useTooltipStyles) {
       return (
         <div className="botones-categorias tooltip-version" ref={ref}>
           <div
@@ -185,9 +189,6 @@ const BotonesCategorias = forwardRef(
         </div>
       );
     }
-
-    // MOBILE: render dropdown and overlay into document.body usando portal
-    if (isMobile) {
       const iconoSeleccionado =
         ICONOS_POR_DEFECTO[seleccionada]?.src ||
         ICONOS_POR_DEFECTO[seleccionada] ||
