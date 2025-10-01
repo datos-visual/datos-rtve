@@ -1,7 +1,3 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { useRouter, useParams } from "next/navigation";
 import { cargarFosas } from "../../../../lib/datos";
 import JsonLdScript from "../../../../../components/BreadcrumbJsonLd/BreadcrumbJsonLd";
 import Creditos from "../../../../../components/common/Creditos";
@@ -14,116 +10,79 @@ import MapaBuscadorFosas from "../../../../../components/MapaBuscadorFosas/MapaB
 import "../../../../styles/_historias.scss";
 import MenuSwitchClient from "@/components/MenuSwitchClient/MenuSwitchClient";
 
-export default function FosaEspecificaPage() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [fosas, setFosas] = useState([]);
-  const [fosasFiltered, setFosasFiltered] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-  const params = useParams();
+function slugify(text) {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "");
+}
 
-  // Extraer parámetros de la URL dinámica (incluyendo fosa específica)
+export async function generateStaticParams() {
+  const fosas = await cargarFosas();
+  return fosas
+    .filter((f) => f.ccaa && f.provincia && f.municipio && f.denominacion)
+    .map((f) => ({
+      ccaa: f.ccaa_seo || slugify(f.ccaa),
+      provincia: f.provincia_seo || slugify(f.provincia),
+      municipio: f.municipio_seo || slugify(f.municipio),
+      fosa: f.fosa_seo || slugify(f.denominacion),
+    }));
+}
+
+export default async function FosaEspecificaPage({ params }) {
   const { ccaa, provincia, municipio, fosa } = params;
 
-  // Obtener parámetros adicionales de query string si existen
-  const [urlParams, setUrlParams] = useState({});
+  const fosas = await cargarFosas();
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const searchParams = new URLSearchParams(window.location.search);
-      setUrlParams({
-        ccaa: ccaa || searchParams.get("ccaa"),
-        provincia: provincia || searchParams.get("provincia"),
-        municipio: municipio || searchParams.get("municipio"),
-        fosa: fosa || searchParams.get("fosa"),
-      });
-    }
-  }, [ccaa, provincia, municipio, fosa]);
+  // Filtrar fosas por ubicación y fosa específica
+  const municipioFosas = fosas.filter(
+    (f) =>
+      (f.ccaa_seo || slugify(f.ccaa)) === ccaa &&
+      (f.provincia_seo || slugify(f.provincia)) === provincia &&
+      (f.municipio_seo || slugify(f.municipio)) === municipio
+  );
 
-  // Cargar y filtrar fosas
-  useEffect(() => {
-    async function fetchFosas() {
-      setLoading(true);
-      const todas = await cargarFosas();
+  const fosaEspecifica = municipioFosas.find(
+    (f) => (f.fosa_seo || slugify(f.denominacion)) === fosa
+  );
 
-      // Normalizar función
-      const normalizar = (str) =>
-        (str || "")
-          .toLowerCase()
-          .normalize("NFD")
-          .replace(/\s+/g, "-")
-          .replace(/[\u0300-\u036f]/g, "");
+  if (!fosaEspecifica) return <p>Fosa no encontrada</p>;
 
-      const ccaaNorm = normalizar(ccaa);
-      const provinciaNorm = normalizar(provincia);
-      const municipioNorm = normalizar(municipio);
-      const fosaNorm = normalizar(fosa);
+  // Obtener nombres y URLs
+  const ccaaName = fosaEspecifica?.ccaa || params.ccaa;
+  const provinciaName = fosaEspecifica?.provincia || params.provincia;
+  const municipioName = fosaEspecifica?.municipio || params.municipio;
+  const fosaName = fosaEspecifica?.denominacion || params.fosa;
 
-      // Filtrar por municipio
-      const municipioFosas = todas.filter(
-        (f) =>
-          normalizar(f.ccaa_seo || f.ccaa) === ccaaNorm &&
-          normalizar(f.provincia_seo || f.provincia) === provinciaNorm &&
-          normalizar(f.municipio_seo || f.municipio) === municipioNorm
-      );
-
-      setFosas(todas);
-      setFosasFiltered(municipioFosas);
-      setLoading(false);
-    }
-    fetchFosas();
-  }, [ccaa, provincia, municipio, fosa]);
-
-  // Construir breadcrumbs dinámicos
-  const ccaaUrl = urlParams.ccaa
-    ? `https://www.rtve.es/noticias/fosas-guerra-civil-franquismo/${urlParams.ccaa}/`
-    : undefined;
-  const provinciaUrl =
-    urlParams.ccaa && urlParams.provincia
-      ? `https://www.rtve.es/noticias/fosas-guerra-civil-franquismo/${urlParams.ccaa}/${urlParams.provincia}/`
-      : undefined;
-  const municipioUrl =
-    urlParams.ccaa && urlParams.provincia && urlParams.municipio
-      ? `https://www.rtve.es/noticias/fosas-guerra-civil-franquismo/${urlParams.ccaa}/${urlParams.provincia}/${urlParams.municipio}/`
-      : undefined;
-  const fosaUrl =
-    urlParams.ccaa &&
-    urlParams.provincia &&
-    urlParams.municipio &&
-    urlParams.fosa
-      ? `https://www.rtve.es/noticias/fosas-guerra-civil-franquismo/${urlParams.ccaa}/${urlParams.provincia}/${urlParams.municipio}/${urlParams.fosa}/`
-      : undefined;
+  const ccaaUrl = `https://www.rtve.es/noticias/fosas-guerra-civil-franquismo/${ccaa}/`;
+  const provinciaUrl = `https://www.rtve.es/noticias/fosas-guerra-civil-franquismo/${ccaa}/${provincia}/`;
+  const municipioUrl = `https://www.rtve.es/noticias/fosas-guerra-civil-franquismo/${ccaa}/${provincia}/${municipio}/`;
+  const fosaUrl = `https://www.rtve.es/noticias/fosas-guerra-civil-franquismo/${ccaa}/${provincia}/${municipio}/${fosa}/`;
 
   const breadcrumbs = [
     {
       name: "Fosas de la Guerra Civil y el franquismo",
       item: "https://www.rtve.es/noticias/fosas-guerra-civil-franquismo/",
     },
-  ];
-  if (urlParams.ccaa) {
-    breadcrumbs.push({
-      name: `Fosas de ${urlParams.ccaa}`,
+    {
+      name: `Fosas de ${ccaaName}`,
       item: ccaaUrl,
-    });
-  }
-  if (urlParams.provincia) {
-    breadcrumbs.push({
-      name: `Fosas de ${urlParams.provincia}`,
+    },
+    {
+      name: `Fosas de ${provinciaName}`,
       item: provinciaUrl,
-    });
-  }
-  if (urlParams.municipio) {
-    breadcrumbs.push({
-      name: `Fosas de ${urlParams.municipio}`,
+    },
+    {
+      name: `Fosas de ${municipioName}`,
       item: municipioUrl,
-    });
-  }
-  if (urlParams.fosa) {
-    breadcrumbs.push({
-      name: `${urlParams.fosa}`,
+    },
+    {
+      name: `${fosaName}`,
       item: fosaUrl,
-    });
-  }
+    },
+  ];
 
   // JSON-LD para breadcrumb
   const breadcrumbJsonLd = {
@@ -142,12 +101,8 @@ export default function FosaEspecificaPage() {
     "@context": "https://schema.org",
     "@type": "WebPage",
     url: fosaUrl,
-    name: urlParams.fosa
-      ? `${urlParams.fosa} (${urlParams.municipio}, ${urlParams.provincia}, ${urlParams.ccaa}) | RTVE.es`
-      : "Fosa | RTVE.es",
-    description: urlParams.fosa
-      ? `Información sobre ${urlParams.fosa} en ${urlParams.municipio}, ${urlParams.provincia}, ${urlParams.ccaa}. Proyecto RTVE.es`
-      : "Información sobre fosa de la Guerra Civil y el franquismo. Proyecto RTVE.es",
+    name: `${fosaName} (${municipioName}, ${provinciaName}, ${ccaaName}) | RTVE.es`,
+    description: `Información sobre ${fosaName} en ${municipioName}, ${provinciaName}, ${ccaaName}. Proyecto RTVE.es`,
     isPartOf: { "@id": "https://www.rtve.es/#website" },
     publisher: {
       "@type": "Organization",
@@ -186,11 +141,11 @@ export default function FosaEspecificaPage() {
           <section style={{ width: "100%", marginBottom: "160px" }}>
             {/* Componente principal del buscador de fosas con parámetros de ubicación y fosa específica */}
             <MapaBuscadorFosas
-              ccaa={urlParams.ccaa}
-              provincia={urlParams.provincia}
-              municipio={urlParams.municipio}
-              fosa={urlParams.fosa}
-              fosas={fosasFiltered}
+              ccaa={ccaa}
+              provincia={provincia}
+              municipio={municipio}
+              fosa={fosa}
+              fosas={municipioFosas}
             />
           </section>
 

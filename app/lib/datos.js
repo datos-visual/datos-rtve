@@ -4,13 +4,13 @@
  */
 
 import apiClient from "./axios.js";
-import { 
-  GEO_CONFIG, 
-  NARRATIVE_MAPPINGS, 
+import {
+  GEO_CONFIG,
+  NARRATIVE_MAPPINGS,
   REQUIRED_FIELDS,
   LOG_CONFIG,
   DATA_ERROR_MESSAGES,
-  DEFAULT_STATS 
+  DEFAULT_STATS,
 } from "./constants.js";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
 import { point, polygon } from "@turf/helpers";
@@ -46,7 +46,7 @@ const esCoordenadasValidas = (lat, lon) => {
 
   const spain = polygon([GEO_CONFIG.SPAIN_BOUNDS]);
   const punto = point([lon, lat]);
-  
+
   return booleanPointInPolygon(punto, spain);
 };
 
@@ -81,8 +81,10 @@ const crearObjetoFosa = (rawData) => {
     provincia_seo: rawData.provincia_seo ?? null,
     ccaa: rawData.ccaa?.trim() ?? null,
     ccaa_seo: rawData.ccaa_seo ?? null,
+    denominacion: rawData.title?.trim() ?? rawData.denominacion?.trim() ?? null,
     title: rawData.title?.trim() ?? null,
     title_seo: rawData.title_seo ?? null,
+    fosa_seo: rawData.fosa_seo ?? rawData.title_seo ?? null,
     event_date: rawData.event_date ?? null,
     event_date_end: rawData.event_date_end ?? null,
     status: rawData.status_filtro?.trim() ?? null,
@@ -106,7 +108,7 @@ const crearObjetoFosa = (rawData) => {
  */
 const procesarFosa = (rawFosa) => {
   const fosaSin = crearObjetoFosa(rawFosa);
-  
+
   if (!fosaSin) {
     return null; // Datos insuficientes
   }
@@ -129,7 +131,7 @@ const procesarFosa = (rawFosa) => {
  */
 const validarEstructuraJSON = (data) => {
   const { arrayOfArrays, propertiesMapping } = data || {};
-  
+
   if (!Array.isArray(arrayOfArrays) || !Array.isArray(propertiesMapping)) {
     throw new Error(DATA_ERROR_MESSAGES.INVALID_STRUCTURE);
   }
@@ -165,7 +167,9 @@ const convertirArraysAObjetos = (arrayOfArrays, propertiesMapping) => {
  * @returns {Object} Estadísticas del procesamiento
  */
 const calcularEstadisticas = (fosasProcesadas) => {
-  const fosasConCoordenadas = fosasProcesadas.filter(fosa => fosa.lat && fosa.lon).length;
+  const fosasConCoordenadas = fosasProcesadas.filter(
+    (fosa) => fosa.lat && fosa.lon
+  ).length;
   const fosasSinCoordenadas = fosasProcesadas.length - fosasConCoordenadas;
 
   return {
@@ -186,17 +190,17 @@ const logger = {
       console.log(...args);
     }
   },
-  
+
   performance: (...args) => {
     if (LOG_CONFIG.ENABLE_PERFORMANCE_LOGS) {
       console.log(...args);
     }
   },
-  
+
   error: (...args) => {
     console.error(...args);
   },
-  
+
   warn: (...args) => {
     console.warn(...args);
   },
@@ -209,10 +213,10 @@ const logger = {
  */
 export async function cargarFosas() {
   const startTime = performance.now();
-  
+
   try {
     logger.processing("🚀 Iniciando carga de datos de fosas...");
-    
+
     const response = await apiClient.get(JSON_URL);
     const rawData = response.data;
 
@@ -221,34 +225,36 @@ export async function cargarFosas() {
 
     // Extraer datos
     const { arrayOfArrays, propertiesMapping } = rawData;
-    
+
     // Convertir a objetos
     const fosasRaw = convertirArraysAObjetos(arrayOfArrays, propertiesMapping);
-    
+
     logger.processing(`📊 Procesando ${fosasRaw.length} registros de fosas...`);
 
     // Procesar cada fosa
-    const fosasProcesadas = fosasRaw
-      .map(procesarFosa)
-      .filter(Boolean); // Eliminar nulos
+    const fosasProcesadas = fosasRaw.map(procesarFosa).filter(Boolean); // Eliminar nulos
 
     // Calcular estadísticas
     const stats = calcularEstadisticas(fosasProcesadas);
     const endTime = performance.now();
     const processingTime = (endTime - startTime).toFixed(2);
 
-    logger.performance(`✅ Procesamiento completado en ${processingTime}ms:`, stats);
+    logger.performance(
+      `✅ Procesamiento completado en ${processingTime}ms:`,
+      stats
+    );
 
     return fosasProcesadas;
-
   } catch (error) {
     logger.error("❌ Error al cargar fosas:", error);
-    
+
     // Re-lanzar con contexto adicional
-    const detailedError = new Error(`Error al cargar datos de fosas: ${error.message}`);
+    const detailedError = new Error(
+      `Error al cargar datos de fosas: ${error.message}`
+    );
     detailedError.originalError = error;
     detailedError.url = JSON_URL;
-    
+
     throw detailedError;
   }
 }

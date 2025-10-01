@@ -1,8 +1,4 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import { cargarFosas } from "../../../lib/datos";
-import { useRouter, useParams } from "next/navigation";
 import JsonLdScript from "../../../../components/BreadcrumbJsonLd/BreadcrumbJsonLd";
 import Creditos from "../../../../components/common/Creditos";
 import ModuloNoticias from "../../../../components/common/ModuloNoticias";
@@ -13,95 +9,68 @@ import MapaBuscadorFosas from "../../../../components/MapaBuscadorFosas/MapaBusc
 import "../../../../app/styles/_historias.scss";
 import MenuSwitchClient from "@/components/MenuSwitchClient/MenuSwitchClient";
 
-export default function UbicacionPage() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [fosas, setFosas] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-  const params = useParams();
+function slugify(text) {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "");
+}
 
-  // Extraer parámetros de la URL dinámica
+export async function generateStaticParams() {
+  const fosas = await cargarFosas();
+  return fosas
+    .filter((f) => f.ccaa && f.provincia && f.municipio)
+    .map((f) => ({
+      ccaa: f.ccaa_seo || slugify(f.ccaa),
+      provincia: f.provincia_seo || slugify(f.provincia),
+      municipio: f.municipio_seo || slugify(f.municipio),
+    }));
+}
+
+export default async function UbicacionPage({ params }) {
   const { ccaa, provincia, municipio } = params;
 
-  // Obtener parámetros adicionales de query string si existen
-  const [urlParams, setUrlParams] = useState({});
+  const fosas = await cargarFosas();
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const searchParams = new URLSearchParams(window.location.search);
-      setUrlParams({
-        ccaa: ccaa || searchParams.get("ccaa"),
-        provincia: provincia || searchParams.get("provincia"),
-        municipio: municipio || searchParams.get("municipio"),
-        fosa: searchParams.get("fosa"),
-      });
-    }
-  }, [ccaa, provincia, municipio]);
+  // Filtrar fosas por ubicación
+  const municipioFosas = fosas.filter(
+    (f) =>
+      (f.ccaa_seo || slugify(f.ccaa)) === ccaa &&
+      (f.provincia_seo || slugify(f.provincia)) === provincia &&
+      (f.municipio_seo || slugify(f.municipio)) === municipio
+  );
 
-  // Cargar y filtrar fosas
-  useEffect(() => {
-    async function fetchFosas() {
-      setLoading(true);
-      const todas = await cargarFosas();
-      // Normalizar función
-      const normalizar = (str) =>
-        (str || "")
-          .toLowerCase()
-          .normalize("NFD")
-          .replace(/\s+/g, "-")
-          .replace(/[\u0300-\u036f]/g, "");
-      const ccaaNorm = normalizar(ccaa);
-      const provinciaNorm = normalizar(provincia);
-      const municipioNorm = normalizar(municipio);
-      const filtradas = todas.filter(
-        (f) =>
-          normalizar(f.ccaa_seo || f.ccaa) === ccaaNorm &&
-          normalizar(f.provincia_seo || f.provincia) === provinciaNorm &&
-          normalizar(f.municipio_seo || f.municipio) === municipioNorm
-      );
-      setFosas(filtradas);
-      setLoading(false);
-    }
-    fetchFosas();
-  }, [ccaa, provincia, municipio]);
+  if (!municipioFosas.length) return <p>No hay fosas en este municipio</p>;
 
-  // Construir breadcrumbs dinámicos
-  const ccaaUrl = urlParams.ccaa
-    ? `https://www.rtve.es/noticias/fosas-guerra-civil-franquismo/${urlParams.ccaa}/`
-    : undefined;
-  const provinciaUrl =
-    urlParams.ccaa && urlParams.provincia
-      ? `https://www.rtve.es/noticias/fosas-guerra-civil-franquismo/${urlParams.ccaa}/${urlParams.provincia}/`
-      : undefined;
-  const municipioUrl =
-    urlParams.ccaa && urlParams.provincia && urlParams.municipio
-      ? `https://www.rtve.es/noticias/fosas-guerra-civil-franquismo/${urlParams.ccaa}/${urlParams.provincia}/${urlParams.municipio}/`
-      : undefined;
+  // Obtener nombres y URLs
+  const ccaaName = municipioFosas[0]?.ccaa || params.ccaa;
+  const provinciaName = municipioFosas[0]?.provincia || params.provincia;
+  const municipioName = municipioFosas[0]?.municipio || params.municipio;
+
+  const ccaaUrl = `https://www.rtve.es/noticias/fosas-guerra-civil-franquismo/${ccaa}/`;
+  const provinciaUrl = `https://www.rtve.es/noticias/fosas-guerra-civil-franquismo/${ccaa}/${provincia}/`;
+  const municipioUrl = `https://www.rtve.es/noticias/fosas-guerra-civil-franquismo/${ccaa}/${provincia}/${municipio}/`;
 
   const breadcrumbs = [
     {
       name: "Fosas de la Guerra Civil y el franquismo",
       item: "https://www.rtve.es/noticias/fosas-guerra-civil-franquismo/",
     },
-  ];
-  if (urlParams.ccaa) {
-    breadcrumbs.push({
-      name: `Fosas de ${urlParams.ccaa}`,
+    {
+      name: `Fosas de ${ccaaName}`,
       item: ccaaUrl,
-    });
-  }
-  if (urlParams.provincia) {
-    breadcrumbs.push({
-      name: `Fosas de ${urlParams.provincia}`,
+    },
+    {
+      name: `Fosas de ${provinciaName}`,
       item: provinciaUrl,
-    });
-  }
-  if (urlParams.municipio) {
-    breadcrumbs.push({
-      name: `Fosas de ${urlParams.municipio}`,
+    },
+    {
+      name: `Fosas de ${municipioName}`,
       item: municipioUrl,
-    });
-  }
+    },
+  ];
 
   // JSON-LD para breadcrumb
   const breadcrumbJsonLd = {
@@ -120,12 +89,8 @@ export default function UbicacionPage() {
     "@context": "https://schema.org",
     "@type": "WebPage",
     url: municipioUrl,
-    name: urlParams.municipio
-      ? `Fosas de ${urlParams.municipio} (${urlParams.provincia}, ${urlParams.ccaa}) | RTVE.es`
-      : "Fosas | RTVE.es",
-    description: urlParams.municipio
-      ? `Listado de fosas de la Guerra Civil y el franquismo en ${urlParams.municipio}, ${urlParams.provincia}, ${urlParams.ccaa}. Proyecto RTVE.es`
-      : "Listado de fosas de la Guerra Civil y el franquismo. Proyecto RTVE.es",
+    name: `Fosas de ${municipioName} (${provinciaName}, ${ccaaName}) | RTVE.es`,
+    description: `Listado de fosas de la Guerra Civil y el franquismo en ${municipioName}, ${provinciaName}, ${ccaaName}. Proyecto RTVE.es`,
     isPartOf: { "@id": "https://www.rtve.es/#website" },
     publisher: {
       "@type": "Organization",
@@ -147,11 +112,10 @@ export default function UbicacionPage() {
           <MenuSwitchClient />
           <section style={{ width: "100%", marginBottom: "160px" }}>
             <MapaBuscadorFosas
-              ccaa={urlParams.ccaa}
-              provincia={urlParams.provincia}
-              municipio={urlParams.municipio}
-              fosa={urlParams.fosa}
-              fosas={fosas}
+              ccaa={ccaa}
+              provincia={provincia}
+              municipio={municipio}
+              fosas={municipioFosas}
             />
           </section>
 
