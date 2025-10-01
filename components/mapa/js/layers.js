@@ -51,7 +51,7 @@ export function montarCapaFosas(map, fosas, soloNarrativas = false) {
   }
 
   // Agregar leyenda si no existe
-  agregarLeyenda(map);
+  agregarLeyenda(map, soloNarrativas);
 
   // Capa sombra
   if (!map.getLayer("fosasShadow")) {
@@ -261,8 +261,9 @@ export function actualizarDatosFosas(map, fosasFiltradas) {
 /**
  * Agrega una leyenda al mapa en la esquina superior derecha
  * @param {mapboxgl.Map} map
+ * @param {boolean} soloNarrativas - si true muestra solo leyenda de historias, si false muestra ambas
  */
-function agregarLeyenda(map) {
+function agregarLeyenda(map, soloNarrativas = false) {
   // Verificar si ya existe la leyenda
   if (document.getElementById("mapa-leyenda")) {
     return;
@@ -289,9 +290,10 @@ function agregarLeyenda(map) {
     border: 1px solid #ddd;
   `;
 
-  // Crear el contenido de la leyenda
-  leyenda.innerHTML = `
-    <div style="display:flex; align-items: center; justify-content: center; gap: 20px;">
+  // Crear contenido según el tipo de mapa
+  if (soloNarrativas) {
+    // Solo para mapa de historias: únicamente "Historias destacadas"
+    leyenda.innerHTML = `
       <div style="display: flex; align-items: center;">
         <div style="
           width: 12px; 
@@ -303,19 +305,36 @@ function agregarLeyenda(map) {
         "></div>
         <span style="color: #333; font-weight: 500;">Historias destacadas</span>
       </div>
-      <div style="display: flex; align-items: center;">
-        <div style="
-          width: 12px; 
-          height: 12px; 
-          background-color: #796060; 
-          border-radius: 50%; 
-          margin-right: 8px;
-          border: 1px solid rgba(0,0,0,0.2);
-        "></div>
-        <span style="color: #333; font-weight: 500;">Fosas</span>
+    `;
+  } else {
+    // Para mapa buscador: ambas leyendas
+    leyenda.innerHTML = `
+      <div style="display:flex; align-items: center; justify-content: center; gap: 20px;">
+        <div style="display: flex; align-items: center;">
+          <div style="
+            width: 12px; 
+            height: 12px; 
+            background-color: #D69F1A; 
+            border-radius: 50%; 
+            margin-right: 8px;
+            border: 1px solid rgba(0,0,0,0.2);
+          "></div>
+          <span style="color: #333; font-weight: 500;">Historias destacadas</span>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div style="
+            width: 12px; 
+            height: 12px; 
+            background-color: #796060; 
+            border-radius: 50%; 
+            margin-right: 8px;
+            border: 1px solid rgba(0,0,0,0.2);
+          "></div>
+          <span style="color: #333; font-weight: 500;">Fosas</span>
+        </div>
       </div>
-    </div>
-  `;
+    `;
+  }
 
   // Agregar la leyenda al contenedor del mapa
   const mapContainer = map.getContainer();
