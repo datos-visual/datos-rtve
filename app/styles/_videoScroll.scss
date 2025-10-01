@@ -16,9 +16,13 @@
 .video-scroll-spacers {
   position: relative;
   z-index: 1;
-  
+
   .scroll-section {
     height: 100vh;
     width: 100%;
   }
+}
+
+.intro-text {
+  font-size: clamp(2.167rem, calc(4vw + 1rem), 4.167rem);
 }

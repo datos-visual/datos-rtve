@@ -47,31 +47,30 @@ function FosasPageContent() {
       content: "",
       showAt: 0,
       hideAt: 5,
-      visible: false
+      visible: false,
     },
     {
       content: "Más de 20.000 víctimas siguen en cementerios, cunetas y pozos",
       showAt: 5,
       hideAt: 10,
-      background: 'rgba(255,255,255,0.9)',
-      fontSize: '20px',
-      fontWeight: 'bold'
+      background: "transparent",
+      backdropFilter: "blur(0)",
+      color: "#ffffff",
     },
     {
-      content: "Descubre las 6.000 fosas de España y recupera la memoria de las víctimas",
+      content:
+        "Descubre las 6.000 fosas de España y recupera la memoria de las víctimas",
       showAt: 10,
       hideAt: 17,
-      background: 'rgba(255,255,255,0.9)',
-      fontSize: '18px'
-    }
+      background: "transparent",
+      backdropFilter: "blur(0)",
+      color: "#ffffff",
+    },
   ];
 
   return (
     <main>
-      <VideoScroll 
-        duration={23} 
-        cards={videoCards}
-      >
+      <VideoScroll duration={23} cards={videoCards}>
         {/* Contenido del mapa */}
         <section className="buscador-mapa-fosas">
           <MenuSwitch
@@ -93,8 +92,8 @@ function FosasPageContent() {
             <h2 className="buscador-intro__title">Buscador de fosas</h2>
             <p className="buscador-intro__text">
               La Guerra Civil y el franquismo convirtieron a España en una gran
-              fosa común. En las últimas décadas se han exhumado los restos de más
-              de 18.000 víctimas. Se estima que más de 20.000 siguen en
+              fosa común. En las últimas décadas se han exhumado los restos de
+              más de 18.000 víctimas. Se estima que más de 20.000 siguen en
               cementerios, cunetas, pozos y otros lugares donde los responsables
               de sus asesinatos intentaron ocultar los cuerpos o enterrarlos sin
               dignidad, para prolongar el castigo a ellos y a sus familias.
@@ -107,28 +106,28 @@ function FosasPageContent() {
               sumarísimos sin garantías.
             </p>
             <p className="buscador-intro__text">
-              Este es el primer mapa audiovisual de las fosas de la Guerra Civil y
-              el franquismo, donde puedes descubrir las 6.000 fosas de España y
-              recuperar la memoria de algunas de las víctimas. Una parte de la
+              Este es el primer mapa audiovisual de las fosas de la Guerra Civil
+              y el franquismo, donde puedes descubrir las 6.000 fosas de España
+              y recuperar la memoria de algunas de las víctimas. Una parte de la
               historia que yace aún en la tierra.
               <br />
               <br />
-              1. No importa la coordenada: en España no es posible estar a más de
-              X kilómetros de una fosa común. Algunas contienen los restos de
+              1. No importa la coordenada: en España no es posible estar a más
+              de X kilómetros de una fosa común. Algunas contienen los restos de
               miles de personas; otras son enterramientos individuales.
               <br />
-              2. Uno de cada XX municipios españoles tiene en su terreno al menos
-              una fosa de la Guerra Civil o el franquismo. Se han exhumado 1.300
-              de las 6.000 registradas actualmente.
+              2. Uno de cada XX municipios españoles tiene en su terreno al
+              menos una fosa de la Guerra Civil o el franquismo. Se han exhumado
+              1.300 de las 6.000 registradas actualmente.
               <br />
-              3. La exhumación en Priaranza del Bierzo (León) en el año 2000 marcó
-              un hito en la preservación de la memoria democrática. Desde entonces
-              se han recuperado los restos de más de 18.000 personas, de las
-              cuales solo se han podido identificar unas 700.
+              3. La exhumación en Priaranza del Bierzo (León) en el año 2000
+              marcó un hito en la preservación de la memoria democrática. Desde
+              entonces se han recuperado los restos de más de 18.000 personas,
+              de las cuales solo se han podido identificar unas 700.
               <br />
               4. A medida que continúan las prospecciones, el número de fosas
-              sigue aumentando. Es probable que algunos de los desaparecidos no se
-              lleguen a encontrar nunca.
+              sigue aumentando. Es probable que algunos de los desaparecidos no
+              se lleguen a encontrar nunca.
             </p>
           </div>
 
