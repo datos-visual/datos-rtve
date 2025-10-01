@@ -20,6 +20,10 @@ const toGeoJSON = (filas) => ({
         provincia: f.provincia,
         status: f.status,
         url_ficha: f.url_ficha,
+        linea_narrativa: f.linea_narrativa,
+        tieneLineaNarrativa: !!(f.linea_narrativa && 
+          f.linea_narrativa.toLowerCase() !== 'null' && 
+          f.linea_narrativa.trim() !== ''),
       },
     })),
 });
@@ -59,7 +63,7 @@ export function montarCapaFosas(map, fosas, soloNarrativas = false) {
     );
   }
 
-  // Capa principal (con feature-state)
+  // Capa principal (con colores condicionales basados en línea narrativa)
   if (!map.getLayer("fosasLayer")) {
     map.addLayer(
       {
@@ -68,7 +72,12 @@ export function montarCapaFosas(map, fosas, soloNarrativas = false) {
         source: "fosas",
         paint: {
           "circle-radius": 5,
-          "circle-color": soloNarrativas ? "#D69F1A" : "#796060", // naranja si narrativas, rojo si no
+          "circle-color": [
+            "case",
+            ["==", ["get", "tieneLineaNarrativa"], true],
+            "#D69F1A", // Color dorado para fosas con línea narrativa
+            "#796060"  // Color gris/marrón para fosas sin línea narrativa
+          ],
           "circle-stroke-color": "rgba(0,0,0,.6)",
           "circle-stroke-width": 0.5,
           "circle-blur": 0.4,
@@ -215,7 +224,17 @@ export function actualizarDatosFosas(map, fosasFiltradas) {
     src.setData(toGeoJSON(fosasFiltradas));
   }
 
-  // 2. Aplicar filtros por IDs (para ocultar puntos no filtrados)
+  // 2. Actualizar el color de la capa si es necesario (aplicar colores condicionales)
+  if (map.getLayer("fosasLayer")) {
+    map.setPaintProperty("fosasLayer", "circle-color", [
+      "case",
+      ["==", ["get", "tieneLineaNarrativa"], true],
+      "#D69F1A", // Color dorado para fosas con línea narrativa
+      "#796060"  // Color gris/marrón para fosas sin línea narrativa
+    ]);
+  }
+
+  // 3. Aplicar filtros por IDs (para ocultar puntos no filtrados)
   const ids = fosasFiltradas.map((f) => String(f.id));
   if (!map.getLayer("fosasLayer")) return;
 
