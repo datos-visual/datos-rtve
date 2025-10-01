@@ -270,6 +270,70 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     []
   );
 
+  // === FUNCIÓN DE ZOOM A ZONA BUSCADA ===
+  const zoomAZonaBuscada = useCallback(() => {
+    if (!mapaRef.current?.map || !busquedaTexto.trim() || !fosasFiltradas.length) return;
+
+    // Filtrar fosas con coordenadas válidas
+    const fosasConCoordenadas = fosasFiltradas.filter(
+      (fosa) => fosa.lat && fosa.lon && 
+      !isNaN(parseFloat(fosa.lat)) && !isNaN(parseFloat(fosa.lon))
+    );
+
+    if (fosasConCoordenadas.length === 0) return;
+
+    const map = mapaRef.current.map;
+
+    if (fosasConCoordenadas.length === 1) {
+      // Una sola fosa: zoom a ella
+      const fosa = fosasConCoordenadas[0];
+      map.flyTo({
+        center: [parseFloat(fosa.lon), parseFloat(fosa.lat)],
+        zoom: 12,
+        duration: 1500
+      });
+    } else {
+      // Múltiples fosas: calcular bounds y ajustar vista
+      const coords = fosasConCoordenadas.map(fosa => [
+        parseFloat(fosa.lon), 
+        parseFloat(fosa.lat)
+      ]);
+
+      // Calcular bounding box
+      const lons = coords.map(coord => coord[0]);
+      const lats = coords.map(coord => coord[1]);
+      
+      const minLon = Math.min(...lons);
+      const maxLon = Math.max(...lons);
+      const minLat = Math.min(...lats);
+      const maxLat = Math.max(...lats);
+
+      // Crear bounds con un pequeño padding
+      const bounds = [
+        [minLon - 0.01, minLat - 0.01], // suroeste
+        [maxLon + 0.01, maxLat + 0.01]  // noreste
+      ];
+
+      map.fitBounds(bounds, {
+        padding: 50,
+        duration: 1500,
+        maxZoom: 14
+      });
+    }
+  }, [busquedaTexto, fosasFiltradas]);
+
+  // Efecto para hacer zoom cuando cambia la búsqueda aplicada
+  useEffect(() => {
+    if (busquedaTexto.trim()) {
+      // Pequeño delay para asegurar que el mapa y las fosas estén actualizadas
+      const timeoutId = setTimeout(() => {
+        zoomAZonaBuscada();
+      }, 300);
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [busquedaTexto, zoomAZonaBuscada]);
+
   // === RETURN ===
   return {
     // Estado
@@ -303,6 +367,7 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
 
     // Utilidades
     aplicarFiltroUbicacion,
+    zoomAZonaBuscada,
     totalFosas: fosas.length,
     totalFiltradas: fosasFiltradas.length,
     hayFiltrosActivos:

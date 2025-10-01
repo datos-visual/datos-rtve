@@ -26,7 +26,7 @@ export default function MapaBuscadorFosas({
   // Estado de datos
   const [fosas, setFosas] = useState(fosasProp || []);
   const [fosasVisiblesEnMapa, setFosasVisiblesEnMapa] = useState([]);
-  
+
   // Estado para autocompletar
   const [sugerencias, setSugerencias] = useState([]);
   const [sugerenciasVisibles, setSugerenciasVisibles] = useState(false);
@@ -57,6 +57,7 @@ export default function MapaBuscadorFosas({
     handleToggleStatusPanel,
     loadMoreItems,
     aplicarFiltroUbicacion,
+    zoomAZonaBuscada,
     totalFiltradas,
     loadingInfo,
     isLoadingMore,
@@ -82,151 +83,177 @@ export default function MapaBuscadorFosas({
       const ccaaSlug = slugify(f.ccaa_seo || f.ccaa);
       const provSlug = slugify(f.provincia_seo || f.provincia);
       const munSlug = slugify(f.municipio_seo || f.municipio);
-      
+
       if (ccaaSlug && !ccaaMap.has(ccaaSlug))
-        ccaaMap.set(ccaaSlug, { 
-          slug: ccaaSlug, 
+        ccaaMap.set(ccaaSlug, {
+          slug: ccaaSlug,
           nombre: f.ccaa_seo || f.ccaa,
-          tipo: 'ccaa'
+          tipo: "ccaa",
         });
       if (provSlug && !provMap.has(provSlug))
-        provMap.set(provSlug, { 
-          slug: provSlug, 
+        provMap.set(provSlug, {
+          slug: provSlug,
           nombre: f.provincia_seo || f.provincia,
           ccaaSlug,
           ccaaNombre: f.ccaa_seo || f.ccaa,
-          tipo: 'provincia'
+          tipo: "provincia",
         });
       if (munSlug && !munMap.has(munSlug))
-        munMap.set(munSlug, { 
-          slug: munSlug, 
+        munMap.set(munSlug, {
+          slug: munSlug,
           nombre: f.municipio_seo || f.municipio,
-          provSlug, 
+          provSlug,
           ccaaSlug,
           provNombre: f.provincia_seo || f.provincia,
           ccaaNombre: f.ccaa_seo || f.ccaa,
-          tipo: 'municipio'
+          tipo: "municipio",
         });
     }
     return { slugify, ccaaMap, provMap, munMap };
   }, [fosas]);
 
   // Generar sugerencias basadas en el texto de entrada
-  const generarSugerencias = useCallback((texto) => {
-    if (!texto || texto.length < 2) {
-      setSugerencias([]);
-      setSugerenciasVisibles(false);
-      return;
-    }
-
-    const { ccaaMap, provMap, munMap } = indiceGeografico;
-    const textoLower = texto.toLowerCase();
-    const sugerenciasEncontradas = [];
-
-    // Buscar en CCAs
-    for (const [slug, data] of ccaaMap) {
-      if (data.nombre.toLowerCase().includes(textoLower) || slug.includes(textoLower)) {
-        sugerenciasEncontradas.push({
-          ...data,
-          coincidencia: data.nombre,
-          url: `/${slug}`
-        });
+  const generarSugerencias = useCallback(
+    (texto) => {
+      if (!texto || texto.length < 2) {
+        setSugerencias([]);
+        setSugerenciasVisibles(false);
+        return;
       }
-    }
 
-    // Buscar en provincias
-    for (const [slug, data] of provMap) {
-      if (data.nombre.toLowerCase().includes(textoLower) || slug.includes(textoLower)) {
-        sugerenciasEncontradas.push({
-          ...data,
-          coincidencia: `${data.nombre}, ${data.ccaaNombre}`,
-          url: `/${data.ccaaSlug}/${slug}`
-        });
+      const { ccaaMap, provMap, munMap } = indiceGeografico;
+      const textoLower = texto.toLowerCase();
+      const sugerenciasEncontradas = [];
+
+      // Buscar en CCAs
+      for (const [slug, data] of ccaaMap) {
+        if (
+          data.nombre.toLowerCase().includes(textoLower) ||
+          slug.includes(textoLower)
+        ) {
+          sugerenciasEncontradas.push({
+            ...data,
+            coincidencia: data.nombre,
+            url: `/${slug}`,
+          });
+        }
       }
-    }
 
-    // Buscar en municipios
-    for (const [slug, data] of munMap) {
-      if (data.nombre.toLowerCase().includes(textoLower) || slug.includes(textoLower)) {
-        sugerenciasEncontradas.push({
-          ...data,
-          coincidencia: `${data.nombre}, ${data.provNombre}`,
-          url: `/${data.ccaaSlug}/${data.provSlug}/${slug}/`
-        });
+      // Buscar en provincias
+      for (const [slug, data] of provMap) {
+        if (
+          data.nombre.toLowerCase().includes(textoLower) ||
+          slug.includes(textoLower)
+        ) {
+          sugerenciasEncontradas.push({
+            ...data,
+            coincidencia: `${data.nombre}, ${data.ccaaNombre}`,
+            url: `/${data.ccaaSlug}/${slug}`,
+          });
+        }
       }
-    }
 
-    // Limitar a 8 sugerencias y ordenar por relevancia
-    const sugerenciasLimitadas = sugerenciasEncontradas
-      .sort((a, b) => {
-        // Priorizar coincidencias exactas al inicio
-        const aExacta = a.nombre.toLowerCase() === textoLower;
-        const bExacta = b.nombre.toLowerCase() === textoLower;
-        if (aExacta && !bExacta) return -1;
-        if (!aExacta && bExacta) return 1;
-        
-        // Luego por tipo (ccaa > provincia > municipio)
-        const ordenTipo = { ccaa: 0, provincia: 1, municipio: 2 };
-        return ordenTipo[a.tipo] - ordenTipo[b.tipo];
-      })
-      .slice(0, 8);
+      // Buscar en municipios
+      for (const [slug, data] of munMap) {
+        if (
+          data.nombre.toLowerCase().includes(textoLower) ||
+          slug.includes(textoLower)
+        ) {
+          sugerenciasEncontradas.push({
+            ...data,
+            coincidencia: `${data.nombre}, ${data.provNombre}`,
+            url: `/${data.ccaaSlug}/${data.provSlug}/${slug}/`,
+          });
+        }
+      }
 
-    setSugerencias(sugerenciasLimitadas);
-    setSugerenciasVisibles(sugerenciasLimitadas.length > 0);
-  }, [indiceGeografico]);
+      // Limitar a 8 sugerencias y ordenar por relevancia
+      const sugerenciasLimitadas = sugerenciasEncontradas
+        .sort((a, b) => {
+          // Priorizar coincidencias exactas al inicio
+          const aExacta = a.nombre.toLowerCase() === textoLower;
+          const bExacta = b.nombre.toLowerCase() === textoLower;
+          if (aExacta && !bExacta) return -1;
+          if (!aExacta && bExacta) return 1;
+
+          // Luego por tipo (ccaa > provincia > municipio)
+          const ordenTipo = { ccaa: 0, provincia: 1, municipio: 2 };
+          return ordenTipo[a.tipo] - ordenTipo[b.tipo];
+        })
+        .slice(0, 8);
+
+      setSugerencias(sugerenciasLimitadas);
+      setSugerenciasVisibles(sugerenciasLimitadas.length > 0);
+    },
+    [indiceGeografico]
+  );
 
   // Manejar el cambio en el input con sugerencias
-  const handleBusquedaChangeConSugerencias = useCallback((e) => {
-    const valor = e.target.value;
-    handleBusquedaChange(e);
-    generarSugerencias(valor);
-    setIndiceSugerencia(-1);
-  }, [handleBusquedaChange, generarSugerencias]);
+  const handleBusquedaChangeConSugerencias = useCallback(
+    (e) => {
+      const valor = e.target.value;
+      handleBusquedaChange(e);
+      generarSugerencias(valor);
+      setIndiceSugerencia(-1);
+    },
+    [handleBusquedaChange, generarSugerencias]
+  );
 
   // Manejar navegación con teclado en sugerencias
-  const handleKeyDown = useCallback((e) => {
-    if (!sugerenciasVisibles || sugerencias.length === 0) return;
+  const handleKeyDown = useCallback(
+    (e) => {
+      if (!sugerenciasVisibles || sugerencias.length === 0) return;
 
-    switch (e.key) {
-      case 'ArrowDown':
-        e.preventDefault();
-        setIndiceSugerencia(prev => 
-          prev < sugerencias.length - 1 ? prev + 1 : 0
-        );
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        setIndiceSugerencia(prev => 
-          prev > 0 ? prev - 1 : sugerencias.length - 1
-        );
-        break;
-      case 'Enter':
-        e.preventDefault();
-        if (indiceSugerencia >= 0 && sugerencias[indiceSugerencia]) {
-          seleccionarSugerencia(sugerencias[indiceSugerencia]);
-        } else {
-          handleFormSubmit(e);
-        }
-        break;
-      case 'Escape':
-        setSugerenciasVisibles(false);
-        setIndiceSugerencia(-1);
-        break;
-    }
-  }, [sugerenciasVisibles, sugerencias, indiceSugerencia, handleFormSubmit]);
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          setIndiceSugerencia((prev) =>
+            prev < sugerencias.length - 1 ? prev + 1 : 0
+          );
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          setIndiceSugerencia((prev) =>
+            prev > 0 ? prev - 1 : sugerencias.length - 1
+          );
+          break;
+        case "Enter":
+          e.preventDefault();
+          if (indiceSugerencia >= 0 && sugerencias[indiceSugerencia]) {
+            seleccionarSugerencia(sugerencias[indiceSugerencia]);
+          } else {
+            handleFormSubmit(e);
+          }
+          break;
+        case "Escape":
+          setSugerenciasVisibles(false);
+          setIndiceSugerencia(-1);
+          break;
+      }
+    },
+    [sugerenciasVisibles, sugerencias, indiceSugerencia, handleFormSubmit]
+  );
 
   // Seleccionar una sugerencia
-  const seleccionarSugerencia = useCallback((sugerencia) => {
-    setBusquedaInput(sugerencia.nombre);
-    setBusquedaTexto(sugerencia.nombre);
-    setSugerenciasVisibles(false);
-    setIndiceSugerencia(-1);
-    
-    // Navegar a la URL correspondiente
-    if (typeof window !== "undefined") {
-      window.history.replaceState({}, "", sugerencia.url);
-    }
-  }, [setBusquedaInput, setBusquedaTexto]);
+  const seleccionarSugerencia = useCallback(
+    (sugerencia) => {
+      setBusquedaInput(sugerencia.nombre);
+      setBusquedaTexto(sugerencia.nombre);
+      setSugerenciasVisibles(false);
+      setIndiceSugerencia(-1);
+
+      // Navegar a la URL correspondiente
+      if (typeof window !== "undefined") {
+        window.history.replaceState({}, "", sugerencia.url);
+      }
+
+      // Hacer zoom a la zona después de un pequeño delay para asegurar que las fosas se actualicen
+      setTimeout(() => {
+        zoomAZonaBuscada();
+      }, 100);
+    },
+    [setBusquedaInput, setBusquedaTexto, zoomAZonaBuscada]
+  );
 
   // Cerrar sugerencias al hacer clic fuera
   const cerrarSugerencias = useCallback(() => {
@@ -406,7 +433,7 @@ export default function MapaBuscadorFosas({
 
   const SearchForm = useMemo(
     () => (
-      <div className="search-form-container" style={{ position: 'relative' }}>
+      <div className="search-form-container" style={{ position: "relative" }}>
         <form
           role="search"
           aria-label="Buscador de fosas"
@@ -450,34 +477,38 @@ export default function MapaBuscadorFosas({
             </svg>
           </button>
         </form>
-        
+
         {/* Panel de sugerencias */}
         {sugerenciasVisibles && sugerencias.length > 0 && (
-          <div 
+          <div
             className="autocomplete-suggestions"
             style={{
-              position: 'absolute',
-              top: '100%',
+              position: "absolute",
+              top: "100%",
               left: 0,
               right: 0,
-              backgroundColor: 'white',
-              border: '1px solid #ddd',
-              borderRadius: '4px',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              backgroundColor: "white",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
               zIndex: 1000,
-              maxHeight: '300px',
-              overflowY: 'auto'
+              maxHeight: "300px",
+              overflowY: "auto",
             }}
           >
             {sugerencias.map((sugerencia, index) => (
               <div
                 key={`${sugerencia.tipo}-${sugerencia.slug}`}
-                className={`autocomplete-item ${index === indiceSugerencia ? 'highlighted' : ''}`}
+                className={`autocomplete-item ${
+                  index === indiceSugerencia ? "highlighted" : ""
+                }`}
                 style={{
-                  padding: '12px 16px',
-                  cursor: 'pointer',
-                  borderBottom: index < sugerencias.length - 1 ? '1px solid #eee' : 'none',
-                  backgroundColor: index === indiceSugerencia ? '#f5f5f5' : 'white'
+                  padding: "12px 16px",
+                  cursor: "pointer",
+                  borderBottom:
+                    index < sugerencias.length - 1 ? "1px solid #eee" : "none",
+                  backgroundColor:
+                    index === indiceSugerencia ? "#f5f5f5" : "white",
                 }}
                 onMouseDown={(e) => {
                   e.preventDefault(); // Evita que onBlur se dispare antes
@@ -485,19 +516,21 @@ export default function MapaBuscadorFosas({
                 }}
                 onMouseEnter={() => setIndiceSugerencia(index)}
               >
-                <div style={{ fontWeight: '500', color: '#333' }}>
+                <div style={{ fontWeight: "500", color: "#333" }}>
                   {sugerencia.nombre}
                 </div>
-                <div style={{ fontSize: '0.85em', color: '#666' }}>
-                  {sugerencia.tipo === 'ccaa' && 'Comunidad Autónoma'}
-                  {sugerencia.tipo === 'provincia' && `Provincia, ${sugerencia.ccaaNombre}`}
-                  {sugerencia.tipo === 'municipio' && `Municipio, ${sugerencia.provNombre}`}
+                <div style={{ fontSize: "0.85em", color: "#666" }}>
+                  {sugerencia.tipo === "ccaa" && "Comunidad Autónoma"}
+                  {sugerencia.tipo === "provincia" &&
+                    `Provincia, ${sugerencia.ccaaNombre}`}
+                  {sugerencia.tipo === "municipio" &&
+                    `Municipio, ${sugerencia.provNombre}`}
                 </div>
               </div>
             ))}
           </div>
         )}
-        
+
         <button
           type="button"
           id="toggle-busqueda"
