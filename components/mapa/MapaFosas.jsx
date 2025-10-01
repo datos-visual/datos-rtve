@@ -131,7 +131,7 @@ const MapaFosas = forwardRef(
           setAllFosas(fosasData);
           setFosas(fosasData);
         })
-        .catch((err) => console.error("Error al cargar fosas:", err));
+        .catch((err) => {});
 
       return () => {
         mounted = false;
@@ -244,7 +244,6 @@ const MapaFosas = forwardRef(
           }
         })
         .catch((err) => {
-          console.error("Error al geocodificar:", err);
           alert("Error en la geocodificación.");
         });
     };
@@ -258,7 +257,6 @@ const MapaFosas = forwardRef(
 
       const f = fosas.find((x) => x.id === idBuscado);
       if (!f) {
-        console.warn("ID no encontrado:", idBuscado);
         return;
       }
 
@@ -271,8 +269,6 @@ const MapaFosas = forwardRef(
         const query = [f.municipio, f.codigo_postal].filter(Boolean).join(" ");
         if (query) {
           geocodeFallback(query, f.id);
-        } else {
-          console.warn("Sin coordenadas ni datos para geocodificar:", f.id);
         }
       }
     }, [map, fosas]);

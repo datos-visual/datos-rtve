@@ -63,7 +63,6 @@ export default function MapaHistorias({
   
   // Actualizar categoría cuando cambie la prop initialCategoria
   useEffect(() => {
-    console.log('🏷️ MapaHistorias - initialCategoria cambió a:', initialCategoria);
     setCategoriaSeleccionada(initialCategoria);
   }, [initialCategoria]);
   const [estadoSeleccionado, setEstadoSeleccionado] = useState("todos");
@@ -99,13 +98,11 @@ export default function MapaHistorias({
     cargaIniciadaRef.current = true;
 
     const cargar = async () => {
-      console.log("📦 MapaHistorias: Iniciando carga de datos...");
       setCargando(true);
       setError(null);
 
       try {
         const todas = await cargarFosas();
-        console.log(`✅ MapaHistorias: ${todas.length} fosas cargadas`);
 
         const filtradas = todas.filter(
           (f) =>
@@ -113,7 +110,6 @@ export default function MapaHistorias({
             f.linea_narrativa.trim() &&
             f.linea_narrativa.trim().toLowerCase() !== "null"
         );
-        console.log(`🎯 MapaHistorias: ${filtradas.length} fosas con línea narrativa`);
 
         setFosas(filtradas);
         setCargando(false);
@@ -126,7 +122,6 @@ export default function MapaHistorias({
           if (encontrada) setSelectedFosa(encontrada);
         }
       } catch (err) {
-        console.error("❌ Error al cargar fosas:", err);
         setError(err.message || "Error al cargar datos");
         setCargando(false);
       }

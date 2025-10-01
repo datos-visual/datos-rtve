@@ -75,7 +75,7 @@ export default function MenuSwitch({ onOpenMenu }) {
       // Opcional: mostrar feedback visual
       alert("Enlace copiado al portapapeles");
     } catch (err) {
-      console.error("Error al copiar enlace:", err);
+      // Error al copiar
     }
     setShareOpen(false);
   };

@@ -69,7 +69,6 @@ export default function ListadoSEO({ fosaSeleccionada = null, fosas = [] }) {
           setLoading(false);
         })
         .catch((error) => {
-          console.error("Error cargando fosas:", error);
           setLoading(false);
         });
     }
