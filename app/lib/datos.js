@@ -66,8 +66,8 @@ const normalizarCoordenada = (coord) => {
  * @returns {Object} Objeto fosa normalizado
  */
 const crearObjetoFosa = (rawData) => {
-  const id = normId(rawData.id_datos ?? rawData.code);
-  const municipio = rawData.municipality?.trim();
+  const id = normId(rawData.id_datos);
+  const municipio = rawData.municipio ? String(rawData.municipio).trim() : null;
 
   if (!id || !municipio) {
     return null; // Datos insuficientes
@@ -76,28 +76,31 @@ const crearObjetoFosa = (rawData) => {
   return {
     id,
     municipio,
-    municipio_seo: rawData.municipality_seo ?? null,
-    provincia: rawData.provincia?.trim() ?? null,
-    provincia_seo: rawData.provincia_seo ?? null,
-    ccaa: rawData.ccaa?.trim() ?? null,
-    ccaa_seo: rawData.ccaa_seo ?? null,
-    denominacion: rawData.title?.trim() ?? rawData.denominacion?.trim() ?? null,
-    title: rawData.title?.trim() ?? null,
-    title_seo: rawData.title_seo ?? null,
-    fosa_seo: rawData.fosa_seo ?? rawData.title_seo ?? null,
+    municipio_seo: rawData.municipioSeo ?? null,
+    provincia: rawData.provincia ? String(rawData.provincia).trim() : null,
+    provincia_seo: rawData.provinciaSeo ?? null,
+    ccaa: rawData.ccaa ? String(rawData.ccaa).trim() : null,
+    ccaa_seo: rawData.ccaaSeo ?? null,
+    denominacion: rawData.titulo ? String(rawData.titulo).trim() : null,
+    title: rawData.titulo ? String(rawData.titulo).trim() : null,
+    title_seo: rawData.tituloSeo ?? null,
+    fosa_seo: rawData.tituloSeo ?? null,
     event_date: rawData.event_date ?? null,
     event_date_end: rawData.event_date_end ?? null,
-    status: rawData.status_filtro?.trim() ?? null,
-    linea_narrativa: rawData.linea_narrativa?.trim() ?? null,
+    status: rawData.status_filtro ? String(rawData.status_filtro).trim() : null,
+    linea_narrativa: rawData.linea_narrativa ? String(rawData.linea_narrativa).trim() : null,
     lineas: normalizarLineasNarrativas(rawData.linea_narrativa),
-    n_buried: rawData.n_buried,
-    detalle_linea_narrativa: rawData.detalle_linea_narrativa,
-    fuente_info: rawData.fuente_info,
-    fuente_enlace: rawData.fuente_enlace,
+    n_buried: rawData.n_buried ?? null,
+    detalle_linea_narrativa: rawData.detalle_linea_narrativa ?? null,
+    fuente_info: rawData.fuente_info ?? null,
+    fuente_enlace: rawData.fuente_enlace ?? null,
     url_ficha: "",
     isInDedalo: Boolean(rawData.isInDedalo),
     section_id: rawData.section_id ?? null,
     deposit_type: rawData.deposit_type ?? null,
+    cod_ine: rawData.cod_ine ?? null,
+    destacado: rawData.destacado ?? null,
+    vitaminada: rawData.vitaminada ?? null,
   };
 };
 

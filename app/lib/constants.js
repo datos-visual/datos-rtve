@@ -29,7 +29,7 @@ export const NARRATIVE_MAPPINGS = {
 // Campos requeridos para validación
 export const REQUIRED_FIELDS = {
   ID: ["id_datos", "code"],
-  MUNICIPALITY: ["municipality"],
+  MUNICIPALITY: ["municipio", "municipality"],
 };
 
 // Configuración de logging
