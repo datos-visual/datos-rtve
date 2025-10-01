@@ -25,6 +25,9 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
   const [selectedFosa, setSelectedFosa] = useState(null);
   const [error, setError] = useState(null);
   const [listaVisible, setListaVisible] = useState(false);
+  // busquedaInput: lo que el usuario está escribiendo ahora.
+  // busquedaTexto: término de búsqueda aplicado (solo cambia al enviar el formulario)
+  const [busquedaInput, setBusquedaInput] = useState("");
   const [busquedaTexto, setBusquedaTexto] = useState("");
   const [estadosSeleccionados, setEstadosSeleccionados] = useState(CONFIG.DEFAULT_STATES);
   const [statusPanelExpanded, setStatusPanelExpanded] = useState(true);
@@ -113,20 +116,17 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     loadAttemptRef.current = 0;
   }, []);
 
+  // Al cambiar el input NO aplicamos aún la búsqueda; solo actualizamos el valor del campo.
   const handleBusquedaChange = useCallback((e) => {
-    setBusquedaTexto(e.target.value);
-    if (debounceTimeoutRef.current) clearTimeout(debounceTimeoutRef.current);
-    resetScrollState();
-  }, [resetScrollState]);
+    setBusquedaInput(e.target.value);
+  }, []);
 
   const handleFormSubmit = useCallback((e) => {
     e.preventDefault();
-    const input = e.target.querySelector('input[name="busqueda"]');
-    if (input) {
-      setBusquedaTexto(input.value);
-      resetScrollState();
-    }
-  }, [resetScrollState]);
+    // Aplicar término escrito
+    setBusquedaTexto(busquedaInput.trim());
+    resetScrollState();
+  }, [busquedaInput, resetScrollState]);
 
   const handleToggleClick = useCallback(() => {
     setListaVisible(prev => !prev);
@@ -241,7 +241,8 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     error,
     setError,
     listaVisible,
-    busquedaTexto,
+  busquedaTexto,
+  busquedaInput,
     estadosSeleccionados,
     statusPanelExpanded,
     fosasFiltradas,
