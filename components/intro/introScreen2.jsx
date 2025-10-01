@@ -120,7 +120,7 @@ export default function IntroScreen2({onNavigation}) {
                     </div>
                     <div className="button-wrapper">
                         <button
-                            className={`btn-historias ${tooltipVisible ? "active" : ""}`}
+                            className={`primary-btn btn-historias ${tooltipVisible ? "active" : "primary-btn"}`}
                             ref={historiasBtnRef}
                             onClick={toggleTooltip}
                         >
@@ -132,6 +132,40 @@ export default function IntroScreen2({onNavigation}) {
                                 aria-hidden="true"
                             />
                         </button>
+                        <div
+                            className={`tooltip-categorias ${tooltipVisible ? "" : "hidden"}`}
+                            ref={tooltipRef}
+                            style={{display: tooltipVisible ? "block" : "none"}}
+                        >
+                            
+                            <BotonesCategorias
+                                categorias={CATEGORIES}
+                                onCategoryChange={handleCategoryChange}
+                                useTooltipStyles={true}
+                                ref={containerRef}
+                            />
+                           
+                            <div className="bottom-navigation">
+                                <div className="category-navigation">
+                                    <button
+                                        ref={prevBtnRef}
+                                        className="nav-button prev"
+                                        aria-label="Categoría anterior"
+                                        onClick={() => navigate(-1)}
+                                    >
+                                        ‹
+                                    </button>
+                                    <button
+                                        ref={nextBtnRef}
+                                        className="nav-button next"
+                                        aria-label="Siguiente categoría"
+                                        onClick={() => navigate(1)}
+                                    >
+                                        ›
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                         <button
                             className="primary-btn"
                             onClick={() => (window.location.href = "/mapa")}
@@ -145,48 +179,13 @@ export default function IntroScreen2({onNavigation}) {
                                 aria-hidden="true"
                             />
                         </button>
-
-                        <a href="/mapa" data-link="/mapa" className="text-link-btn">
-                            <span>Saltar introducción</span>
-                        </a>
-                    </div>
-                </div>
-
-                <div
-                    className={`tooltip-categorias ${tooltipVisible ? "" : "hidden"}`}
-                    ref={tooltipRef}
-                    style={{display: tooltipVisible ? "block" : "none"}}
-                >
-                    <div className="vista-figura">
-                        <BotonesCategorias
-                            categorias={CATEGORIES}
-                            onCategoryChange={handleCategoryChange}
-                            useTooltipStyles={true}
-                            ref={containerRef}
-                        />
-                    </div>
-                    <div className="bottom-navigation">
-                        <div className="category-navigation">
-                            <button
-                                ref={prevBtnRef}
-                                className="nav-button prev"
-                                aria-label="Categoría anterior"
-                                onClick={() => navigate(-1)}
-                            >
-                                ‹
-                            </button>
-                            <button
-                                ref={nextBtnRef}
-                                className="nav-button next"
-                                aria-label="Siguiente categoría"
-                                onClick={() => navigate(1)}
-                            >
-                                ›
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
+
+            <a href="/mapa" data-link="/mapa" className="text-link-btn">
+                <span>Saltar introducción</span>
+            </a>
 
             <div className="info-footer">
                 <p>

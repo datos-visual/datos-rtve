@@ -266,36 +266,32 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
               )}
             </div>
           </div>
+          <div className="fuentes">
+            <h4 className="fuentes_title">Fuentes</h4>
+            <ul className="fuentes_list">
+              <li className="fuentes_item">
+                <a href="#">Xunta de Galicia y Memoria Democrática</a>
+              </li>
+            </ul>
+          </div>
 
           <div className="victimas">
             <div className="victimas_header">
-              <h4>Victimas</h4>
-              <p>
-                <strong>Formato de los datos:</strong> Nombre y Apellido, edad,
-                fecha de fusilamiento
-              </p>
+              <h4 className="victimas_header-title">Victimas</h4>
+              <p className="victimas_header-info"><strong>Formato de los datos:</strong> Nombre y Apellido, edad, fecha de fusilamiento</p>
             </div>
 
             <div className="victimas_item">
               <div className="victimas_item-title">
-                <h5>
-                  <strong>Ricardo Gómex Alonso</strong>, 19 años, estudiantes
-                </h5>
-                <a className="victimas_open">Más información</a>
+                <h5><strong>Ricardo Gómex Alonso</strong>, 19 años, estudiantes</h5>
+                {/*<a className="victimas_open">Más información</a>*/}
               </div>
 
-              <p>
-                Aprendió de manera práctica en hospitales de campaña
-                improvisados. Pasaba noches enteras atendiendo heridos. Llevaba
-                una libreta donde escribís los nombres de los que no
-                sobrevivían, apara que no quedaran en el olvido.
-              </p>
+              {/*<p>Aprendió de manera práctica en hospitales de campaña improvisados. Pasaba noches enteras atendiendo heridos. Llevaba una libreta donde escribís los nombres de los que no sobrevivían, apara que no quedaran en el olvido.</p>*/}
             </div>
             <div className="victimas_item">
               <div className="victimas_item-title">
-                <h5>
-                  <strong>Gregorio Muñoz García</strong>, 24 años, maestro
-                </h5>
+                <h5><strong>Gregorio Muñoz García</strong>, 24 años, maestro</h5>
               </div>
             </div>
           </div>
