@@ -1,5 +1,14 @@
 /** @type {import('next').NextConfig} */
 
+import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+// Obtener directorio actual y leer package.json para versión
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const packageJson = JSON.parse(readFileSync(join(__dirname, "package.json"), "utf8"));
+
 // Función para obtener la configuración de assets según el entorno
 const getAssetConfig = () => {
   const env = process.env.APP_ENV;
@@ -32,6 +41,14 @@ const nextConfig = {
 
   // Para assets estáticos (CSS, JS), usar URLs específicas de RTVE
   assetPrefix: assetConfig.assetPrefix,
+
+  // Asegurar que las URLs terminen en barra (/)
+  trailingSlash: true,
+
+  // Build ID basado en la versión del package.json para control de versiones
+  generateBuildId: async () => {
+    return packageJson.version;
+  },
 
   // Configuración de imágenes
   images: {

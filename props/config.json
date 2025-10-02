@@ -45,7 +45,13 @@
     "apiUrl": "http://localhost:3000/api",
     "environment": "development",
     "debug": true,
-    "assetsUrl": "http://localhost:3000"
+    "assetsUrl": "http://localhost:3000",
+    "basePath": "",
+    "domains": {
+      "images": "http://localhost:3000",
+      "css": "http://localhost:3000",
+      "www": "http://localhost:3000"
+    }
   },
   "preproduction": {
     "baseUrl": "https://www-pre.rtve.es/noticias/fosas",
@@ -53,6 +59,12 @@
     "environment": "preproduction",
     "debug": false,
     "assetsUrl": "https://www-pre.rtve.es/noticias/fosas",
+    "basePath": "/noticias/fosas",
+    "domains": {
+      "images": "https://img-pre.rtve.es",
+      "css": "https://css-pre.rtve.es",
+      "www": "https://www-pre.rtve.es"
+    },
     "map": {
       "defaultCenter": [40.4168, -3.7038],
       "defaultZoom": 6
@@ -62,8 +74,7 @@
       "description": "Aplicación para la visualización de fosas comunes de la Guerra Civil y la dictadura franquista en España",
       "domain": "www-pre.rtve.es",
       "url": "https://www-pre.rtve.es/noticias/fosas"
-    },
-    "basePath": "/noticias/fosas"
+    }
   },
   "production": {
     "baseUrl": "https://www.rtve.es/noticias/fosas",
@@ -71,6 +82,12 @@
     "environment": "production",
     "debug": false,
     "assetsUrl": "https://www.rtve.es/noticias/fosas",
+    "basePath": "/noticias/fosas",
+    "domains": {
+      "images": "https://img.rtve.es",
+      "css": "https://css.rtve.es",
+      "www": "https://www.rtve.es"
+    },
     "map": {
       "defaultCenter": [40.4168, -3.7038],
       "defaultZoom": 6
@@ -81,7 +98,6 @@
       "domain": "www.rtve.es",
       "url": "https://www.rtve.es/noticias/fosas"
     },
-    "basePath": "/noticias/fosas",
     "analytics": {
       "enabled": true,
       "gtmId": "GTM-XXXXXX"
