@@ -1,11 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Configuración base que se aplicará según APP_ENV en tiempo de ejecución
-  basePath: process.env.APP_ENV === 'development' ? '' : '/noticias/fosas',
-  
+  // Por defecto usa desarrollo (sin basePath) si APP_ENV no está definido o es 'development'
+  basePath:
+    process.env.APP_ENV === "preproduction" ||
+    process.env.APP_ENV === "production"
+      ? "/noticias/fosas"
+      : "",
+
   // Para assets estáticos, usar la misma configuración que basePath
-  assetPrefix: process.env.APP_ENV === 'development' ? '' : '/noticias/fosas',
-  
+  assetPrefix:
+    process.env.APP_ENV === "preproduction" ||
+    process.env.APP_ENV === "production"
+      ? "/noticias/fosas"
+      : "",
+
   // Configuración de imágenes
   images: {
     remotePatterns: [
@@ -26,9 +35,9 @@ const nextConfig = {
 
   // Variables de entorno públicas
   env: {
-    APP_ENV: process.env.APP_ENV || 'development',
+    APP_ENV: process.env.APP_ENV || "development",
   },
-  
+
   webpack: (config, { isServer }) => {
     // Configuración para manejar dependencias de Node.js en el cliente
     if (!isServer) {
@@ -51,7 +60,7 @@ const nextConfig = {
 
     return config;
   },
-  
+
   // Configuración para permitir el embebido del mapa en sitios externos
   async headers() {
     return [
