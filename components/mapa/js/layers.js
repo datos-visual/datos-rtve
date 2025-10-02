@@ -310,7 +310,19 @@ function agregarLeyenda(map, soloNarrativas = false) {
     // Para mapa buscador: ambas leyendas
     leyenda.innerHTML = `
       <div style="display:flex; align-items: center; justify-content: center; gap: 20px;">
-        <div style="display: flex; align-items: center;">
+      <div style="display: flex; align-items: center;">
+          <div style="
+            width: 12px; 
+            height: 12px; 
+            background-color: #796060; 
+            border-radius: 50%; 
+            margin-right: 8px;
+            border: 1px solid rgba(0,0,0,0.2);
+          "></div>
+          <span style="color: #333; font-weight: 500;">Fosas</span>
+        </div>  
+      
+      <div style="display: flex; align-items: center;">
           <div style="
             width: 12px; 
             height: 12px; 
@@ -321,17 +333,7 @@ function agregarLeyenda(map, soloNarrativas = false) {
           "></div>
           <span style="color: #333; font-weight: 500;">Historias destacadas</span>
         </div>
-        <div style="display: flex; align-items: center;">
-          <div style="
-            width: 12px; 
-            height: 12px; 
-            background-color: #796060; 
-            border-radius: 50%; 
-            margin-right: 8px;
-            border: 1px solid rgba(0,0,0,0.2);
-          "></div>
-          <span style="color: #333; font-weight: 500;">Fosas</span>
-        </div>
+        
       </div>
     `;
   }

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ejemplo de Embed - Mapa de Fosas RTVE</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        margin-bottom: 30px;
+      }
+
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+      }
+
+      p {
+        margin-bottom: 20px;
+      }
+
+      .embed-container {
+        margin-bottom: 40px;
+        border: 1px solid #ddd;
+      }
+
+      .embed-container iframe {
+        width: 100%;
+        height: 600px;
+        border: 0;
+      }
+
+      .code-container {
+        background: #f5f5f5;
+        padding: 20px;
+        border-radius: 4px;
+        margin-bottom: 30px;
+        overflow-x: auto;
+      }
+
+      code {
+        font-family: monospace;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      footer {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid #ddd;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Mapa de Fosas - RTVE</h1>
+      <p>
+        Esta página muestra cómo incrustar el mapa buscador de fosas en tu sitio
+        web.
+      </p>
+    </header>
+
+    <main>
+      <section>
+        <h2>Vista previa</h2>
+        <p>Así se verá el mapa embebido en tu sitio web:</p>
+        <div class="embed-container">
+          <!-- Reemplazar URL_DE_TU_SITIO con la URL real de tu sitio -->
+          <iframe
+            src="URL_DE_TU_SITIO/embed/mapa"
+            width="100%"
+            height="600"
+            title="Mapa de Fosas RTVE"
+            allow="geolocation"
+            loading="lazy"
+          >
+          </iframe>
+        </div>
+      </section>
+
+      <section>
+        <h2>Código para incrustar</h2>
+        <p>
+          Para incluir este mapa en tu sitio web, copia y pega este código HTML:
+        </p>
+        <div class="code-container">
+          <code
+            >&lt;iframe src="URL_DE_TU_SITIO/embed/mapa" width="100%"
+            height="600" style="border:0; max-width:100%;" title="Mapa de Fosas
+            RTVE" allow="geolocation" loading="lazy"&gt; &lt;/iframe&gt;</code
+          >
+        </div>
+      </section>
+
+      <section>
+        <h2>Recomendaciones</h2>
+        <ul>
+          <li>
+            El mapa se adaptará automáticamente al ancho del contenedor donde lo
+            coloques.
+          </li>
+          <li>
+            La altura mínima recomendada es de 500px para una buena experiencia
+            de usuario.
+          </li>
+          <li>
+            Puedes ajustar los valores de width y height según tus necesidades.
+          </li>
+          <li>Para un mejor rendimiento, el iframe utiliza loading="lazy".</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer>
+      <p>© RTVE - Mapa de Fosas</p>
+    </footer>
+  </body>
+</html>

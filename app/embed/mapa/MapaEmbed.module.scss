@@ -1,0 +1,99 @@
+.mapaEmbedContainer {
+  width: 100%;
+  height: 100vh;
+  min-height: 500px;
+  position: relative;
+  
+  :global(.mapa-fosas) {
+    width: 100%;
+    height: 100%;
+  }
+  
+  :global(.mapa-fosas_content) {
+    height: 100%;
+  }
+  
+  .attribution {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 1000;
+    
+    a {
+      color: #333;
+      text-decoration: none;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 300px;
+  
+  .spinner {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 20px;
+    border: 4px solid rgba(195, 15, 20, 0.3);
+    border-radius: 50%;
+    border-top-color: #c30f14;
+    animation: spin 1s ease-in-out infinite;
+  }
+  
+  p {
+    font-size: 16px;
+    color: #666;
+  }
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 300px;
+  padding: 20px;
+  text-align: center;
+  
+  h2 {
+    color: #c30f14;
+    margin-bottom: 10px;
+  }
+  
+  p {
+    margin-bottom: 20px;
+    color: #666;
+  }
+  
+  button {
+    padding: 8px 16px;
+    background-color: #c30f14;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    
+    &:hover {
+      background-color: darken(#c30f14, 10%);
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

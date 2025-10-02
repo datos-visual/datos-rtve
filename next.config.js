@@ -31,8 +31,26 @@ const nextConfig = {
         path: false,
       };
     }
-    
+
     return config;
+  },
+  // Configuración para permitir el embebido del mapa en sitios externos
+  async headers() {
+    return [
+      {
+        source: "/embed/:path*",
+        headers: [
+          {
+            key: "X-Frame-Options",
+            value: "ALLOWALL",
+          },
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "*",
+          },
+        ],
+      },
+    ];
   },
 };
 
