@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mapa de Fosas RTVE - Ejemplo de Integración</title>
+    <style>
+      /* Estilos básicos para la página de ejemplo */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+
+      h1,
+      h2 {
+        color: #444;
+      }
+
+      .container {
+        margin-top: 30px;
+      }
+
+      /* Contenedor del mapa - ajusta estas dimensiones según tus necesidades */
+      .mapa-container {
+        width: 100%;
+        height: 600px;
+        border: 1px solid #ddd;
+        margin: 20px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Mapa de Fosas RTVE</h1>
+    <p>
+      Esta es una página de ejemplo que muestra cómo integrar el mapa de fosas
+      de RTVE en tu sitio web.
+    </p>
+
+    <div class="container">
+      <h2>Mapa de Fosas</h2>
+      <div class="mapa-container">
+        <!-- 
+                INSTRUCCIONES:
+                1. Reemplaza "URL_DE_TU_SITIO" con la URL real de tu sitio, por ejemplo: https://tudominio.com
+                2. No modifiques el resto del código a menos que sepas lo que estás haciendo
+            -->
+        <iframe
+          src="URL_DE_TU_SITIO/embed/mapa"
+          width="100%"
+          height="100%"
+          style="border: 0"
+          title="Mapa de Fosas RTVE"
+          allow="geolocation"
+          loading="lazy"
+        >
+        </iframe>
+      </div>
+      <p><small>Mapa de Fosas © RTVE</small></p>
+    </div>
+  </body>
+</html>
