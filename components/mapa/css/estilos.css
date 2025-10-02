@@ -114,13 +114,17 @@ body {
 }
 
 .mapboxgl-popup-content {
-  background: #796060;
+  background: #333333;
   color: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
   padding: 15px 20px;
   font-family: "Inter", sans-serif;
   font-size: 14px;
+}
+
+strong {
+  color: #e7d6d6;
 }
 
 .mapboxgl-popup-close-button {
