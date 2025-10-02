@@ -228,12 +228,20 @@ export function useMobileSheetManager(isEnabled = false) {
 
     const defaultImage = "https://fotografias.larazon.es/clipping/cmsimages02/2024/11/15/93DFFB09-1D04-4088-99A5-94DC549EE9EC/hallada-fosa-comun-cementerio-val-51-victimas-franquismo_98.jpg?crop=1200,675,x0,y113&width=1900&height=1069&optimize=low&format=webply";
     const titulo = fosa.title?.trim() || `Fosa en ${fosa.municipio || "ubicación desconocida"}`;
+    
+    // Usar imagenDestacada si existe, sino foto, sino imagen, sino default
+    const imagenUrl = fosa.imagenDestacada || fosa.foto || fosa.imagen || defaultImage;
+    
+    // Solo mostrar imagen si hay imagenDestacada o foto
+    const mostrarImagen = fosa.imagenDestacada || fosa.foto;
 
     return `
       <div class="fosa scroll-item" data-id="${fosa.id}" data-index="${index}" style="opacity: 0; transform: translateY(20px); transition: opacity 0.4s ease-out, transform 0.4s ease-out; transition-delay: ${(index % 20) * 50}ms;">
-        <div class="fosa__img">
-          <img src="${fosa.imagen || defaultImage}" alt="Fosa" loading="lazy" decoding="async">
-        </div>
+        ${mostrarImagen ? `
+          <div class="fosa__img">
+            <img src="${imagenUrl}" alt="Fosa" loading="lazy" decoding="async">
+          </div>
+        ` : ''}
         <div class="info">
           <p class="ubicacion ${fosa.status}">
             <span>${fosa.municipio || ''}</span>${fosa.provincia ? ' / ' + fosa.provincia : ''}

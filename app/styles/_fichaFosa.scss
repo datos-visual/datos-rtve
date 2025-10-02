@@ -21,6 +21,9 @@ ficha-fosa {
     background: $text-color-primary;
     padding: 0;
     padding-top: 40px;
+    max-height: 660px;
+    overflow: auto;
+    padding-right: 10px;
 
     @media (min-width: 768px) {
       height: 100%;
@@ -386,6 +389,14 @@ ficha-fosa {
           color: $text-color-secundary;
           text-transform: uppercase;
           margin: 20px 0 10px 0;
+        }
+
+        p {
+          font-family: $font-primary;
+          font-weight: 400;
+          font-size: 14px;
+          line-height: 20px;
+          color: $color-gray-dark-3;
         }
 
         a {

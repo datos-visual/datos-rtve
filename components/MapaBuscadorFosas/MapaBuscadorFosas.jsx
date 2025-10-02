@@ -26,6 +26,7 @@ export default function MapaBuscadorFosas({
   // Estado de datos
   const [fosas, setFosas] = useState(fosasProp || []);
   const [fosasVisiblesEnMapa, setFosasVisiblesEnMapa] = useState([]);
+  const [imagenesDestacadas, setImagenesDestacadas] = useState({});
 
   // Estado para autocompletar
   const [sugerencias, setSugerencias] = useState([]);
@@ -342,12 +343,78 @@ export default function MapaBuscadorFosas({
 
   // === EFECTOS PRINCIPALES ===
 
+  // === CARGAR IMAGENES DESTACADAS PARA MÓVIL ===
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const cargarImagenesDestacadas = async () => {
+      const fosasACargar = fosasVisibles.slice(0, 20);
+      const nuevasImagenes = {};
+
+      for (const fosa of fosasACargar) {
+        if (fosa.section_id || fosa.isInDedalo) {
+          const id = fosa.id_datos || fosa.id;
+          const idFormateado = String(id).padStart(5, '0');
+          
+          try {
+            const response = await fetch(
+              `https://www.rtve.es/datos-repo/test-fosas/v2/fichas/${idFormateado}.json`
+            );
+            
+            if (response.ok) {
+              const data = await response.json();
+              const contenidos = data.contenidos || [];
+              const destacado = contenidos.find(c => c.destacado === true);
+              
+              if (destacado) {
+                const { tipo, id: contentId, url } = destacado;
+                let thumbnail = null;
+                
+                if (tipo === "video") {
+                  thumbnail = `https://img.rtve.es/v/${contentId}?w=400`;
+                } else if (tipo === "audio") {
+                  thumbnail = `https://img.rtve.es/a/${contentId}?w=400`;
+                } else if (tipo === "foto") {
+                  thumbnail = url;
+                }
+                
+                if (thumbnail) {
+                  nuevasImagenes[fosa.id] = thumbnail;
+                }
+              }
+            }
+          } catch (error) {
+            // Silenciar errores
+          }
+        }
+      }
+
+      if (Object.keys(nuevasImagenes).length > 0) {
+        setImagenesDestacadas(prev => ({...prev, ...nuevasImagenes}));
+      }
+    };
+
+    if (fosasVisibles.length > 0) {
+      cargarImagenesDestacadas();
+    }
+  }, [fosasVisibles, isMobile]);
+
+  // Combinar fosas visibles con imágenes destacadas para móvil
+  const fosasConImagenes = useMemo(() => {
+    if (!isMobile) return fosasVisibles;
+    
+    return fosasVisibles.map(fosa => ({
+      ...fosa,
+      imagenDestacada: imagenesDestacadas[fosa.id] || null
+    }));
+  }, [fosasVisibles, imagenesDestacadas, isMobile]);
+
   // Actualizar mobile sheet cuando cambien las fosas visibles
   useEffect(() => {
     if (isMobile && mobileSheet.updateContent) {
-      mobileSheet.updateContent(fosasVisibles, loadingInfo, isLoadingMore);
+      mobileSheet.updateContent(fosasConImagenes, loadingInfo, isLoadingMore);
     }
-  }, [fosasVisibles, loadingInfo, isLoadingMore, isMobile, mobileSheet]);
+  }, [fosasConImagenes, loadingInfo, isLoadingMore, isMobile, mobileSheet]);
 
   // === TRACKEAR FOSAS VISIBLES DEL MAPA ===
   useEffect(() => {
