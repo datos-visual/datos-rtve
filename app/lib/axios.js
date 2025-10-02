@@ -53,20 +53,15 @@ const getErrorMessage = (error) => {
  */
 const devLogger = {
   request: (config) => {
-    console.log(`📡 Request: ${config.method?.toUpperCase()} ${config.url}`);
+    // Request logging disabled
   },
   
   response: (response) => {
-    console.log(`✅ Response: ${response.status} ${response.config.url}`);
+    // Response logging disabled
   },
   
   error: (error) => {
-    console.error("❌ Response error:", {
-      url: error.config?.url,
-      status: error.response?.status,
-      message: error.message,
-      data: error.response?.data,
-    });
+    // Error logging disabled
   },
 };
 
@@ -89,7 +84,6 @@ const createApiClient = () => {
       return config;
     },
     (error) => {
-      console.error("❌ Request error:", error);
       return Promise.reject(error);
     }
   );

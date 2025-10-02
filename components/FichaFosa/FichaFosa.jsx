@@ -40,33 +40,23 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
       // Formatear ID con padding de ceros (ej: 257 → 00257)
       const idFormateado = String(idDatos).padStart(5, '0');
       
-      console.log('🔍 Intentando cargar ficha extra para id:', idDatos, '→', idFormateado);
       fetch(
         `https://www.rtve.es/datos-repo/test-fosas/v2/fichas/${idFormateado}.json`
       )
         .then((resp) => {
           if (!resp.ok) {
-            console.warn(`⚠️ Ficha extra no disponible para id: ${idDatos} (${resp.status})`);
             return null;
           }
           return resp.json();
         })
         .then((data) => {
           if (data) {
-            console.log('✅ Ficha extra cargada exitosamente para id:', idDatos);
-            console.log('   📦 Contenidos:', data?.contenidos?.length || 0);
-            console.log('   👥 Víctimas:', data?.victimas?.length || 0);
             setFichaExtra(data);
-          } else {
-            console.log('ℹ️ No hay datos adicionales para esta fosa (usando solo datos base)');
           }
         })
         .catch((e) => {
           // Silenciar errores de CORS/404 ya que son esperados para muchas fosas
-          console.log(`ℹ️ Ficha extra no disponible para id: ${idDatos} (usando solo datos base)`);
         });
-    } else {
-      console.warn('⚠️ Fosa sin ID, no se puede cargar ficha extra');
     }
   }, [fosa]);
 
@@ -370,11 +360,6 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
           </div>
 
           {/* Multimedia - Solo mostrar si hay contenidos disponibles */}
-          {(() => {
-            const tieneContenidos = contenidos && contenidos.length > 0;
-            console.log('🎬 Evaluando condición multimedia - contenidos:', contenidos?.length || 0, 'evaluación:', tieneContenidos);
-            return null;
-          })()}
           {contenidos && contenidos.length > 0 && (
             <div className="multimedia">
               <h3>MATERIAL MULTIMEDIA</h3>
@@ -440,7 +425,6 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                             src={generarThumbnail(video, 400)} 
                             alt={video.titulo || 'Video'}
                             onError={(e) => {
-                              console.error('Error cargando thumbnail de video:', video.id);
                               e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="225"%3E%3Crect fill="%23cccccc" width="400" height="225"/%3E%3Ctext fill="%23666666" font-family="Arial" font-size="20" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3EImagen no disponible%3C/text%3E%3C/svg%3E';
                             }}
                           />

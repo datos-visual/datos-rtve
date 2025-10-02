@@ -93,7 +93,7 @@ export function useMobileSheetManager(isEnabled = false) {
         
         createMobileSheet(gsap, Draggable);
       } catch (error) {
-        console.error('Error inicializando mobile sheet:', error);
+        // Error inicializando mobile sheet
       }
     };
 

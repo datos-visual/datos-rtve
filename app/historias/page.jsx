@@ -20,7 +20,6 @@ export default function HistoriasPage() {
   useEffect(() => {
     const categoriaFromUrl = searchParams.get("categoria");
     if (categoriaFromUrl) {
-      console.log('📍 HistoriasPage - Categoría desde URL:', categoriaFromUrl);
       setCategoriaInicial(categoriaFromUrl);
     }
   }, [searchParams]);

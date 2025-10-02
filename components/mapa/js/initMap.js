@@ -25,8 +25,7 @@ export function createMap(container) {
  * GEOCODER - Temporalmente deshabilitado para evitar errores de dependencias
  */
 export function createGeocoder(map, localGeocoderFn) {
-  // Temporalmente deshabilitado hasta resolver problemas de dependencias
-  console.log("Geocoder temporalmente deshabilitado");
+  // Geocoder temporalmente deshabilitado hasta resolver problemas de dependencias
   return null;
   
   /* Código original comentado:

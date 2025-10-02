@@ -82,27 +82,12 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
       : Array.isArray(fosas)
       ? fosas
       : [];
-    console.log("📋 ListaFosasCompleta recibe:", {
-      contexto,
-      totalItems: result.length,
-      categoria,
-      filtrarPorViewport,
-      ejemplos: result.slice(0, 2).map((item) => ({
-        id: item?.id,
-        municipio: item?.municipio,
-        narrativa: item?.linea_narrativa,
-      })),
-    });
     return result;
   }, [lista, fosas, contexto, categoria, filtrarPorViewport]);
 
   // === SINCRONIZAR FOSAS EXTERNAS ===
   useEffect(() => {
     if (fosasVisiblesExternas && Array.isArray(fosasVisiblesExternas)) {
-      console.log(
-        "🔄 Actualizando fosas externas:",
-        fosasVisiblesExternas.length
-      );
       setFosasExternas(fosasVisiblesExternas);
     }
   }, [fosasVisiblesExternas]);
@@ -116,13 +101,6 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
       !itemsBase.length ||
       actualizandoViewportRef.current
     ) {
-      console.log("🚫 No actualizando viewport:", {
-        modoViewportActivo,
-        map: !!map,
-        mapaListo,
-        itemsBaseLength: itemsBase.length,
-        actualizando: actualizandoViewportRef.current,
-      });
       return;
     }
 
@@ -131,34 +109,8 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
       const bounds = map.getBounds();
 
       if (!bounds) {
-        console.warn("No se pudieron obtener los bounds del mapa");
         return;
       }
-
-      // Debug: revisar algunos datos de muestra
-      console.log("🔍 Datos de muestra antes del filtro:", {
-        totalFosas: itemsBase.length,
-        primeras3Fosas: itemsBase.slice(0, 3).map((fosa) => ({
-          id: fosa.id,
-          lat: fosa.lat,
-          lon: fosa.lon,
-          latType: typeof fosa.lat,
-          lonType: typeof fosa.lon,
-          municipio: fosa.municipio,
-          latParsed: parseFloat(fosa.lat),
-          lonParsed: parseFloat(fosa.lon),
-          latValid: !isNaN(parseFloat(fosa.lat)),
-          lonValid: !isNaN(parseFloat(fosa.lon)),
-          latNumber: typeof fosa.lat === "number" ? fosa.lat : "not number",
-          lonNumber: typeof fosa.lon === "number" ? fosa.lon : "not number",
-        })),
-        bounds: {
-          north: bounds.getNorth(),
-          south: bounds.getSouth(),
-          east: bounds.getEast(),
-          west: bounds.getWest(),
-        },
-      });
 
       // Filtrar fosas que están dentro del viewport
       const visibles = itemsBase.filter((fosa) => {
@@ -189,31 +141,9 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
         return dentroDelBounds;
       });
 
-      console.log("🗺️ Actualizando viewport:", {
-        totalFosas: itemsBase.length,
-        fosasConCoordenadasValidas: itemsBase.filter((f) => {
-          const lat = typeof f.lat === "number" ? f.lat : parseFloat(f.lat);
-          const lon = typeof f.lon === "number" ? f.lon : parseFloat(f.lon);
-          return !isNaN(lat) && !isNaN(lon);
-        }).length,
-        fosasVisibles: visibles.length,
-        bounds: {
-          north: bounds.getNorth(),
-          south: bounds.getSouth(),
-          east: bounds.getEast(),
-          west: bounds.getWest(),
-        },
-        algunasFosasVisibles: visibles.slice(0, 3).map((f) => ({
-          id: f.id,
-          lat: f.lat,
-          lon: f.lon,
-          municipio: f.municipio,
-        })),
-      });
-
       setFosasEnViewport(visibles);
     } catch (error) {
-      console.error("Error al actualizar fosas en viewport:", error);
+      // Error al actualizar fosas en viewport
     } finally {
       actualizandoViewportRef.current = false;
     }
@@ -235,7 +165,6 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
     };
 
     const handleMapReady = () => {
-      console.log("🗺️ Mapa listo para filtro por viewport");
       setMapaListo(true);
       setTimeout(() => {
         actualizarFosasViewport();
@@ -277,26 +206,15 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
 
   // === DETERMINAR QUÉ ITEMS MOSTRAR ===
   const items = useMemo(() => {
-    console.log("🔄 Calculando items a mostrar:", {
-      modoViewportActivo,
-      mapaListo,
-      fosasExternas: fosasExternas.length,
-      fosasEnViewport: fosasEnViewport.length,
-      itemsBase: itemsBase.length,
-    });
-
     // Si tenemos fosas visibles externas (desde useMapaRecuento), usarlas cuando el viewport esté activo
     if (modoViewportActivo && fosasExternas.length > 0) {
-      console.log("📦 Usando fosas visibles externas:", fosasExternas.length);
       return fosasExternas;
     }
     // Si no, usar nuestra lógica interna
     if (modoViewportActivo && mapaListo) {
-      console.log("🔧 Usando lógica interna:", fosasEnViewport.length);
       return fosasEnViewport;
     }
 
-    console.log("📋 Usando items base:", itemsBase.length);
     return itemsBase;
   }, [
     modoViewportActivo,
@@ -313,7 +231,6 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
       
       // Solo cargar las primeras 20 fosas para no saturar
       const fosasACargar = items.slice(0, 20);
-      console.log('🖼️ Cargando imágenes destacadas para', fosasACargar.length, 'fosas');
 
       for (const fosa of fosasACargar) {
         // Solo intentar cargar si la fosa tiene section_id o isInDedalo
@@ -321,13 +238,6 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
           // Usar id_datos si existe, sino usar id
           const id = fosa.id_datos || fosa.id;
           const idFormateado = String(id).padStart(5, '0');
-          
-          console.log('🔍 Cargando destacado para fosa:', {
-            id: fosa.id,
-            id_datos: fosa.id_datos,
-            idFormateado,
-            municipio: fosa.municipio
-          });
           
           try {
             const response = await fetch(
@@ -344,23 +254,15 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
               if (destacado) {
                 const thumbnail = generarThumbnail(destacado, 400);
                 nuevasImagenes[fosa.id] = thumbnail;
-                console.log('✅ Imagen destacada encontrada:', {
-                  fosaId: fosa.id,
-                  thumbnail,
-                  tipo: destacado.tipo
-                });
-              } else {
-                console.log('ℹ️ Sin destacado para fosa:', fosa.id);
               }
             }
           } catch (error) {
-            console.log('⚠️ Error cargando fosa:', fosa.id, error.message);
+            // Error silenciado
           }
         }
       }
 
       if (Object.keys(nuevasImagenes).length > 0) {
-        console.log('💾 Guardando', Object.keys(nuevasImagenes).length, 'imágenes destacadas');
         setImagenesDestacadas(prev => ({...prev, ...nuevasImagenes}));
       }
     };
@@ -422,26 +324,6 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
     return "";
   })();
 
-  console.log("🎨 ListaFosasCompleta renderizando:", {
-    contexto,
-    totalItems: items.length,
-    totalBase: itemsBase.length,
-    fosasEnViewport: fosasEnViewport.length,
-    fosasExternas: fosasExternas.length,
-    fosasVisiblesExternas: fosasVisiblesExternas?.length || "no disponibles",
-    modoViewportActivo,
-    mapaListo,
-    introVisible,
-    config: config.tipoContenido,
-    mensajeVacio,
-    ejemplosItems: items.slice(0, 2).map((item) => ({
-      id: item?.id,
-      lat: item?.lat,
-      lon: item?.lon,
-      municipio: item?.municipio,
-    })),
-  });
-
   // === HANDLERS ===
   const toggleIntro = () => {
     const nuevo = !introVisible;
@@ -459,8 +341,6 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
     
     // Activar highlight en el mapa
     map.setFilter("fosaHighlight", ["==", "id", String(fosa.id)]);
-    
-    console.log("🎯 Hover sobre fosa:", fosa.id, fosa.title);
   }, [map]);
 
   const handleItemLeave = useCallback(() => {
@@ -568,13 +448,7 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
             // si se pasó renderListaFosas usarla, sino fallback
             renderListaFosas ? (
               (() => {
-                console.log("🔧 Usando renderListaFosas personalizada");
                 const result = renderListaFosas(items, onItemClick);
-                console.log(
-                  "🔧 Resultado de renderListaFosas:",
-                  typeof result,
-                  result
-                );
                 // Si es string HTML, convertir a JSX usando dangerouslySetInnerHTML
                 if (typeof result === "string") {
                   return <div dangerouslySetInnerHTML={{ __html: result }} />;
@@ -582,10 +456,7 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
                 return result;
               })()
             ) : (
-              (() => {
-                console.log("🔧 Usando defaultRender");
-                return defaultRender(items, onItemClick);
-              })()
+              defaultRender(items, onItemClick)
             )
           ) : (
             <p className="no-resultados">{mensajeVacio}</p>

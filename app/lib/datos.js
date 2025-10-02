@@ -140,7 +140,7 @@ const validarEstructuraJSON = (data) => {
   }
 
   if (arrayOfArrays.length === 0) {
-    console.warn(`⚠️ ${DATA_ERROR_MESSAGES.EMPTY_ARRAYS}`);
+    // Array vacío
   }
 
   if (propertiesMapping.length === 0) {
@@ -189,23 +189,19 @@ const calcularEstadisticas = (fosasProcesadas) => {
  */
 const logger = {
   processing: (...args) => {
-    if (LOG_CONFIG.ENABLE_PROCESSING_LOGS) {
-      console.log(...args);
-    }
+    // Processing logs disabled
   },
 
   performance: (...args) => {
-    if (LOG_CONFIG.ENABLE_PERFORMANCE_LOGS) {
-      console.log(...args);
-    }
+    // Performance logs disabled
   },
 
   error: (...args) => {
-    console.error(...args);
+    // Error logs disabled
   },
 
   warn: (...args) => {
-    console.warn(...args);
+    // Warning logs disabled
   },
 };
 
