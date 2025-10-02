@@ -96,12 +96,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
     foto,
     video,
     audio,
-    vitaminada,
   } = fosa;
-
-  // Log para debug: verificar estado de vitaminada
-  console.log(`📺 Fosa "${title}" - vitaminada:`, vitaminada, 'tipo:', typeof vitaminada, '- Mostrará multimedia:', vitaminada === true);
-  console.log('   Valores de fosa completa:', { vitaminada, id: fosa.id, title });
 
   // Datos de fichaExtra (API v2)
   const descripcion =
@@ -344,12 +339,13 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
             )}
           </div>
 
-          {/* Multimedia - Solo mostrar si vitaminada es true */}
+          {/* Multimedia - Solo mostrar si hay contenidos disponibles */}
           {(() => {
-            console.log('🎬 Evaluando condición multimedia - vitaminada:', vitaminada, 'evaluación:', !!vitaminada);
+            const tieneContenidos = contenidos && contenidos.length > 0;
+            console.log('🎬 Evaluando condición multimedia - contenidos:', contenidos?.length || 0, 'evaluación:', tieneContenidos);
             return null;
           })()}
-          {vitaminada && (
+          {contenidos && contenidos.length > 0 && (
             <div className="multimedia">
               <h3>MATERIAL MULTIMEDIA</h3>
               <div className="multimedia-tabs">
