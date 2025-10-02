@@ -210,7 +210,12 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
             <div className="info-cabecera">
               <div className="info-ubicacion">
                 <p className="ubicacion">
-                  <strong>{municipio}</strong> | {provincia} | {ccaa}
+                  {/* Si municipio y provincia son iguales, mostrar solo provincia */}
+                  {municipio === provincia ? (
+                    <><strong>{provincia}</strong> | {ccaa}</>
+                  ) : (
+                    <><strong>{municipio}</strong> | {provincia} | {ccaa}</>
+                  )}
                 </p>
                 <h2 className="info-ubicacion__name">
                   {title || "Sin título"}
