@@ -317,13 +317,19 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
             <p>{descripcion}</p>
 
             {fuenteInfo && (
-              <>
-                <h4>FUENTES</h4>
-                <a href={fuenteEnlace} target="_blank">
-                  {fuenteInfo} 🔗
-                </a>
-              </>
-            )}
+            <>
+              <div className="fuentes">
+                <h4 className="fuentes_title">Fuentes</h4>
+                <ul className="fuentes_list">
+                  <li className="fuentes_item">
+                    <a href={fuenteEnlace} target="_blank">
+                      {fuenteInfo}
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </>
+          )}
 
             {noticias.length > 0 && (
               <>
@@ -507,15 +513,6 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
             </div>
             </div>
           )}
-          
-          <div className="fuentes">
-            <h4 className="fuentes_title">Fuentes</h4>
-            <ul className="fuentes_list">
-              <li className="fuentes_item">
-                <a href="#">Xunta de Galicia y Memoria Democrática</a>
-              </li>
-            </ul>
-          </div>
 
           {victimas.length > 0 && (
             <div className="victimas">
