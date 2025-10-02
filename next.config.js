@@ -10,6 +10,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "www.rtve.es",
       },
+      {
+        protocol: "https",
+        hostname: "img.rtve.es",
+      },
     ],
   },
   webpack: (config, { isServer }) => {

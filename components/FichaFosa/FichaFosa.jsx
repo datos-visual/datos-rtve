@@ -191,6 +191,12 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
   // Filtrar contenidos destacados para el modal
   const contenidosDestacados = contenidosMultimedia.filter(c => c.destacado === true);
 
+  // Obtener imagen destacada SOLO del primer contenido con destacado: true
+  // No usar foto como fallback para mantener la lógica de contenidos
+  const imagenDestacada = contenidosDestacados.length > 0 
+    ? contenidosDestacados[0].thumbnail 
+    : null;
+
   return (
     <div className="ficha-fosa inline">
       {/* Cerrar */}
@@ -263,19 +269,18 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
             </ul>
           </div>
 
-          {/* Imagen destacada */}
-          <div className="foto" onClick={handleOpenModal}>
-            <h2 className="datos__title">{title || "Sin título"}</h2>
-            <Image
-              src={
-                foto ||
-                "https://fotografias.larazon.es/clipping/cmsimages02/2024/11/15/93DFFB09-1D04-4088-99A5-94DC549EE9EC/hallada-fosa-comun-cementerio-val-51-victimas-franquismo_98.jpg"
-              }
-              alt="Imagen fosa"
-              width={500}
-              height={300}
-            />
-          </div>
+          {/* Imagen destacada - Solo si existe contenido con destacado: true */}
+          {imagenDestacada && (
+            <div className="foto" onClick={handleOpenModal}>
+              <h2 className="datos__title">{title || "Sin título"}</h2>
+              <Image
+                src={imagenDestacada}
+                alt={`${title} - Imagen destacada`}
+                width={500}
+                height={300}
+              />
+            </div>
+          )}
 
           {/* ModalCarrousel */}
           <ModalCarrousel
