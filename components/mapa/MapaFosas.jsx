@@ -15,6 +15,7 @@ import { abrirFicha } from "./js/overlay.js";
 import { getParam, normId } from "./js/utils.js";
 import { MAPBOX_TOKEN } from "./js/config.js";
 import { useMapaRecuento } from "../../app/hooks/useMapaRecuento.js";
+import { addNavButtons } from "./js/navButtons.js";
 import "./css/estilos.css";
 
 // Normalizar nombres para la URL
@@ -43,6 +44,7 @@ const MapaFosas = forwardRef(
     const [allFosas, setAllFosas] = useState([]);
     const [capaMontada, setCapaMontada] = useState(false);
     const [pendingSubset, setPendingSubset] = useState(null);
+    const [navButtons, setNavButtons] = useState(null);
 
     // Hook para calcular fosas visibles en viewport
     const { fosasVisibles, actualizarRecuento } = useMapaRecuento(map, fosas);
@@ -104,8 +106,11 @@ const MapaFosas = forwardRef(
         },
         map: map, // Exponer la instancia del mapa directamente
         fosasVisibles: fosasVisibles, // Exponer las fosas visibles desde useMapaRecuento
+        // Exponer funciones de navegación
+        navegarAPeninsula: navButtons?.navegarAPeninsula,
+        navegarACanarias: navButtons?.navegarACanarias,
       }),
-      [map, fosas, allFosas, fosasVisibles]
+      [map, fosas, allFosas, fosasVisibles, navButtons]
     );
 
     // Cargar fosas y crear mapa
@@ -225,6 +230,32 @@ const MapaFosas = forwardRef(
           }));
       });
     }, [map, fosas, sinGeocoder]);
+
+    // Agregar botones de navegación Península/Canarias
+    useEffect(() => {
+      if (!map) return;
+      
+      const buttons = addNavButtons(map, {
+        peninsulaCenter: [-3, 40],
+        peninsulaZoom: 5,
+        canarias: {
+          center: [-15.847252225331033, 27.867463299169856],
+          zoom: 5.85,
+        },
+        durationMs: 1500,
+        left: 16,
+        margin: 8,
+      });
+      
+      setNavButtons(buttons);
+
+      return () => {
+        // Limpiar botones al desmontar
+        if (buttons && buttons.el && buttons.el.parentNode) {
+          buttons.el.parentNode.removeChild(buttons.el);
+        }
+      };
+    }, [map]);
 
     // Geocoder fallback para casos sin coordenadas
     const geocodeFallback = (query, id) => {

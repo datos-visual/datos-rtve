@@ -190,3 +190,58 @@ body {
   background-color: #ffe599 !important;
   font-weight: bold;
 }
+
+/* Botones de navegación Península/Canarias */
+.navjump {
+  position: absolute;
+  z-index: 11;
+  display: flex;
+  gap: 8px;
+}
+
+.navjump__btn {
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.navjump__btn:hover {
+  background: #fff;
+  border-color: #999;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+.navjump__btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.navjump__btn--peninsula {
+  background: rgba(76, 175, 80, 0.9);
+  color: white;
+  border-color: #4caf50;
+}
+
+.navjump__btn--peninsula:hover {
+  background: #4caf50;
+  border-color: #45a049;
+}
+
+.navjump__btn--canarias {
+  background: rgba(33, 150, 243, 0.9);
+  color: white;
+  border-color: #2196f3;
+}
+
+.navjump__btn--canarias:hover {
+  background: #2196f3;
+  border-color: #1976d2;
+}
