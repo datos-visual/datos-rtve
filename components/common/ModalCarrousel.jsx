@@ -9,13 +9,17 @@ import {
 } from "react";
 
 const ModalCarrousel = forwardRef(function ModalCarrousel(
-  { imagenes = [], videos = [], onClose, startIndex = 0, contentType = "imagenes" },
+  { contenidos = [], destacados = [], imagenes = [], videos = [], onClose, startIndex = 0, contentType = "imagenes" },
   ref
 ) {
   const [visible, setVisible] = useState(false);
   const [idx, setIdx] = useState(0);
   const modalRef = useRef(null);
   const touchStartRef = useRef({ x: 0, y: 0 });
+  
+  // Usar contenidos si están disponibles, sino usar imagenes/videos antiguos
+  const items = contenidos.length > 0 ? contenidos : (contentType === "videos" ? videos : imagenes);
+  const itemsDestacados = destacados.length > 0;
 
   // Abrir modal
   const open = (startIdx = 0) => {
@@ -29,11 +33,10 @@ const ModalCarrousel = forwardRef(function ModalCarrousel(
     if (onClose) onClose();
   };
 
-  // Navegar entre imágenes/videos
+  // Navegar entre imágenes/videos/contenidos
   const mostrar = (i) => {
-    const content = contentType === "videos" ? videos : imagenes;
-    if (!content.length) return;
-    const newIdx = (i + content.length) % content.length;
+    if (!items.length) return;
+    const newIdx = (i + items.length) % items.length;
     setIdx(newIdx);
   };
 
@@ -45,7 +48,7 @@ const ModalCarrousel = forwardRef(function ModalCarrousel(
       close,
       mostrar,
     }),
-    [imagenes, videos, contentType]
+    [items, contenidos, imagenes, videos, contentType]
   );
 
   // Exponer métodos para compatibilidad con Web Component
@@ -55,7 +58,7 @@ const ModalCarrousel = forwardRef(function ModalCarrousel(
       modalRef.current.close = close;
       modalRef.current.mostrar = mostrar;
     }
-  }, [imagenes, videos, contentType]);
+  }, [items, contenidos, imagenes, videos, contentType]);
 
   // Manejar teclas de navegación y scroll
   useEffect(() => {
@@ -211,7 +214,7 @@ const ModalCarrousel = forwardRef(function ModalCarrousel(
         </button>
 
         {/* Carrusel */}
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", maxWidth: "95vw" }}>
           <button
             style={{
               fontSize: "2rem",
@@ -226,39 +229,217 @@ const ModalCarrousel = forwardRef(function ModalCarrousel(
             &#8592;
           </button>
           
-          {contentType === "videos" ? (
-            <iframe
-              src={videos[idx]}
-              style={{
-                width: "80vw",
-                height: "45vw",
-                maxWidth: "1200px",
-                maxHeight: "675px",
-                minWidth: "320px",
-                minHeight: "180px",
-                border: "none",
-                borderRadius: 8,
-                boxShadow: "0 0 20px #000",
-              }}
-              allowFullScreen
-              frameBorder="0"
-              title="Video RTVE"
-            />
-          ) : (
-            <img
-              src={imagenes[idx]}
-              alt="Imagen carrusel"
-              style={{
-                maxWidth: "70vw",
-                maxHeight: "70vh",
-                borderRadius: 8,
-                boxShadow: "0 0 20px #000",
-                transition: "opacity 0.3s ease-in-out",
-                cursor: "pointer",
-              }}
-              onClick={() => mostrar(idx + 1)}
-            />
-          )}
+          {(() => {
+            const currentItem = items[idx];
+            
+            // Si es un objeto de contenido con tipo
+            if (currentItem && typeof currentItem === 'object' && currentItem.tipo) {
+              if (currentItem.tipo === 'video' && currentItem.embed) {
+                return (
+                  <div style={{ textAlign: 'center' }}>
+                    <iframe
+                      src={currentItem.embed}
+                      style={{
+                        width: "80vw",
+                        height: "45vw",
+                        maxWidth: "1200px",
+                        maxHeight: "675px",
+                        minWidth: "320px",
+                        minHeight: "180px",
+                        border: "none",
+                        borderRadius: 8,
+                        boxShadow: "0 0 20px #000",
+                      }}
+                      allowFullScreen
+                      frameBorder="0"
+                      title={currentItem.titulo || "Video RTVE"}
+                    />
+                    {currentItem.destacado && (
+                      <div style={{
+                        marginTop: '12px',
+                        backgroundColor: '#d32f2f',
+                        color: 'white',
+                        padding: '6px 12px',
+                        borderRadius: '4px',
+                        display: 'inline-block',
+                        fontSize: '12px',
+                        fontWeight: 'bold'
+                      }}>
+                        ⭐ DESTACADO
+                      </div>
+                    )}
+                    {currentItem.titulo && (
+                      <h3 style={{ 
+                        color: 'white', 
+                        marginTop: '16px', 
+                        fontSize: '18px',
+                        maxWidth: '800px',
+                        margin: '16px auto 0'
+                      }}>
+                        {currentItem.titulo}
+                      </h3>
+                    )}
+                    {currentItem.texto && (
+                      <div 
+                        style={{ 
+                          color: '#ccc', 
+                          marginTop: '8px', 
+                          fontSize: '14px',
+                          maxWidth: '800px',
+                          margin: '8px auto 0',
+                          maxHeight: '100px',
+                          overflow: 'auto'
+                        }}
+                        dangerouslySetInnerHTML={{ __html: currentItem.texto }}
+                      />
+                    )}
+                  </div>
+                );
+              } else if (currentItem.tipo === 'audio') {
+                return (
+                  <div style={{ textAlign: 'center', maxWidth: '900px' }}>
+                    {currentItem.embed ? (
+                      // Audio embed de RTVE
+                      <iframe
+                        src={currentItem.embed}
+                        style={{
+                          width: "100%",
+                          maxWidth: "800px",
+                          height: "360px",
+                          border: "none",
+                          borderRadius: 8,
+                          boxShadow: "0 0 20px #000",
+                        }}
+                        allowFullScreen
+                        frameBorder="0"
+                        title={currentItem.titulo || "Audio RTVE"}
+                      />
+                    ) : (
+                      // Fallback: thumbnail + audio player
+                      <>
+                        <img
+                          src={currentItem.thumbnail}
+                          alt={currentItem.titulo || 'Audio'}
+                          style={{
+                            maxWidth: "70vw",
+                            maxHeight: "60vh",
+                            borderRadius: 8,
+                            boxShadow: "0 0 20px #000",
+                            marginBottom: '16px'
+                          }}
+                        />
+                        {currentItem.url && (
+                          <audio 
+                            controls 
+                            src={currentItem.url}
+                            style={{
+                              width: '100%',
+                              maxWidth: '600px',
+                              marginTop: '16px'
+                            }}
+                          />
+                        )}
+                      </>
+                    )}
+                    {currentItem.destacado && (
+                      <div style={{
+                        marginTop: '12px',
+                        backgroundColor: '#d32f2f',
+                        color: 'white',
+                        padding: '6px 12px',
+                        borderRadius: '4px',
+                        display: 'inline-block',
+                        fontSize: '12px',
+                        fontWeight: 'bold'
+                      }}>
+                        ⭐ DESTACADO
+                      </div>
+                    )}
+                    {currentItem.titulo && (
+                      <h3 style={{ 
+                        color: 'white', 
+                        marginTop: '16px', 
+                        fontSize: '18px',
+                        maxWidth: '800px',
+                        margin: '16px auto 0'
+                      }}>
+                        {currentItem.titulo}
+                      </h3>
+                    )}
+                    {currentItem.texto && (
+                      <div 
+                        style={{ 
+                          color: '#ccc', 
+                          marginTop: '8px', 
+                          fontSize: '14px',
+                          maxWidth: '800px',
+                          margin: '8px auto 0',
+                          maxHeight: '100px',
+                          overflow: 'auto'
+                        }}
+                        dangerouslySetInnerHTML={{ __html: currentItem.texto }}
+                      />
+                    )}
+                  </div>
+                );
+              } else if (currentItem.tipo === 'foto') {
+                return (
+                  <img
+                    src={currentItem.url || currentItem.thumbnail}
+                    alt={currentItem.titulo || 'Foto'}
+                    style={{
+                      maxWidth: "70vw",
+                      maxHeight: "70vh",
+                      borderRadius: 8,
+                      boxShadow: "0 0 20px #000",
+                      transition: "opacity 0.3s ease-in-out",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => mostrar(idx + 1)}
+                  />
+                );
+              }
+            }
+            
+            // Fallback: comportamiento antiguo
+            if (contentType === "videos" || (typeof currentItem === 'string' && currentItem.includes('embed'))) {
+              return (
+                <iframe
+                  src={currentItem}
+                  style={{
+                    width: "80vw",
+                    height: "45vw",
+                    maxWidth: "1200px",
+                    maxHeight: "675px",
+                    minWidth: "320px",
+                    minHeight: "180px",
+                    border: "none",
+                    borderRadius: 8,
+                    boxShadow: "0 0 20px #000",
+                  }}
+                  allowFullScreen
+                  frameBorder="0"
+                  title="Video"
+                />
+              );
+            } else {
+              return (
+                <img
+                  src={currentItem}
+                  alt="Imagen carrusel"
+                  style={{
+                    maxWidth: "70vw",
+                    maxHeight: "70vh",
+                    borderRadius: 8,
+                    boxShadow: "0 0 20px #000",
+                    transition: "opacity 0.3s ease-in-out",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => mostrar(idx + 1)}
+                />
+              );
+            }
+          })()}
           
           <button
             style={{
@@ -285,7 +466,7 @@ const ModalCarrousel = forwardRef(function ModalCarrousel(
           }}
         >
           <div>
-            {idx + 1} / {contentType === "videos" ? videos.length : imagenes.length}
+            {idx + 1} / {items.length}
           </div>
           <div
             style={{

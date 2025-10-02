@@ -124,8 +124,9 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
   
   // Separar contenidos por tipo
   const noticias = contenidos.filter(c => c.tipo === "noticia");
-  const videosContenido = contenidos.filter(c => c.tipo === "video" || c.embed);
+  const videosContenido = contenidos.filter(c => c.tipo === "video");
   const audiosContenido = contenidos.filter(c => c.tipo === "audio");
+  const fotosContenido = contenidos.filter(c => c.tipo === "foto");
 
   const claveCategoria = (linea_narrativa || "todas").toLowerCase();
   const textoCategoria =
@@ -134,48 +135,61 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
       : claveCategoria.charAt(0).toUpperCase() + claveCategoria.slice(1);
   const iconoCategoria = iconosCategorias[claveCategoria] || iconFiltro;
 
+  // Función para generar thumbnail según tipo de contenido
+  const generarThumbnail = (contenido, size = 400) => {
+    const { tipo, id, url } = contenido;
+    
+    if (tipo === "video") {
+      return `https://img.rtve.es/v/${id}?w=${size}`;
+    } else if (tipo === "audio") {
+      return `https://img.rtve.es/a/${id}?w=${size}`;
+    } else if (tipo === "foto") {
+      return url;
+    }
+    return null;
+  };
+
   // Multimedia de la fosa base
   const fotosBase = Array.isArray(foto) ? foto : foto ? [foto] : [];
   const videosBase = Array.isArray(video) ? video : video ? [video] : [];
   const audiosBase = Array.isArray(audio) ? audio : audio ? [audio] : [];
 
   // Multimedia de fichaExtra (combinar con base)
-  const fotos = [...fotosBase].filter(Boolean);
-  const videos = [
-    ...videosBase,
-    ...videosContenido.filter(v => v.url && !v.embed).map(v => v.url)
+  // Fotos: combinar base + contenidos tipo foto
+  const fotos = [
+    ...fotosBase,
+    ...fotosContenido.map(f => f.url)
   ].filter(Boolean);
+  
+  // Videos: solo los de la base (los de contenido van en videosEmbed)
+  const videos = [...videosBase].filter(Boolean);
+  
+  // Audios: combinar base + contenidos tipo audio
   const audios = [
     ...audiosBase,
     ...audiosContenido.map(a => a.url)
   ].filter(Boolean);
 
-  // Videos embed de RTVE (para modal)
-  const videosEmbed = [
-    ...videosContenido.filter(v => v.embed).map(v => v.embed)
-  ].filter(Boolean);
+  // Contenidos multimedia completos (para modal con thumbnails)
+  const contenidosMultimedia = [
+    ...videosContenido.map(v => ({
+      ...v,
+      thumbnail: generarThumbnail(v, 400),
+      embed: v.embed || null
+    })),
+    ...audiosContenido.map(a => ({
+      ...a,
+      thumbnail: generarThumbnail(a, 400),
+      embed: a.embed || null
+    })),
+    ...fotosContenido.map(f => ({
+      ...f,
+      thumbnail: generarThumbnail(f, 400)
+    }))
+  ];
 
-  // Debug logs completos
-  console.log('═══════════════════════════════════════');
-  console.log('📊 FICHA FOSA - Datos completos:');
-  console.log('ID Fosa:', fosa?.id);
-  console.log('Section ID:', sectionId);
-  console.log('Status:', statusExtra);
-  console.log('Fechas:', eventDateExtra, '-', eventDateEnd);
-  console.log('Bando represor:', bandoRepresor);
-  console.log('Contexto muerte:', deathContext);
-  console.log('Inhumados:', nBuriedExtra);
-  console.log('Exhumados:', nExhumed);
-  console.log('Intervenciones:', interventionsDateStart, '-', interventionsDateEnd);
-  console.log('Fuente:', fuenteInfo);
-  console.log('---');
-  console.log('📸 Fotos:', fotos.length);
-  console.log('🎬 Videos:', videos.length);
-  console.log('📺 Videos embed:', videosEmbed.length, videosEmbed);
-  console.log('🎵 Audios:', audios.length);
-  console.log('📰 Noticias:', noticias.length, noticias);
-  console.log('👥 Víctimas:', victimas.length, victimas);
-  console.log('═══════════════════════════════════════');
+  // Filtrar contenidos destacados para el modal
+  const contenidosDestacados = contenidosMultimedia.filter(c => c.destacado === true);
 
   return (
     <div className="ficha-fosa inline">
@@ -266,9 +280,8 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
           {/* ModalCarrousel */}
           <ModalCarrousel
             ref={modalRef}
-            imagenes={fotos}
-            videos={videosEmbed}
-            contentType="videos"
+            contenidos={contenidosMultimedia}
+            destacados={contenidosDestacados}
             onClose={handleCloseModal}
           />
         </div>
@@ -352,13 +365,13 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                 className={`tab-btn ${activeTab === "videos" ? "active" : ""}`}
                 onClick={() => setActiveTab("videos")}
               >
-                Videos <span className="badge">{videos.length + videosEmbed.length}</span>
+                Videos <span className="badge">{videosContenido.length}</span>
               </button>
               <button
                 className={`tab-btn ${activeTab === "audios" ? "active" : ""}`}
                 onClick={() => setActiveTab("audios")}
               >
-                Voces <span className="badge">{audios.length}</span>
+                Voces <span className="badge">{audiosContenido.length}</span>
               </button>
             </div>
 
@@ -384,28 +397,71 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
               {activeTab === "videos" && (
                 <div className="tab-content active">
                   <h4>Videos</h4>
-                  {videos.length > 0 || videosEmbed.length > 0 ? (
-                    <>
-                      {/* Videos normales (HTML5) */}
-                      {videos.map((v, i) => (
-                        <video key={`video-${i}`} controls src={v} width="100%" />
-                      ))}
-                      
-                      {/* Videos embed de RTVE */}
-                      {videosEmbed.map((embed, i) => (
-                        <div key={`embed-${i}`} className="video-embed-container">
-                          <iframe
-                            src={embed}
-                            width="100%"
-                            height="360"
-                            frameBorder="0"
-                            allowFullScreen
-                            title={`Video RTVE ${i + 1}`}
-                            style={{ maxWidth: '100%', aspectRatio: '16/9' }}
+                  {videosContenido.length > 0 ? (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
+                      {videosContenido.map((video, i) => (
+                        <div 
+                          key={`video-${i}`} 
+                          style={{ 
+                            cursor: 'pointer',
+                            position: 'relative',
+                            borderRadius: '8px',
+                            overflow: 'hidden',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                            transition: 'transform 0.2s'
+                          }}
+                          onClick={() => handleOpenModal()}
+                          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                        >
+                          {video.destacado && (
+                            <span style={{ 
+                              position: 'absolute',
+                              top: '8px',
+                              left: '8px',
+                              backgroundColor: '#d32f2f', 
+                              color: 'white', 
+                              padding: '4px 8px', 
+                              borderRadius: '4px', 
+                              fontSize: '10px',
+                              fontWeight: 'bold',
+                              zIndex: 1,
+                              textTransform: 'uppercase'
+                            }}>
+                              ⭐ Destacado
+                            </span>
+                          )}
+                          <img 
+                            src={video.thumbnail} 
+                            alt={video.titulo || 'Video'}
+                            style={{ width: '100%', height: '150px', objectFit: 'cover' }}
                           />
+                          <div style={{ 
+                            position: 'absolute',
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
+                            padding: '20px 8px 8px',
+                            color: 'white',
+                            fontSize: '12px',
+                            fontWeight: '500'
+                          }}>
+                            <div style={{ 
+                              position: 'absolute',
+                              top: '50%',
+                              left: '50%',
+                              transform: 'translate(-50%, -100%)',
+                              fontSize: '40px',
+                              opacity: 0.9
+                            }}>
+                              ▶️
+                            </div>
+                            {video.titulo}
+                          </div>
                         </div>
                       ))}
-                    </>
+                    </div>
                   ) : (
                     <p>No hay videos disponibles.</p>
                   )}
@@ -414,8 +470,104 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
               {activeTab === "audios" && (
                 <div className="tab-content active">
                   <h4>Audios</h4>
-                  {audios.length ? (
-                    audios.map((a, i) => <audio key={i} controls src={a} />)
+                  {audiosContenido.length > 0 ? (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
+                      {audiosContenido.map((audio, i) => (
+                        <div 
+                          key={`audio-${i}`} 
+                          style={{ 
+                            cursor: 'pointer',
+                            position: 'relative',
+                            borderRadius: '8px',
+                            overflow: 'hidden',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                            transition: 'transform 0.2s',
+                            height: '150px',
+                            background: '#f5f5f5'
+                          }}
+                          onClick={() => handleOpenModal()}
+                          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                        >
+                          {audio.destacado && (
+                            <span style={{ 
+                              position: 'absolute',
+                              top: '8px',
+                              left: '8px',
+                              backgroundColor: '#d32f2f', 
+                              color: 'white', 
+                              padding: '4px 8px', 
+                              borderRadius: '4px', 
+                              fontSize: '10px',
+                              fontWeight: 'bold',
+                              zIndex: 2,
+                              textTransform: 'uppercase'
+                            }}>
+                              ⭐ Destacado
+                            </span>
+                          )}
+                          <img 
+                            src={audio.thumbnail} 
+                            alt={audio.titulo || 'Audio'}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            onError={(e) => {
+                              // Si la imagen falla, usar gradiente de fallback
+                              e.target.style.display = 'none';
+                              const parent = e.target.parentElement;
+                              parent.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                              parent.style.display = 'flex';
+                              parent.style.alignItems = 'center';
+                              parent.style.justifyContent = 'center';
+                              
+                              // Agregar icono grande de audio si no existe
+                              if (!parent.querySelector('.audio-fallback-icon')) {
+                                const iconDiv = document.createElement('div');
+                                iconDiv.className = 'audio-fallback-icon';
+                                iconDiv.style.cssText = 'font-size: 60px; opacity: 0.3; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;';
+                                iconDiv.textContent = '🎵';
+                                parent.insertBefore(iconDiv, parent.lastChild);
+                              }
+                            }}
+                          />
+                          
+                          {/* Icono de reproducción */}
+                          <div style={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: '48px',
+                            height: '48px',
+                            borderRadius: '50%',
+                            backgroundColor: 'rgba(0,0,0,0.6)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: 'white',
+                            fontSize: '20px',
+                            zIndex: 1,
+                            pointerEvents: 'none'
+                          }}>
+                            ▶
+                          </div>
+                          
+                          <div style={{ 
+                            position: 'absolute',
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
+                            padding: '20px 8px 8px',
+                            color: 'white',
+                            fontSize: '12px',
+                            fontWeight: '500',
+                            zIndex: 1
+                          }}>
+                            {audio.titulo}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   ) : (
                     <p>No hay audios disponibles.</p>
                   )}
