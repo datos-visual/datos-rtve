@@ -96,7 +96,12 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
     foto,
     video,
     audio,
+    vitaminada,
   } = fosa;
+
+  // Log para debug: verificar estado de vitaminada
+  console.log(`📺 Fosa "${title}" - vitaminada:`, vitaminada, 'tipo:', typeof vitaminada, '- Mostrará multimedia:', vitaminada === true);
+  console.log('   Valores de fosa completa:', { vitaminada, id: fosa.id, title });
 
   // Datos de fichaExtra (API v2)
   const descripcion =
@@ -349,31 +354,36 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
             )}
           </div>
 
-          {/* Multimedia */}
-          <div className="multimedia">
-            <h3>MATERIAL MULTIMEDIA</h3>
-            <div className="multimedia-tabs">
-              <button
-                className={`tab-btn ${
-                  activeTab === "imagenes" ? "active" : ""
-                }`}
-                onClick={() => setActiveTab("imagenes")}
-              >
-                Fotos <span className="badge">{fotos.length}</span>
-              </button>
-              <button
-                className={`tab-btn ${activeTab === "videos" ? "active" : ""}`}
-                onClick={() => setActiveTab("videos")}
-              >
-                Videos <span className="badge">{videosContenido.length}</span>
-              </button>
-              <button
-                className={`tab-btn ${activeTab === "audios" ? "active" : ""}`}
-                onClick={() => setActiveTab("audios")}
-              >
-                Voces <span className="badge">{audiosContenido.length}</span>
-              </button>
-            </div>
+          {/* Multimedia - Solo mostrar si vitaminada es true */}
+          {(() => {
+            console.log('🎬 Evaluando condición multimedia - vitaminada:', vitaminada, 'evaluación:', !!vitaminada);
+            return null;
+          })()}
+          {vitaminada && (
+            <div className="multimedia">
+              <h3>MATERIAL MULTIMEDIA</h3>
+              <div className="multimedia-tabs">
+                <button
+                  className={`tab-btn ${
+                    activeTab === "imagenes" ? "active" : ""
+                  }`}
+                  onClick={() => setActiveTab("imagenes")}
+                >
+                  Fotos <span className="badge">{fotos.length}</span>
+                </button>
+                <button
+                  className={`tab-btn ${activeTab === "videos" ? "active" : ""}`}
+                  onClick={() => setActiveTab("videos")}
+                >
+                  Videos <span className="badge">{videosContenido.length}</span>
+                </button>
+                <button
+                  className={`tab-btn ${activeTab === "audios" ? "active" : ""}`}
+                  onClick={() => setActiveTab("audios")}
+                >
+                  Voces <span className="badge">{audiosContenido.length}</span>
+                </button>
+              </div>
 
             <div className="multimedia-content">
               {activeTab === "imagenes" && (
@@ -574,7 +584,9 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                 </div>
               )}
             </div>
-          </div>
+            </div>
+          )}
+          
           <div className="fuentes">
             <h4 className="fuentes_title">Fuentes</h4>
             <ul className="fuentes_list">

@@ -100,7 +100,7 @@ const crearObjetoFosa = (rawData) => {
     deposit_type: rawData.deposit_type ?? null,
     cod_ine: rawData.cod_ine ?? null,
     destacado: rawData.destacado ?? null,
-    vitaminada: rawData.vitaminada ?? null,
+    vitaminada: Boolean(rawData.vitaminada),
   };
 };
 
