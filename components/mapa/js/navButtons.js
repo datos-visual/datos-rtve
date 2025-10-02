@@ -34,15 +34,10 @@ export const canonical = (s) =>
  */
 
 function placeBelowTopLeftControls(map, el, { left = 16, margin = 8 } = {}) {
-  // contenedor de controles top-left (geocoder vive aquí)
-  const topLeft = map.getContainer().querySelector(".mapboxgl-ctrl-top-left");
-  const rect = topLeft ? topLeft.getBoundingClientRect() : null;
-  const parentRect = map.getContainer().getBoundingClientRect();
-
-  const top = rect ? rect.bottom - parentRect.top + margin : 16;
-
-  el.style.top = `${Math.max(0, top)}px`;
-  el.style.left = `${left}px`;
+  el.style.bottom = "0px";
+  el.style.right = "0px";
+  el.style.top = "auto";
+  el.style.left = "auto";
 }
 
 export function addNavButtons(map, opts = {}) {
@@ -63,16 +58,16 @@ export function addNavButtons(map, opts = {}) {
   wrap.style.display = "flex";
   wrap.style.gap = `${gap}px`;
 
-  // botones…
+  // botones con SVGs
   const btnPen = document.createElement("button");
   btnPen.className = "navjump__btn navjump__btn--peninsula";
   btnPen.type = "button";
-  btnPen.textContent = "Península";
+  btnPen.innerHTML = `<img src="/assets/flytoPeninsula.svg" alt="Ir a Península" title="Ir a Península" />`;
 
   const btnCan = document.createElement("button");
   btnCan.className = "navjump__btn navjump__btn--canarias";
   btnCan.type = "button";
-  btnCan.textContent = "Canarias";
+  btnCan.innerHTML = `<img src="/assets/flytoCanarias.svg" alt="Ir a Canarias" title="Ir a Canarias" />`;
 
   wrap.append(btnPen, btnCan);
   map.getContainer().appendChild(wrap);
