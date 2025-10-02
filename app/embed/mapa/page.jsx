@@ -20,7 +20,6 @@ export default function MapaEmbed() {
         setLoaded(true);
         setLoading(false);
       } catch (err) {
-        console.error("Error al cargar datos:", err);
         setError("Error al cargar los datos del mapa");
         setLoading(false);
       }

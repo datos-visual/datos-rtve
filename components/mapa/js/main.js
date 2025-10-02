@@ -53,7 +53,7 @@ const idBuscado = idURL ? normId(idURL) : null;
     // Handler de ?ficha= en la URL (provisional)
     if (idBuscado) {
       const f = fosas.find((x) => x.id === idBuscado);
-      if (!f) return console.warn("ID no encontrado:", idBuscado);
+      if (!f) return;
 
       const zURL = +getParam("zoom") || 14;
       if (f.lat && f.lon) {
@@ -108,7 +108,6 @@ function geocodeFallback(query, id) {
       }
     })
     .catch((err) => {
-      console.error("Error al geocodificar:", err);
       alert("Error en la geocodificación.");
     });
 }

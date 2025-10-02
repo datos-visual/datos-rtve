@@ -85,7 +85,7 @@ export default function EmbedGenerator() {
         setTimeout(() => setCopied(false), 2000);
       })
       .catch((err) => {
-        console.error("Error al copiar:", err);
+        // Error al copiar
       });
   };
 
