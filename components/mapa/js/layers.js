@@ -111,17 +111,30 @@ export function montarCapaFosas(map, fosas, soloNarrativas = false) {
     );
   }
 
-  // Capa de resaltado
   if (!map.getLayer("fosaHighlight")) {
     map.addLayer({
       id: "fosaHighlight",
       type: "circle",
       source: "fosas",
       paint: {
-        "circle-radius": 10,
-        "circle-color": "#f8eb9e",
-        "circle-stroke-color": "#000000",
-        "circle-stroke-width": 2,
+        "circle-radius": 14,
+        "circle-color": "#ffffff",
+        "circle-stroke-color": "#333333",
+        "circle-stroke-width": 4,
+        "circle-opacity": 1,
+        "circle-stroke-opacity": 1,
+      },
+      filter: ["==", "id", ""],
+    });
+
+    map.addLayer({
+      id: "fosaHighlightInner",
+      type: "circle",
+      source: "fosas",
+      paint: {
+        "circle-radius": 9,
+        "circle-color": "#333333",
+        "circle-opacity": 1,
       },
       filter: ["==", "id", ""],
     });
@@ -159,6 +172,7 @@ export function montarCapaFosas(map, fosas, soloNarrativas = false) {
       hoveredId = id;
       map.setFeatureState({ source: "fosas", id: hoveredId }, { hover: true });
       map.setFilter("fosaHighlight", ["==", "id", id]);
+      map.setFilter("fosaHighlightInner", ["==", "id", id]);
     }
 
     // Lista lateral
@@ -190,6 +204,7 @@ export function montarCapaFosas(map, fosas, soloNarrativas = false) {
       hoveredId = null;
 
       map.setFilter("fosaHighlight", ["==", "id", ""]);
+      map.setFilter("fosaHighlightInner", ["==", "id", ""]);
     }
   });
 
@@ -203,6 +218,7 @@ export function montarCapaFosas(map, fosas, soloNarrativas = false) {
     }
 
     map.setFilter("fosaHighlight", ["==", "id", ""]);
+    map.setFilter("fosaHighlightInner", ["==", "id", ""]);
     document
       .querySelector(".fosas-laterales li.highlight")
       ?.classList.remove("highlight");
@@ -250,11 +266,12 @@ export function actualizarDatosFosas(map, fosasFiltradas) {
     map.setFilter("fosasShadow", ["==", "id", "___NINGUNO___"]);
     map.setFilter("fosasHit", ["==", "id", "___NINGUNO___"]);
     map.setFilter("fosaHighlight", ["==", "id", ""]);
+    map.setFilter("fosaHighlightInner", ["==", "id", ""]);
   } else {
     map.setFilter("fosasLayer", ["in", "id", ...ids]);
     map.setFilter("fosasShadow", ["in", "id", ...ids]);
     map.setFilter("fosasHit", ["in", "id", ...ids]);
-    // fosaHighlight se actualiza solo desde hover
+    // fosaHighlight y fosaHighlightInner se actualizan solo desde hover
   }
 }
 

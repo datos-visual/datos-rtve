@@ -15,6 +15,6 @@ export function createTooltip() {
   return new mapboxgl.Popup({
     closeButton: false,
     closeOnClick: false,
-    offset: 10,
+    offset: 20,
   });
 }
