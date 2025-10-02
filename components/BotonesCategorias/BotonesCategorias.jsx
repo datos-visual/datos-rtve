@@ -207,17 +207,9 @@ const BotonesCategorias = forwardRef(
           role="menu"
           aria-hidden={!dropdownOpen}
           style={{
-            position: "absolute",
             top: menuRect ? menuRect.top : "auto",
             left: menuRect ? menuRect.left : 0,
             width: menuRect ? menuRect.width : "100%",
-            background: "#fff",
-            border: "1px solid #ccc",
-            borderRadius: 6,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-            zIndex: 1000,
-            overflow: "hidden",
-            pointerEvents: "auto",
           }}
         >
           {categorias.map((cat) => {
@@ -234,13 +226,6 @@ const BotonesCategorias = forwardRef(
                 className="dropdown-option"
                 data-cat={cat}
                 role="menuitem"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "8px 12px",
-                  cursor: "pointer",
-                  pointerEvents: "auto",
-                }}
                 onClick={() => handleSelect(cat)}
               >
                 <img
@@ -250,7 +235,6 @@ const BotonesCategorias = forwardRef(
                     ""
                   }
                   alt={cat}
-                  style={{ width: 20, height: 20, marginRight: 8 }}
                 />
                 <span>{label}</span>
               </div>
@@ -286,15 +270,10 @@ const BotonesCategorias = forwardRef(
             aria-expanded={dropdownOpen}
             style={{ display: "flex", alignItems: "center", width: "100%" }}
           >
-            <img
-              src={iconoSeleccionado}
-              alt={seleccionada}
-              style={{ width: 24, height: 24, marginRight: 8 }}
-            />
-            <span style={{ flex: 1, textAlign: "left" }}>
+            <span>
               {labelSeleccionada}
             </span>
-            <span style={{ marginLeft: "auto" }}>&#9662;</span>
+            <span>&#9662;</span>
           </button>
 
           {/* Render portal only on client and when open */}
