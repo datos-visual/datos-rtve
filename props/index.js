@@ -1,7 +1,35 @@
-// Gestor de configuración por entornos
-import { localConfig } from "./local.js";
-import { developmentConfig } from "./development.js";
-import { productionConfig } from "./production.js";
+// Gestor de configuración por entornos usando JSON
+import { readFileSync } from "fs";
+import { join } from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+// Obtener la ruta del directorio actual
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Leer el archivo config.json
+let configData;
+try {
+  const configPath = join(__dirname, "config.json");
+  const configFile = readFileSync(configPath, "utf8");
+  configData = JSON.parse(configFile);
+} catch (error) {
+  console.error("Error al leer config.json:", error);
+  // Configuración de fallback básica
+  configData = {
+    common: {
+      projectName: "Fosas Comunes",
+      version: "1.0.0",
+    },
+    development: {
+      baseUrl: "http://localhost:3000",
+      environment: "development",
+      assetsUrl: "http://localhost:3000",
+      seo: { title: "Fosas Comunes - Desarrollo" },
+    },
+  };
+}
 
 /**
  * Obtiene la configuración según el entorno actual
@@ -21,41 +49,51 @@ function getConfig() {
     // Si NODE_ENV es production pero no hay APP_ENV, asumimos production
     environment = "production";
   } else {
-    // Por defecto, local
-    environment = "local";
+    // Por defecto, development
+    environment = "development";
   }
 
-  // Devolver la configuración según el entorno
-  switch (environment) {
-    case "local":
-      return localConfig;
+  // Obtener la configuración base común
+  const commonConfig = configData.common || {};
 
+  // Obtener la configuración específica del entorno
+  let envConfig;
+  switch (environment) {
     case "development":
+      envConfig = configData.development || {};
+      break;
+
+    case "preproduction":
     case "pre":
-      return developmentConfig;
+      envConfig = configData.preproduction || {};
+      break;
 
     case "production":
     case "prod":
-      return productionConfig;
+      envConfig = configData.production || {};
+      break;
 
     default:
       console.warn(
         `Entorno '${environment}' no reconocido. Usando configuración de desarrollo.`
       );
-      return localConfig;
+      envConfig = configData.development || {};
   }
+
+  // Combinar configuración común con la específica del entorno
+  return {
+    ...commonConfig,
+    ...envConfig,
+  };
 }
 
 // Exportar la configuración actual
 export const config = getConfig();
 
-// Exportar también las configuraciones individuales por si se necesitan
-export { localConfig, developmentConfig, productionConfig };
-
 // Función helper para verificar el entorno actual
 export const isProduction = () => config.environment === "production";
-export const isdevelopment = () => config.environment === "development";
-export const isLocal = () => config.environment === "local";
+export const isPreproduction = () => config.environment === "preproduction";
+export const isDevelopment = () => config.environment === "development";
 
 // Función helper para obtener URLs completas
 export const getFullUrl = (path = "") => {

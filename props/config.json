@@ -1,0 +1,90 @@
+{
+  "common": {
+    "projectName": "Fosas Comunes",
+    "version": "1.0.0",
+    "images": {
+      "remotePatterns": [
+        {
+          "protocol": "https",
+          "hostname": "fotografias.larazon.es"
+        },
+        {
+          "protocol": "https",
+          "hostname": "www.rtve.es"
+        },
+        {
+          "protocol": "https",
+          "hostname": "img.rtve.es"
+        }
+      ]
+    },
+    "embedHeaders": [
+      {
+        "source": "/embed/:path*",
+        "headers": [
+          {
+            "key": "X-Frame-Options",
+            "value": "ALLOWALL"
+          },
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*"
+          }
+        ]
+      }
+    ],
+    "routes": {
+      "home": "/",
+      "mapa": "/mapa",
+      "historias": "/historias",
+      "embed": "/embed"
+    }
+  },
+  "development": {
+    "baseUrl": "http://localhost:3000",
+    "apiUrl": "http://localhost:3000/api",
+    "environment": "development",
+    "debug": true,
+    "assetsUrl": "http://localhost:3000"
+  },
+  "preproduction": {
+    "baseUrl": "https://www-pre.rtve.es/noticias/fosas",
+    "apiUrl": "https://www-pre.rtve.es/noticias/fosas/api",
+    "environment": "preproduction",
+    "debug": false,
+    "assetsUrl": "https://www-pre.rtve.es/noticias/fosas",
+    "map": {
+      "defaultCenter": [40.4168, -3.7038],
+      "defaultZoom": 6
+    },
+    "seo": {
+      "title": "Fosas Comunes - RTVE Noticias",
+      "description": "Aplicación para la visualización de fosas comunes de la Guerra Civil y la dictadura franquista en España",
+      "domain": "www-pre.rtve.es",
+      "url": "https://www-pre.rtve.es/noticias/fosas"
+    },
+    "basePath": "/noticias/fosas"
+  },
+  "production": {
+    "baseUrl": "https://www.rtve.es/noticias/fosas",
+    "apiUrl": "https://www.rtve.es/noticias/fosas/api",
+    "environment": "production",
+    "debug": false,
+    "assetsUrl": "https://www.rtve.es/noticias/fosas",
+    "map": {
+      "defaultCenter": [40.4168, -3.7038],
+      "defaultZoom": 6
+    },
+    "seo": {
+      "title": "Fosas Comunes - RTVE Noticias",
+      "description": "Aplicación para la visualización de fosas comunes de la Guerra Civil y la dictadura franquista en España",
+      "domain": "www.rtve.es",
+      "url": "https://www.rtve.es/noticias/fosas"
+    },
+    "basePath": "/noticias/fosas",
+    "analytics": {
+      "enabled": true,
+      "gtmId": "GTM-XXXXXX"
+    }
+  }
+}

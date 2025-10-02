@@ -7,17 +7,17 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "dev:pre": "cross-env APP_ENV=development next dev",
+    "dev:pre": "cross-env APP_ENV=preproduction next dev",
     "dev:prod": "cross-env APP_ENV=production next dev",
     "build": "next build",
-    "build:pre": "cross-env APP_ENV=development next build",
+    "build:pre": "cross-env APP_ENV=preproduction next build",
     "build:prod": "cross-env APP_ENV=production next build",
     "start": "next start",
-    "start:pre": "cross-env APP_ENV=development next start",
+    "start:pre": "cross-env APP_ENV=preproduction next start",
     "start:prod": "cross-env APP_ENV=production next start",
     "lint": "next lint",
     "config:check": "node scripts/check-config.js",
-    "config:check:pre": "cross-env APP_ENV=development node scripts/check-config.js",
+    "config:check:pre": "cross-env APP_ENV=preproduction node scripts/check-config.js",
     "config:check:prod": "cross-env APP_ENV=production node scripts/check-config.js"
   },
   "dependencies": {
