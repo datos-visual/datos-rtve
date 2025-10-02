@@ -315,16 +315,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                       <img src="" alt="" />
                       <div className="news-related_description">
                         {noticia.destacado && (
-                          <span style={{ 
-                            backgroundColor: '#d32f2f', 
-                            color: 'white', 
-                            padding: '2px 8px', 
-                            borderRadius: '3px', 
-                            fontSize: '11px',
-                            fontWeight: 'bold',
-                            marginBottom: '8px',
-                            display: 'inline-block'
-                          }}>
+                          <span className="destacado-badge">
                             DESTACADO
                           </span>
                         )}
@@ -336,14 +327,13 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                         >
                           {noticia.titulo}
                         </a>
-                        <p className="news-related_date" style={{ fontSize: '12px', color: '#666', margin: '4px 0' }}>
+                        <p className="news-related_date">
                           {noticia.fecha ? new Date(noticia.fecha).toLocaleDateString('es-ES') : '-'} | {noticia.programa || 'Web'} | ID: {noticia.id_material || noticia.id}
                         </p>
                         {noticia.texto && (
                           <div
                             className="news-related_excerpt"
                             dangerouslySetInnerHTML={{ __html: noticia.texto }}
-                            style={{ fontSize: '14px', marginTop: '8px' }}
                           />
                         )}
                       </div>
@@ -408,65 +398,32 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                 <div className="tab-content active">
                   <h4>Videos</h4>
                   {videosContenido.length > 0 ? (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
+                    <div className="multimedia-grid">
                       {videosContenido.map((video, i) => (
                         <div 
                           key={`video-${i}`} 
-                          style={{ 
-                            cursor: 'pointer',
-                            position: 'relative',
-                            borderRadius: '8px',
-                            overflow: 'hidden',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                            transition: 'transform 0.2s'
-                          }}
+                          className="multimedia-card"
                           onClick={() => handleOpenModal()}
-                          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                         >
                           {video.destacado && (
-                            <span style={{ 
-                              position: 'absolute',
-                              top: '8px',
-                              left: '8px',
-                              backgroundColor: '#d32f2f', 
-                              color: 'white', 
-                              padding: '4px 8px', 
-                              borderRadius: '4px', 
-                              fontSize: '10px',
-                              fontWeight: 'bold',
-                              zIndex: 1,
-                              textTransform: 'uppercase'
-                            }}>
+                            <span className="destacado-badge">
                               ⭐ Destacado
                             </span>
                           )}
                           <img 
-                            src={video.thumbnail} 
+                            src={generarThumbnail(video, 400)} 
                             alt={video.titulo || 'Video'}
-                            style={{ width: '100%', height: '150px', objectFit: 'cover' }}
+                            onError={(e) => {
+                              console.error('Error cargando thumbnail de video:', video.id);
+                              e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="225"%3E%3Crect fill="%23cccccc" width="400" height="225"/%3E%3Ctext fill="%23666666" font-family="Arial" font-size="20" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3EImagen no disponible%3C/text%3E%3C/svg%3E';
+                            }}
                           />
-                          <div style={{ 
-                            position: 'absolute',
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
-                            padding: '20px 8px 8px',
-                            color: 'white',
-                            fontSize: '12px',
-                            fontWeight: '500'
-                          }}>
-                            <div style={{ 
-                              position: 'absolute',
-                              top: '50%',
-                              left: '50%',
-                              transform: 'translate(-50%, -100%)',
-                              fontSize: '40px',
-                              opacity: 0.9
-                            }}>
-                              ▶️
-                            </div>
+                          
+                          <div className="play-icon">
+                            ▶
+                          </div>
+                          
+                          <div className="card-title">
                             {video.titulo}
                           </div>
                         </div>
@@ -481,98 +438,42 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                 <div className="tab-content active">
                   <h4>Audios</h4>
                   {audiosContenido.length > 0 ? (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
+                    <div className="multimedia-grid">
                       {audiosContenido.map((audio, i) => (
                         <div 
                           key={`audio-${i}`} 
-                          style={{ 
-                            cursor: 'pointer',
-                            position: 'relative',
-                            borderRadius: '8px',
-                            overflow: 'hidden',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                            transition: 'transform 0.2s',
-                            height: '150px',
-                            background: '#f5f5f5'
-                          }}
+                          className="multimedia-card"
                           onClick={() => handleOpenModal()}
-                          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                         >
                           {audio.destacado && (
-                            <span style={{ 
-                              position: 'absolute',
-                              top: '8px',
-                              left: '8px',
-                              backgroundColor: '#d32f2f', 
-                              color: 'white', 
-                              padding: '4px 8px', 
-                              borderRadius: '4px', 
-                              fontSize: '10px',
-                              fontWeight: 'bold',
-                              zIndex: 2,
-                              textTransform: 'uppercase'
-                            }}>
+                            <span className="destacado-badge">
                               ⭐ Destacado
                             </span>
                           )}
                           <img 
                             src={audio.thumbnail} 
                             alt={audio.titulo || 'Audio'}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                             onError={(e) => {
                               // Si la imagen falla, usar gradiente de fallback
                               e.target.style.display = 'none';
                               const parent = e.target.parentElement;
-                              parent.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                              parent.style.display = 'flex';
-                              parent.style.alignItems = 'center';
-                              parent.style.justifyContent = 'center';
+                              parent.classList.add('audio-fallback');
                               
                               // Agregar icono grande de audio si no existe
                               if (!parent.querySelector('.audio-fallback-icon')) {
                                 const iconDiv = document.createElement('div');
                                 iconDiv.className = 'audio-fallback-icon';
-                                iconDiv.style.cssText = 'font-size: 60px; opacity: 0.3; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;';
                                 iconDiv.textContent = '🎵';
                                 parent.insertBefore(iconDiv, parent.lastChild);
                               }
                             }}
                           />
                           
-                          {/* Icono de reproducción */}
-                          <div style={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            width: '48px',
-                            height: '48px',
-                            borderRadius: '50%',
-                            backgroundColor: 'rgba(0,0,0,0.6)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: 'white',
-                            fontSize: '20px',
-                            zIndex: 1,
-                            pointerEvents: 'none'
-                          }}>
+                          <div className="play-icon">
                             ▶
                           </div>
                           
-                          <div style={{ 
-                            position: 'absolute',
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
-                            padding: '20px 8px 8px',
-                            color: 'white',
-                            fontSize: '12px',
-                            fontWeight: '500',
-                            zIndex: 1
-                          }}>
+                          <div className="card-title">
                             {audio.titulo}
                           </div>
                         </div>

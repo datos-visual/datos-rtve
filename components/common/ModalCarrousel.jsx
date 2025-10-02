@@ -7,6 +7,7 @@ import {
   forwardRef,
   useImperativeHandle,
 } from "react";
+import "../../app/styles/_modalCarrousel.scss";
 
 const ModalCarrousel = forwardRef(function ModalCarrousel(
   { contenidos = [], destacados = [], imagenes = [], videos = [], onClose, startIndex = 0, contentType = "imagenes" },
@@ -236,60 +237,27 @@ const ModalCarrousel = forwardRef(function ModalCarrousel(
             if (currentItem && typeof currentItem === 'object' && currentItem.tipo) {
               if (currentItem.tipo === 'video' && currentItem.embed) {
                 return (
-                  <div style={{ textAlign: 'center' }}>
+                  <div className="modal-multimedia-content">
                     <iframe
                       src={currentItem.embed}
-                      style={{
-                        width: "80vw",
-                        height: "45vw",
-                        maxWidth: "1200px",
-                        maxHeight: "675px",
-                        minWidth: "320px",
-                        minHeight: "180px",
-                        border: "none",
-                        borderRadius: 8,
-                        boxShadow: "0 0 20px #000",
-                      }}
+                      className="multimedia-embed"
                       allowFullScreen
                       frameBorder="0"
                       title={currentItem.titulo || "Video RTVE"}
                     />
                     {currentItem.destacado && (
-                      <div style={{
-                        marginTop: '12px',
-                        backgroundColor: '#d32f2f',
-                        color: 'white',
-                        padding: '6px 12px',
-                        borderRadius: '4px',
-                        display: 'inline-block',
-                        fontSize: '12px',
-                        fontWeight: 'bold'
-                      }}>
+                      <div className="destacado-badge-modal">
                         ⭐ DESTACADO
                       </div>
                     )}
                     {currentItem.titulo && (
-                      <h3 style={{ 
-                        color: 'white', 
-                        marginTop: '16px', 
-                        fontSize: '18px',
-                        maxWidth: '800px',
-                        margin: '16px auto 0'
-                      }}>
+                      <h3 className="multimedia-title">
                         {currentItem.titulo}
                       </h3>
                     )}
                     {currentItem.texto && (
                       <div 
-                        style={{ 
-                          color: '#ccc', 
-                          marginTop: '8px', 
-                          fontSize: '14px',
-                          maxWidth: '800px',
-                          margin: '8px auto 0',
-                          maxHeight: '100px',
-                          overflow: 'auto'
-                        }}
+                        className="multimedia-text"
                         dangerouslySetInnerHTML={{ __html: currentItem.texto }}
                       />
                     )}
@@ -297,86 +265,44 @@ const ModalCarrousel = forwardRef(function ModalCarrousel(
                 );
               } else if (currentItem.tipo === 'audio') {
                 return (
-                  <div style={{ textAlign: 'center', maxWidth: '900px' }}>
+                  <div className="modal-multimedia-content">
                     {currentItem.embed ? (
                       // Audio embed de RTVE
                       <iframe
                         src={currentItem.embed}
-                        style={{
-                          width: "100%",
-                          maxWidth: "800px",
-                          height: "360px",
-                          border: "none",
-                          borderRadius: 8,
-                          boxShadow: "0 0 20px #000",
-                        }}
+                        className="multimedia-embed"
                         allowFullScreen
                         frameBorder="0"
                         title={currentItem.titulo || "Audio RTVE"}
                       />
                     ) : (
                       // Fallback: thumbnail + audio player
-                      <>
+                      <div className="audio-player-container">
                         <img
                           src={currentItem.thumbnail}
                           alt={currentItem.titulo || 'Audio'}
-                          style={{
-                            maxWidth: "70vw",
-                            maxHeight: "60vh",
-                            borderRadius: 8,
-                            boxShadow: "0 0 20px #000",
-                            marginBottom: '16px'
-                          }}
                         />
                         {currentItem.url && (
                           <audio 
                             controls 
                             src={currentItem.url}
-                            style={{
-                              width: '100%',
-                              maxWidth: '600px',
-                              marginTop: '16px'
-                            }}
                           />
                         )}
-                      </>
+                      </div>
                     )}
                     {currentItem.destacado && (
-                      <div style={{
-                        marginTop: '12px',
-                        backgroundColor: '#d32f2f',
-                        color: 'white',
-                        padding: '6px 12px',
-                        borderRadius: '4px',
-                        display: 'inline-block',
-                        fontSize: '12px',
-                        fontWeight: 'bold'
-                      }}>
+                      <div className="destacado-badge-modal">
                         ⭐ DESTACADO
                       </div>
                     )}
                     {currentItem.titulo && (
-                      <h3 style={{ 
-                        color: 'white', 
-                        marginTop: '16px', 
-                        fontSize: '18px',
-                        maxWidth: '800px',
-                        margin: '16px auto 0'
-                      }}>
+                      <h3 className="multimedia-title">
                         {currentItem.titulo}
                       </h3>
                     )}
                     {currentItem.texto && (
                       <div 
-                        style={{ 
-                          color: '#ccc', 
-                          marginTop: '8px', 
-                          fontSize: '14px',
-                          maxWidth: '800px',
-                          margin: '8px auto 0',
-                          maxHeight: '100px',
-                          overflow: 'auto'
-                        }}
+                        className="multimedia-text"
                         dangerouslySetInnerHTML={{ __html: currentItem.texto }}
                       />
                     )}
@@ -457,28 +383,11 @@ const ModalCarrousel = forwardRef(function ModalCarrousel(
         </div>
 
         {/* Indicador */}
-        <div
-          style={{
-            color: "white",
-            marginTop: 12,
-            textAlign: "center",
-            fontSize: "14px",
-          }}
-        >
+        <div className="modal-navigation-hint">
           <div>
             {idx + 1} / {items.length}
           </div>
-          <div
-            style={{
-              fontSize: "12px",
-              opacity: 0.7,
-              marginTop: "4px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "8px",
-            }}
-          >
+          <div className="hint-controls">
             <span>🖱️ Scroll</span>
             <span>👆 Swipe</span>
             <span>⌨️ Flechas</span>
