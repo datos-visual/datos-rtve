@@ -48,6 +48,27 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
 
   // === ESTADO PARA FILTRO POR VIEWPORT ===
   const [fosasEnViewport, setFosasEnViewport] = useState([]);
+  
+  // === CACHE PARA IMAGENES DESTACADAS ===
+  const [imagenesDestacadas, setImagenesDestacadas] = useState({});
+  
+  // Función para generar thumbnail según tipo de contenido
+  const generarThumbnail = useCallback((contenido, size = 400) => {
+    const { tipo, id, url } = contenido;
+    
+    if (tipo === "video") {
+      return `https://img.rtve.es/v/${id}?w=${size}`;
+    } else if (tipo === "audio") {
+      return `https://img.rtve.es/a/${id}?w=${size}`;
+    } else if (tipo === "foto") {
+      return url;
+    }
+    return null;
+  }, []);
+
+  // Necesitamos mover este useEffect después de que itemsBase esté definido
+  // Por ahora lo comentamos y lo moveremos más abajo
+
   const [mapaListo, setMapaListo] = useState(false);
   const [modoViewportActivo, setModoViewportActivo] =
     useState(filtrarPorViewport);
@@ -285,6 +306,70 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
     fosasExternas,
   ]);
 
+  // === CARGAR IMAGENES DESTACADAS ===
+  useEffect(() => {
+    const cargarImagenesDestacadas = async () => {
+      const nuevasImagenes = {};
+      
+      // Solo cargar las primeras 20 fosas para no saturar
+      const fosasACargar = items.slice(0, 20);
+      console.log('🖼️ Cargando imágenes destacadas para', fosasACargar.length, 'fosas');
+
+      for (const fosa of fosasACargar) {
+        // Solo intentar cargar si la fosa tiene section_id o isInDedalo
+        if (fosa.section_id || fosa.isInDedalo) {
+          // Usar id_datos si existe, sino usar id
+          const id = fosa.id_datos || fosa.id;
+          const idFormateado = String(id).padStart(5, '0');
+          
+          console.log('🔍 Cargando destacado para fosa:', {
+            id: fosa.id,
+            id_datos: fosa.id_datos,
+            idFormateado,
+            municipio: fosa.municipio
+          });
+          
+          try {
+            const response = await fetch(
+              `https://www.rtve.es/datos-repo/test-fosas/v2/fichas/${idFormateado}.json`
+            );
+            
+            if (response.ok) {
+              const data = await response.json();
+              const contenidos = data.contenidos || [];
+              
+              // Buscar primer contenido destacado
+              const destacado = contenidos.find(c => c.destacado === true);
+              
+              if (destacado) {
+                const thumbnail = generarThumbnail(destacado, 400);
+                nuevasImagenes[fosa.id] = thumbnail;
+                console.log('✅ Imagen destacada encontrada:', {
+                  fosaId: fosa.id,
+                  thumbnail,
+                  tipo: destacado.tipo
+                });
+              } else {
+                console.log('ℹ️ Sin destacado para fosa:', fosa.id);
+              }
+            }
+          } catch (error) {
+            console.log('⚠️ Error cargando fosa:', fosa.id, error.message);
+          }
+        }
+      }
+
+      if (Object.keys(nuevasImagenes).length > 0) {
+        console.log('💾 Guardando', Object.keys(nuevasImagenes).length, 'imágenes destacadas');
+        setImagenesDestacadas(prev => ({...prev, ...nuevasImagenes}));
+      }
+    };
+
+    if (items.length > 0) {
+      cargarImagenesDestacadas();
+    }
+  }, [items, generarThumbnail]);
+
   const config = {
     ...configBase,
     modoSimple: modoSimple ?? configBase.modoSimple,
@@ -419,15 +504,19 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
             if (e.key === "Enter" || e.key === " ") callback?.(fosa);
           }}
         >
-          <div className="fosa__img">
-            <img
-              src={
-                fosa.foto ||
-                "https://fotografias.larazon.es/clipping/cmsimages02/2024/11/15/93DFFB09-1D04-4088-99A5-94DC549EE9EC/hallada-fosa-comun-cementerio-val-51-victimas-franquismo_98.jpg?crop=1200,675,x0,y113&width=1900&height=1069&optimize=low&format=webply"
-              }
-              alt={titulo}
-            />
-          </div>
+          {/* Solo mostrar imagen si hay destacado o foto base */}
+          {(imagenesDestacadas[fosa.id] || fosa.foto) && (
+            <div className="fosa__img">
+              <img
+                src={
+                  imagenesDestacadas[fosa.id] ||
+                  fosa.foto ||
+                  "https://fotografias.larazon.es/clipping/cmsimages02/2024/11/15/93DFFB09-1D04-4088-99A5-94DC549EE9EC/hallada-fosa-comun-cementerio-val-51-victimas-franquismo_98.jpg?crop=1200,675,x0,y113&width=1900&height=1069&optimize=low&format=webply"
+                }
+                alt={titulo}
+              />
+            </div>
+          )}
           <div className="info">
             <p className="ubicacion">
               <strong>{fosa.municipio}</strong> / {fosa.provincia}
