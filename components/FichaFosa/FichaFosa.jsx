@@ -231,41 +231,55 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                   <span className="datos__value">{sectionId}</span>
                 </li>
               )}
-              <li className="datos__item">
-                <label className="datos__label">FECHA DE LA FOSA</label>
-                <span className="datos__value">
-                  {eventDateExtra || "-"}
-                  {eventDateEnd && ` / ${eventDateEnd}`}
-                </span>
-              </li>
-              <li className="datos__item">
-                <label className="datos__label">ESTADO DE LA FOSA</label>
-                <span className="datos__value">{statusExtra || "-"}</span>
-              </li>
-              <li className="datos__item">
-                <label className="datos__label">NÚMERO DE INHUMADOS</label>
-                <span className="datos__value">{nBuriedExtra || "-"}</span>
-              </li>
-              <li className="datos__item">
-                <label className="datos__label">NÚMERO DE EXHUMADOS</label>
-                <span className="datos__value">{nExhumed || "No disponible"}</span>
-              </li>
-              <li className="datos__item">
-                <label className="datos__label">BANDO REPRESOR</label>
-                <span className="datos__value">{bandoRepresor || "-"}</span>
-              </li>
-              <li className="datos__item">
-                <label className="datos__label">CONTEXTO DE MUERTE</label>
-                <span className="datos__value" style={{ fontSize: '13px', lineHeight: '1.4' }}>
-                  {deathContext || "-"}
-                </span>
-              </li>
-              <li className="datos__item">
-                <label className="datos__label">INTERVENCIONES</label>
-                <span className="datos__value">
-                  {interventionsDateStart || "No disponible"} / {interventionsDateEnd || "No disponible"}
-                </span>
-              </li>
+              {(eventDateExtra || eventDateEnd) && (
+                <li className="datos__item">
+                  <label className="datos__label">FECHA DE LA FOSA</label>
+                  <span className="datos__value">
+                    {eventDateExtra || "-"}
+                    {eventDateEnd && ` / ${eventDateEnd}`}
+                  </span>
+                </li>
+              )}
+              {statusExtra && (
+                <li className="datos__item">
+                  <label className="datos__label">ESTADO DE LA FOSA</label>
+                  <span className="datos__value">{statusExtra}</span>
+                </li>
+              )}
+              {nBuriedExtra && (
+                <li className="datos__item">
+                  <label className="datos__label">NÚMERO DE INHUMADOS</label>
+                  <span className="datos__value">{nBuriedExtra}</span>
+                </li>
+              )}
+              {nExhumed && (
+                <li className="datos__item">
+                  <label className="datos__label">NÚMERO DE EXHUMADOS</label>
+                  <span className="datos__value">{nExhumed}</span>
+                </li>
+              )}
+              {bandoRepresor && (
+                <li className="datos__item">
+                  <label className="datos__label">BANDO REPRESOR</label>
+                  <span className="datos__value">{bandoRepresor}</span>
+                </li>
+              )}
+              {deathContext && (
+                <li className="datos__item">
+                  <label className="datos__label">CONTEXTO DE MUERTE</label>
+                  <span className="datos__value" style={{ fontSize: '13px', lineHeight: '1.4' }}>
+                    {deathContext}
+                  </span>
+                </li>
+              )}
+              {(interventionsDateStart || interventionsDateEnd) && (
+                <li className="datos__item">
+                  <label className="datos__label">INTERVENCIONES</label>
+                  <span className="datos__value">
+                    {interventionsDateStart || "-"} / {interventionsDateEnd || "-"}
+                  </span>
+                </li>
+              )}
             </ul>
           </div>
 
