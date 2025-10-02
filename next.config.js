@@ -1,21 +1,24 @@
+// Importar la configuración por entornos
+import { config } from "./props/index.js";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "fotografias.larazon.es",
-      },
-      {
-        protocol: "https",
-        hostname: "www.rtve.es",
-      },
-      {
-        protocol: "https",
-        hostname: "img.rtve.es",
-      },
-    ],
+  // Configurar basePath para entornos de preproducción y producción
+  basePath: config.basePath || "",
+
+  // Configurar assetPrefix para los assets estáticos
+  assetPrefix: config.basePath || "",
+
+  // Configuración de imágenes desde la configuración del entorno
+  images: config.images,
+
+  // Variables de entorno públicas
+  env: {
+    APP_ENV: process.env.APP_ENV || "development",
+    BASE_URL: config.baseUrl,
+    ASSETS_URL: config.assetsUrl,
   },
+
   webpack: (config, { isServer }) => {
     // Configuración para manejar dependencias de Node.js en el cliente
     if (!isServer) {
@@ -38,23 +41,10 @@ const nextConfig = {
 
     return config;
   },
+
   // Configuración para permitir el embebido del mapa en sitios externos
   async headers() {
-    return [
-      {
-        source: "/embed/:path*",
-        headers: [
-          {
-            key: "X-Frame-Options",
-            value: "ALLOWALL",
-          },
-          {
-            key: "Access-Control-Allow-Origin",
-            value: "*",
-          },
-        ],
-      },
-    ];
+    return config.embedHeaders;
   },
 };
 

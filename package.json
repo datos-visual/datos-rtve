@@ -1,14 +1,24 @@
 {
   "name": "fosas",
   "version": "0.1.0",
+  "type": "module",
   "projectType": "pf",
   "pfType": "next",
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:pre": "cross-env APP_ENV=preproduction next dev",
+    "dev:prod": "cross-env APP_ENV=production next dev",
     "build": "next build",
+    "build:pre": "cross-env APP_ENV=preproduction next build",
+    "build:prod": "cross-env APP_ENV=production next build",
     "start": "next start",
-    "lint": "next lint"
+    "start:pre": "cross-env APP_ENV=preproduction next start",
+    "start:prod": "cross-env APP_ENV=production next start",
+    "lint": "next lint",
+    "config:check": "node scripts/check-config.js",
+    "config:check:pre": "cross-env APP_ENV=preproduction node scripts/check-config.js",
+    "config:check:prod": "cross-env APP_ENV=production node scripts/check-config.js"
   },
   "dependencies": {
     "@mapbox/mapbox-gl-geocoder": "^5.1.2",
@@ -30,6 +40,7 @@
     "scrolly-video": "^0.0.24"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "eslint": "^8",
     "eslint-config-next": "13.5.11"
   }
