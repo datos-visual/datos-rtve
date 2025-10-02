@@ -1,32 +1,35 @@
-// Configuración para entorno de desarrollo
+// Configuración para entorno de development
 import { commonConfig } from "./common.js";
 
 export const developmentConfig = {
   ...commonConfig,
 
-  // URLs específicas para desarrollo
-  baseUrl: "http://localhost:3000",
-  apiUrl: "http://localhost:3000/api",
+  // URLs específicas para development
+  baseUrl: "https://www-pre.rtve.es/noticias/fosas",
+  apiUrl: "https://www-pre.rtve.es/noticias/fosas/api",
 
-  // Configuraciones específicas de desarrollo
+  // Configuraciones específicas de development
   environment: "development",
-  debug: true,
+  debug: false,
 
   // URLs públicas para assets
-  assetsUrl: "http://localhost:3000",
+  assetsUrl: "https://www-pre.rtve.es/noticias/fosas",
 
-  // Configuraciones de mapas para desarrollo
+  // Configuraciones de mapas para development
   map: {
     defaultCenter: [40.4168, -3.7038], // Madrid
     defaultZoom: 6,
   },
 
-  // SEO específico para desarrollo
+  // SEO específico para development
   seo: {
-    title: "Fosas Comunes - Desarrollo",
+    title: "Fosas Comunes - RTVE Noticias",
     description:
-      "Aplicación para la visualización de fosas comunes - Entorno de desarrollo",
-    domain: "localhost:3000",
-    url: "http://localhost:3000",
+      "Aplicación para la visualización de fosas comunes de la Guerra Civil y la dictadura franquista en España",
+    domain: "www-pre.rtve.es",
+    url: "https://www-pre.rtve.es/noticias/fosas",
   },
+
+  // Configuraciones adicionales para development
+  basePath: "/noticias/fosas",
 };

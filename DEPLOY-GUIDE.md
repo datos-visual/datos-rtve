@@ -11,32 +11,37 @@ Se ha configurado el proyecto para trabajar con múltiples entornos utilizando l
 ## Cambios Realizados
 
 ### 1. Estructura de Configuración (`props/`)
+
 - `common.js`: Configuración compartida entre entornos
-- `development.js`: Configuración específica para desarrollo
-- `preproduction.js`: Configuración específica para preproducción
+- `local.js`: Configuración específica para desarrollo
+- `development.js`: Configuración específica para preproducción
 - `production.js`: Configuración específica para producción
 - `index.js`: Gestor principal que determina qué configuración usar
 - `example-usage.js`: Ejemplos de uso
 - `README.md`: Documentación detallada
 
 ### 2. Next.js Configuration (`next.config.js`)
+
 - Configuración automática de `basePath` y `assetPrefix`
 - URLs específicas por entorno
 - Headers para embeds configurables
 
 ### 3. Package.json
+
 - Scripts específicos por entorno
 - Dependencia `cross-env` para compatibilidad multiplataforma
 - Configuración como módulo ES6
 
 ### 4. Variables de Entorno
+
 - `.env.local`: Desarrollo
-- `.env.preproduction`: Preproducción
+- `.env.development`: Preproducción
 - `.env.production`: Producción
 
 ## Comandos de Despliegue
 
 ### Desarrollo Local
+
 ```bash
 npm run dev                    # Entorno desarrollo
 npm run dev:pre               # Desarrollo con config de preproducción
@@ -44,6 +49,7 @@ npm run dev:prod              # Desarrollo con config de producción
 ```
 
 ### Build por Entornos
+
 ```bash
 npm run build                 # Build desarrollo
 npm run build:pre             # Build preproducción
@@ -51,6 +57,7 @@ npm run build:prod            # Build producción
 ```
 
 ### Inicio por Entornos
+
 ```bash
 npm start                     # Inicio desarrollo
 npm start:pre                 # Inicio preproducción
@@ -62,18 +69,20 @@ npm start:prod                # Inicio producción
 Para desplegar en contenedores Docker, asegúrate de establecer la variable `APP_ENV`:
 
 ### Dockerfile
+
 ```dockerfile
 # Para preproducción
-ENV APP_ENV=preproduction
+ENV APP_ENV=development
 
 # Para producción
 ENV APP_ENV=production
 ```
 
 ### Docker Run
+
 ```bash
 # Preproducción
-docker run -e APP_ENV=preproduction mi-app
+docker run -e APP_ENV=development mi-app
 
 # Producción
 docker run -e APP_ENV=production mi-app
@@ -82,18 +91,21 @@ docker run -e APP_ENV=production mi-app
 ## URLs Resultantes
 
 ### Desarrollo
+
 - Home: `http://localhost:3000/`
 - Mapa: `http://localhost:3000/mapa`
 - Historias: `http://localhost:3000/historias`
 - Embed: `http://localhost:3000/embed`
 
 ### Preproducción
+
 - Home: `https://www-pre.rtve.es/noticias/fosas/`
 - Mapa: `https://www-pre.rtve.es/noticias/fosas/mapa`
 - Historias: `https://www-pre.rtve.es/noticias/fosas/historias`
 - Embed: `https://www-pre.rtve.es/noticias/fosas/embed`
 
 ### Producción
+
 - Home: `https://www.rtve.es/noticias/fosas/`
 - Mapa: `https://www.rtve.es/noticias/fosas/mapa`
 - Historias: `https://www.rtve.es/noticias/fosas/historias`
@@ -102,15 +114,20 @@ docker run -e APP_ENV=production mi-app
 ## Uso en Código
 
 ```javascript
-import { config, getFullUrl, getAssetUrl, isProduction } from '../props/index.js';
+import {
+  config,
+  getFullUrl,
+  getAssetUrl,
+  isProduction,
+} from "../props/index.js";
 
 // Obtener configuración actual
 const currentEnv = config.environment;
 const baseUrl = config.baseUrl;
 
 // Generar URLs
-const homeUrl = getFullUrl('/');
-const logoUrl = getAssetUrl('/logo.png');
+const homeUrl = getFullUrl("/");
+const logoUrl = getAssetUrl("/logo.png");
 
 // Lógica condicional por entorno
 if (isProduction()) {

@@ -1,6 +1,6 @@
 // Gestor de configuración por entornos
+import { localConfig } from "./local.js";
 import { developmentConfig } from "./development.js";
-import { preproductionConfig } from "./preproduction.js";
 import { productionConfig } from "./production.js";
 
 /**
@@ -21,18 +21,18 @@ function getConfig() {
     // Si NODE_ENV es production pero no hay APP_ENV, asumimos production
     environment = "production";
   } else {
-    // Por defecto, development
-    environment = "development";
+    // Por defecto, local
+    environment = "local";
   }
 
   // Devolver la configuración según el entorno
   switch (environment) {
-    case "development":
-      return developmentConfig;
+    case "local":
+      return localConfig;
 
-    case "preproduction":
+    case "development":
     case "pre":
-      return preproductionConfig;
+      return developmentConfig;
 
     case "production":
     case "prod":
@@ -42,7 +42,7 @@ function getConfig() {
       console.warn(
         `Entorno '${environment}' no reconocido. Usando configuración de desarrollo.`
       );
-      return developmentConfig;
+      return localConfig;
   }
 }
 
@@ -50,12 +50,12 @@ function getConfig() {
 export const config = getConfig();
 
 // Exportar también las configuraciones individuales por si se necesitan
-export { developmentConfig, preproductionConfig, productionConfig };
+export { localConfig, developmentConfig, productionConfig };
 
 // Función helper para verificar el entorno actual
 export const isProduction = () => config.environment === "production";
-export const isPreproduction = () => config.environment === "preproduction";
-export const isDevelopment = () => config.environment === "development";
+export const isdevelopment = () => config.environment === "development";
+export const isLocal = () => config.environment === "local";
 
 // Función helper para obtener URLs completas
 export const getFullUrl = (path = "") => {

@@ -4,16 +4,16 @@ Este proyecto está configurado para funcionar en múltiples entornos utilizando
 
 ## Entornos Disponibles
 
-### Development (Desarrollo Local)
+### Local (Desarrollo Local)
 
 - **URL**: `http://localhost:3000`
-- **APP_ENV**: `development`
+- **APP_ENV**: `local`
 - **Características**: Debug habilitado, configuración local
 
-### Preproduction (Preproducción)
+### Development (Preproducción)
 
 - **URL**: `https://www-pre.rtve.es/noticias/fosas`
-- **APP_ENV**: `preproduction`
+- **APP_ENV**: `development`
 - **Características**: Entorno de pruebas antes de producción
 
 ### Production (Producción)
@@ -28,8 +28,8 @@ Este proyecto está configurado para funcionar en múltiples entornos utilizando
 props/
 ├── index.js           # Gestor principal de configuración
 ├── common.js          # Configuración común a todos los entornos
-├── development.js     # Configuración específica de desarrollo
-├── preproduction.js   # Configuración específica de preproducción
+├── local.js     # Configuración específica de desarrollo
+├── development.js   # Configuración específica de preproducción
 ├── production.js      # Configuración específica de producción
 └── example-usage.js   # Ejemplos de cómo usar la configuración
 ```
@@ -39,24 +39,24 @@ props/
 ### Desarrollo
 
 ```bash
-npm run dev              # Desarrollo local (APP_ENV=development)
-npm run dev:pre          # Desarrollo con config de preproducción
+npm run dev              # Desarrollo local (APP_ENV=local)
+npm run dev:pre          # Desarrollo con config de development
 npm run dev:prod         # Desarrollo con config de producción
 ```
 
 ### Build
 
 ```bash
-npm run build            # Build para desarrollo
-npm run build:pre        # Build para preproducción
+npm run build            # Build para local
+npm run build:pre        # Build para development
 npm run build:prod       # Build para producción
 ```
 
 ### Start
 
 ```bash
-npm start                # Inicio para desarrollo
-npm start:pre            # Inicio para preproducción
+npm start                # Inicio para local
+npm start:pre            # Inicio para development
 npm start:prod           # Inicio para producción
 ```
 
@@ -64,8 +64,8 @@ npm start:prod           # Inicio para producción
 
 El sistema utiliza `APP_ENV` para determinar el entorno:
 
-- **APP_ENV=development**: Configuración local
-- **APP_ENV=preproduction**: Configuración de preproducción
+- **APP_ENV=local**: Configuración local
+- **APP_ENV=development**: Configuración de development
 - **APP_ENV=production**: Configuración de producción
 
 Si no se especifica `APP_ENV`, el sistema utilizará `NODE_ENV` como fallback.
@@ -110,7 +110,7 @@ npm run dev
 ### Preproducción
 
 ```bash
-export APP_ENV=preproduction
+export APP_ENV=development
 npm run build:pre
 npm run start:pre
 ```
