@@ -53,10 +53,6 @@ export function addNavButtons(map, opts = {}) {
 
   const wrap = document.createElement("div");
   wrap.className = "navjump";
-  wrap.style.position = "absolute";
-  wrap.style.zIndex = "11";
-  wrap.style.display = "flex";
-  wrap.style.gap = `${gap}px`;
 
   // botones con SVGs
   const btnPen = document.createElement("button");

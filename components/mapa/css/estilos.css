@@ -194,24 +194,29 @@ body {
 /* Botones de navegación Península/Canarias */
 .navjump {
   position: absolute;
+  
   z-index: 11;
   display: flex;
   gap: 8px;
+  flex-direction: column;
+  width: 46px;
+  background: #fff;
+  padding: 8px;
+  box-sizing: border-box;
+  right: 25px!important;
+  bottom: 18px!important;
 }
 
 .navjump__btn {
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  background: #fff;
+  border: 1px solid #242424;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
 }
 
 .navjump__btn img {
@@ -257,4 +262,66 @@ body {
 .navjump__btn--canarias:hover {
   background: rgba(33, 150, 243, 0.1);
   border-color: #333;
+}
+
+
+.mapboxgl-ctrl-top-right {
+  bottom: 100px;
+  top: inherit;
+  width: 46px;
+  right: 25px;
+}
+
+.mapboxgl-ctrl-group:not(:empty) {
+  box-shadow: none;
+  border-radius: 0;
+  margin: 10px 0 2px 0;
+  width: 46px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10px;
+}
+
+.mapboxgl-ctrl-group .mapboxgl-ctrl-zoom-in {
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+  border-left: 1px solid black;
+ 
+}
+
+.mapboxgl-ctrl-group .mapboxgl-ctrl-zoom-out {
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
+  border-left: 1px solid black;
+}
+
+.mapboxgl-ctrl-compass {
+  display: none!important;
+}
+
+.mapboxgl-ctrl-group button:first-child {
+  border-radius: 0;
+  position: relative;
+
+  &:after {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: black;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+
+  }
+
+}
+
+.mapboxgl-ctrl-group button {
+  border: inherit;
+}
+
+.mapboxgl-ctrl-group button+button {
+  border-top: 0;
 }

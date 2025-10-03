@@ -7,20 +7,6 @@
   box-sizing: border-box;
 }
 
-html {
-  font-size: $font-size-base; /* 12px base para cálculos en rem */
-  overflow-x: hidden; /* Prevenir scroll horizontal */
-}
-
-body {
-  margin: 0;
-  font-family: $font-primary, sans-serif;
-  background: $color-primary;
-  color: $text-color-primary;
-  overflow-x: hidden; /* Prevenir scroll horizontal */
-  line-height: $line-height-normal;
-}
-
 // ===== CONTENEDORES PRINCIPALES =====
 .container {
   max-width: $max-width-custom;
