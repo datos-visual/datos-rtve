@@ -1,6 +1,7 @@
 {
   "name": "fosas",
   "version": "0.1.0",
+  "distName": "fosas-comunes",
   "type": "module",
   "projectType": "pf",
   "pfType": "next",

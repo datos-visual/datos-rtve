@@ -50,19 +50,21 @@
     "domains": {
       "images": "http://localhost:3000",
       "css": "http://localhost:3000",
+      "js": "http://localhost:3000",
       "www": "http://localhost:3000"
     }
   },
   "preproduction": {
-    "baseUrl": "https://www-pre.rtve.es/noticias/fosas",
-    "apiUrl": "https://www-pre.rtve.es/noticias/fosas/api",
+    "baseUrl": "https://www-pre.rtve.es/noticias/fosas-guerra-civil-franquismo",
+    "apiUrl": "https://www-pre.rtve.es/noticias/fosas-guerra-civil-franquismo/api",
     "environment": "preproduction",
     "debug": false,
-    "assetsUrl": "https://www-pre.rtve.es/noticias/fosas",
-    "basePath": "/noticias/fosas",
+    "assetsUrl": "https://www-pre.rtve.es/noticias/fosas-guerra-civil-franquismo",
+    "basePath": "/noticias/fosas-guerra-civil-franquismo",
     "domains": {
       "images": "https://img-pre.rtve.es",
       "css": "https://css-pre.rtve.es",
+      "js": "https://js-pre.rtve.es",
       "www": "https://www-pre.rtve.es"
     },
     "map": {
@@ -73,19 +75,20 @@
       "title": "Fosas Comunes - RTVE Noticias",
       "description": "Aplicación para la visualización de fosas comunes de la Guerra Civil y la dictadura franquista en España",
       "domain": "www-pre.rtve.es",
-      "url": "https://www-pre.rtve.es/noticias/fosas"
+      "url": "https://www-pre.rtve.es/noticias/fosas-guerra-civil-franquismo"
     }
   },
   "production": {
-    "baseUrl": "https://www.rtve.es/noticias/fosas",
-    "apiUrl": "https://www.rtve.es/noticias/fosas/api",
+    "baseUrl": "https://www.rtve.es/noticias/fosas-guerra-civil-franquismo",
+    "apiUrl": "https://www.rtve.es/noticias/fosas-guerra-civil-franquismo/api",
     "environment": "production",
     "debug": false,
-    "assetsUrl": "https://www.rtve.es/noticias/fosas",
-    "basePath": "/noticias/fosas",
+    "assetsUrl": "https://www.rtve.es/noticias/fosas-guerra-civil-franquismo",
+    "basePath": "/noticias/fosas-guerra-civil-franquismo",
     "domains": {
       "images": "https://img.rtve.es",
       "css": "https://css.rtve.es",
+      "js": "https://js.rtve.es",
       "www": "https://www.rtve.es"
     },
     "map": {
@@ -96,7 +99,7 @@
       "title": "Fosas Comunes - RTVE Noticias",
       "description": "Aplicación para la visualización de fosas comunes de la Guerra Civil y la dictadura franquista en España",
       "domain": "www.rtve.es",
-      "url": "https://www.rtve.es/noticias/fosas"
+      "url": "https://www.rtve.es/noticias/fosas-guerra-civil-franquismo"
     },
     "analytics": {
       "enabled": true,

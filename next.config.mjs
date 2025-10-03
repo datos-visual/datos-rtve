@@ -1,36 +1,32 @@
 /** @type {import('next').NextConfig} */
 
+import { createRequire } from 'module'
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+
+const require = createRequire(import.meta.url)
+const propsPackage = require('./package.json')
 
 // Obtener directorio actual y leer package.json para versión
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const packageJson = JSON.parse(readFileSync(join(__dirname, "package.json"), "utf8"));
 
+// Leer configuración de props
+const propsConfig = JSON.parse(readFileSync(join(__dirname, "props", "config.json"), "utf8"));
+
 // Función para obtener la configuración de assets según el entorno
 const getAssetConfig = () => {
-  const env = process.env.APP_ENV;
+  const env = process.env.APP_ENV || "development";
+  
+  // Obtener configuración del entorno actual
+  const envConfig = propsConfig[env] || propsConfig.development;
 
-  switch (env) {
-    case "preproduction":
-      return {
-        basePath: "/noticias/fosas",
-        assetPrefix: "https://css-pre.rtve.es/css",
-      };
-    case "production":
-      return {
-        basePath: "/noticias/fosas",
-        assetPrefix: "https://css.rtve.es/css",
-      };
-    default:
-      // Desarrollo (development o undefined)
-      return {
-        basePath: "",
-        assetPrefix: "",
-      };
-  }
+  return {
+    basePath: envConfig.basePath || "",
+    assetPrefix: "", // Se establecerá después de crear nextConfig
+  };
 };
 
 const assetConfig = getAssetConfig();
@@ -40,7 +36,7 @@ const nextConfig = {
   basePath: assetConfig.basePath,
 
   // Para assets estáticos (CSS, JS), usar URLs específicas de RTVE
-  assetPrefix: assetConfig.assetPrefix,
+  // assetPrefix se establecerá después de crear nextConfig
 
   // Asegurar que las URLs terminen en barra (/)
   trailingSlash: true,
@@ -85,6 +81,14 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "css.rtve.es",
+      },
+      {
+        protocol: "https",
+        hostname: "js.rtve.es",
+      },
+      {
+        protocol: "https",
+        hostname: "js-pre.rtve.es",
       },
     ],
   },
@@ -136,5 +140,16 @@ const nextConfig = {
     ];
   },
 };
+
+// Establecer assetPrefix usando la fórmula estándar de RTVE
+// Obtener el dominio JS del entorno actual
+const env = process.env.APP_ENV || "development";
+const envConfig = propsConfig[env] || propsConfig.development;
+const jsDomain = envConfig.domains?.js || "";
+
+// Solo establecer assetPrefix si hay dominio JS (no en desarrollo)
+if (jsDomain) {
+  nextConfig.assetPrefix = `${jsDomain}/pages/${propsPackage.distName}/${propsPackage.version}`;
+}
 
 export default nextConfig;
