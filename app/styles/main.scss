@@ -30,7 +30,7 @@ html {
 
 body {
   margin: 0;
-  font-family: Public, sans-serif;
+  font-family: $font-primary;
   background: $color-primary;
   color: $text-color-primary;
   overflow-x: hidden; /* Prevenir scroll horizontal */
