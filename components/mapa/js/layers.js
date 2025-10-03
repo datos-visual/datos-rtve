@@ -289,68 +289,29 @@ function agregarLeyenda(map, soloNarrativas = false) {
   // Crear el contenedor de la leyenda
   const leyenda = document.createElement("div");
   leyenda.id = "mapa-leyenda";
-  leyenda.style.cssText = `
-    position: absolute;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    justify-content: center;
-    top: 10px;
-    right: 50px;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 8px 20px;
-    border-radius: 50px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    font-family: Arial, sans-serif;
-    font-size: 13px;
-    z-index: 1000;
-    border: 1px solid #ddd;
-  `;
+  leyenda.className = "leyend-map";
 
   // Crear contenido según el tipo de mapa
   if (soloNarrativas) {
     // Solo para mapa de historias: únicamente "Historias destacadas"
     leyenda.innerHTML = `
-      <div style="display: flex; align-items: center;">
-        <div style="
-          width: 12px; 
-          height: 12px; 
-          background-color: #D69F1A; 
-          border-radius: 50%; 
-          margin-right: 8px;
-          border: 1px solid rgba(0,0,0,0.2);
-        "></div>
-        <span style="color: #333; font-weight: 500;">Historias destacadas</span>
+      <div class="leyend-map_container">
+        <div class="leyend-map_historias">
+          <span class="leyend-map_historias-text">Historias destacadas</span>
+        </div>  
       </div>
     `;
   } else {
     // Para mapa buscador: ambas leyendas
     leyenda.innerHTML = `
-      <div style="display:flex; align-items: center; justify-content: center; gap: 20px;">
-      <div style="display: flex; align-items: center;">
-          <div style="
-            width: 12px; 
-            height: 12px; 
-            background-color: #796060; 
-            border-radius: 50%; 
-            margin-right: 8px;
-            border: 1px solid rgba(0,0,0,0.2);
-          "></div>
-          <span style="color: #333; font-weight: 500;">Fosas</span>
+      <div class="leyend-map_container">
+        <div class="leyend-map_fosas">
+          <span class="leyend-map_fosas-text">Fosas</span>
         </div>  
       
-      <div style="display: flex; align-items: center;">
-          <div style="
-            width: 12px; 
-            height: 12px; 
-            background-color: #D69F1A; 
-            border-radius: 50%; 
-            margin-right: 8px;
-            border: 1px solid rgba(0,0,0,0.2);
-          "></div>
-          <span style="color: #333; font-weight: 500;">Historias destacadas</span>
-        </div>
-        
+        <div class="leyend-map_historias">
+          <span class="leyend-map_historias-text">Historias destacadas</span>
+        </div>  
       </div>
     `;
   }

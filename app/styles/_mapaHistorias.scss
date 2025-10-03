@@ -2,7 +2,7 @@
 
 // ===== VISTA FIGURA COMPONENT =====
 mapa-historias {
-  width: 100%;
+  width: 96%;
   max-width: 1800px;
 }
 
@@ -41,7 +41,8 @@ mapa-fosas-new {
   }
 
   .contenido {
-    width: 100%;
+    width: 96%;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
 
