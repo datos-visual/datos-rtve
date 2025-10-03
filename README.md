@@ -1,36 +1,197 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# PF FOSAS GUERRA CIVIL Y FRANQUISMO
 
-## Getting Started
+Proyecto **Página Final de Fosas Comunes**, desarrollado en **Next.js v13**.
 
-First, run the development server:
+## Tech Stack
+- **Node**: v18.17.1
+- **Next.js**: v13.5.11
 
+---
+
+## 🚀 Ejecutar en local
+
+### 1. Instalar dependencias
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Desarrollo local
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+#### Modo desarrollo estándar:
+```bash
+npm run dev
+```
+Acceder en: `http://localhost:3000/`
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+#### Modo preproducción:
+```bash
+npm run dev:pre
+```
+Acceder en: `http://localhost:3000/noticias/fosas-guerra-civil-franquismo/`
 
-## Learn More
+#### Modo producción:
+```bash
+npm run dev:prod
+```
+Acceder en: `http://localhost:3000/noticias/fosas-guerra-civil-franquismo/`
 
-To learn more about Next.js, take a look at the following resources:
+### 3. Build para despliegue
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+#### Build para preproducción:
+```bash
+npm run build:pre
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+#### Build para producción:
+```bash
+npm run build:prod
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📦 Estructura del build
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Después del build, los archivos estáticos se generan en:
+
+```
+.next/
+├── static/
+│   ├── css/
+│   │   └── app/
+│   │       └── layout.css          # CSS compilado desde main.scss
+│   ├── chunks/
+│   │   └── [name]-0.1.0.js         # JavaScript con versión
+│   └── media/
+│       └── [hash].woff2             # Fuentes y assets
+```
+
+---
+
+## 🌐 Gestión de assets (CSS/JS/Imágenes)
+
+### En desarrollo (`npm run dev`):
+- **CSS/JS**: Se sirven desde `http://localhost:3000/_next/static/`
+- **AssetPrefix**: Desactivado automáticamente
+- **Imágenes**: Se sirven desde `http://localhost:3000/`
+
+### En preproducción (`npm run build:pre`):
+- **CSS/JS**: Se espera que estén en `https://js-pre.rtve.es/pages/fosas-comunes/0.1.0/_next/static/`
+- **AssetPrefix**: Configurado automáticamente
+- **Imágenes**: Se cargan desde `https://img-pre.rtve.es/` (ver `lib/imageLoader.js`)
+- **BasePath**: `/noticias/fosas-guerra-civil-franquismo`
+
+### En producción (`npm run build:prod`):
+- **CSS/JS**: Se espera que estén en `https://js.rtve.es/pages/fosas-comunes/0.1.0/_next/static/`
+- **AssetPrefix**: Configurado automáticamente
+- **Imágenes**: Se cargan desde `https://img.rtve.es/` (ver `lib/imageLoader.js`)
+- **BasePath**: `/noticias/fosas-guerra-civil-franquismo`
+
+---
+
+## 📋 Para el equipo de infraestructura
+
+### Después del build, deben copiarse estos archivos al CDN:
+
+```bash
+# Contenido de .next/static/ debe copiarse a:
+# PREPRODUCCIÓN:
+https://js-pre.rtve.es/pages/fosas-comunes/0.1.0/_next/static/
+
+# PRODUCCIÓN:
+https://js.rtve.es/pages/fosas-comunes/0.1.0/_next/static/
+```
+
+### Estructura esperada en el CDN:
+```
+https://js-pre.rtve.es/pages/fosas-comunes/0.1.0/
+├── _next/
+│   └── static/
+│       ├── css/
+│       │   └── app/
+│       │       └── layout.css
+│       ├── chunks/
+│       │   ├── webpack-0.1.0.js
+│       │   ├── main-app-0.1.0.js
+│       │   └── ...
+│       └── media/
+│           └── [hash].woff2
+```
+
+### Versionado:
+- La versión actual es `0.1.0` (definida en `package.json`)
+- Los archivos JavaScript incluyen la versión en el nombre: `[name]-0.1.0.js`
+- Al cambiar la versión, se genera una nueva ruta en el CDN automáticamente
+
+---
+
+## 🔧 Configuración de entornos
+
+La configuración de cada entorno está en `props/config.json`:
+
+```json
+{
+  "development": {
+    "basePath": "",
+    "domains": {
+      "js": ""  // Vacío para desarrollo local
+    }
+  },
+  "preproduction": {
+    "basePath": "/noticias/fosas-guerra-civil-franquismo",
+    "domains": {
+      "js": "https://js-pre.rtve.es"
+    }
+  },
+  "production": {
+    "basePath": "/noticias/fosas-guerra-civil-franquismo",
+    "domains": {
+      "js": "https://js.rtve.es"
+    }
+  }
+}
+```
+
+---
+
+## 🌍 URLs de acceso
+
+### Desarrollo local:
+- **Home**: `http://localhost:3000/`
+- **Historias**: `http://localhost:3000/historias/`
+- **Mapa**: `http://localhost:3000/mapa/`
+
+### Preproducción:
+- **Home**: `https://www-pre.rtve.es/noticias/fosas-guerra-civil-franquismo/`
+- **Historias**: `https://www-pre.rtve.es/noticias/fosas-guerra-civil-franquismo/historias/`
+- **Mapa**: `https://www-pre.rtve.es/noticias/fosas-guerra-civil-franquismo/mapa/`
+
+### Producción:
+- **Home**: `https://www.rtve.es/noticias/fosas-guerra-civil-franquismo/`
+- **Historias**: `https://www.rtve.es/noticias/fosas-guerra-civil-franquismo/historias/`
+- **Mapa**: `https://www.rtve.es/noticias/fosas-guerra-civil-franquismo/mapa/`
+
+---
+
+## 📝 Notas importantes
+
+1. **No modificar `next.config.mjs` para desarrollo**: El `assetPrefix` se activa/desactiva automáticamente según `APP_ENV`.
+2. **CSS centralizado**: Todo el CSS está importado en `app/layout.js` → `app/styles/main.scss`.
+3. **Imágenes optimizadas**: Las imágenes externas se cargan mediante loader personalizado (`lib/imageLoader.js`).
+4. **CORS**: Puede ser necesario un plugin de CORS en el navegador para desarrollo local con APIs externas.
+
+---
+
+## 🐛 Troubleshooting
+
+### CSS no se carga en preproducción/producción:
+- Verificar que los archivos de `.next/static/css/` estén copiados al CDN
+- Comprobar que la ruta incluya la versión correcta del `package.json`
+- Revisar que el `basePath` esté configurado correctamente
+
+### JavaScript no se carga:
+- Verificar que los chunks de `.next/static/chunks/` estén en el CDN
+- Comprobar que los nombres de archivo incluyan la versión (`-0.1.0.js`)
+
+### Imágenes no se cargan:
+- Verificar que `lib/imageLoader.js` esté configurado correctamente
+- Comprobar que las imágenes estén en `img.rtve.es` o `img-pre.rtve.es`
