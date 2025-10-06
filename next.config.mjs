@@ -76,6 +76,13 @@ const nextConfig = {
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.output.filename = 'static/chunks/[name]-' + propsPackage.version + '.js'
+      // En PRE/PROD ignoramos SCSS/SASS porque el CSS se sirve estático desde css.rtve.es
+      if (env !== 'development') {
+        config.module.rules.push({
+          test: /\.(scss|sass)$/,
+          use: 'null-loader'
+        })
+      }
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
@@ -114,7 +121,7 @@ const nextConfig = {
 }
 
 // Establecer assetPrefix igual que en los proyectos RTVE
-if (properties.js2Domain) {
+if (properties.js2Domain && env !== 'development') {
   nextConfig.assetPrefix = `${properties.js2Domain}/pages/${propsPackage.distName}/${propsPackage.version}`
-}
+} 
 export default nextConfig

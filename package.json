@@ -7,12 +7,13 @@
   "pfType": "next",
   "private": true,
   "scripts": {
+    "css:build": "node scripts/compile-css.js",
     "dev": "next dev",
     "dev:pre": "cross-env APP_ENV=preproduction next dev",
     "dev:prod": "cross-env APP_ENV=production next dev",
     "build": "next build",
-    "build:pre": "cross-env APP_ENV=preproduction next build",
-    "build:prod": "cross-env APP_ENV=production next build",
+    "build:pre": "npm run css:build && cross-env APP_ENV=preproduction next build",
+    "build:prod": "npm run css:build && cross-env APP_ENV=production next build",
     "start": "next start",
     "start:pre": "cross-env APP_ENV=preproduction next start",
     "start:prod": "cross-env APP_ENV=production next start",
@@ -37,12 +38,13 @@
     "react": "^18",
     "react-dom": "^18",
     "resolve-alpn": "^1.2.1",
-    "sass": "^1.93.2",
     "scrolly-video": "^0.0.24"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
     "eslint": "^8",
-    "eslint-config-next": "13.5.11"
+    "eslint-config-next": "13.5.11",
+    "null-loader": "^4.0.1",
+    "sass": "^1.93.2"
   }
 }

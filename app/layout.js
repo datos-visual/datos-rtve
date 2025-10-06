@@ -1,6 +1,12 @@
 import { Merriweather, Merriweather_Sans } from "next/font/google";
 import Script from "next/script";
+// En desarrollo cargamos SCSS directamente; en PRE/PROD lo sustituimos por <link>
 import "./styles/main.scss";
+const ENV = process.env.APP_ENV || "development";
+const CSS_URL =
+  ENV === "development"
+    ? null
+    : "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/layout.css";
 
 const merriweather = Merriweather({
   variable: "--font-merriweather",
@@ -54,6 +60,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="es">
       <head>
+        {/* CSS estático RTVE en PRE/PROD */}
+        {CSS_URL && <link rel="stylesheet" href={CSS_URL} />}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
