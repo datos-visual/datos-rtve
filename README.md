@@ -77,13 +77,13 @@ Después del build, los archivos estáticos se generan en:
 ### En preproducción (`npm run build:pre`):
 - **CSS/JS**: Se espera que estén en `https://js-pre.rtve.es/pages/fosas-comunes/0.1.0/_next/static/`
 - **AssetPrefix**: Configurado automáticamente
-- **Imágenes**: Se cargan desde `https://img-pre.rtve.es/` (ver `lib/imageLoader.js`)
+- **Imágenes**: Se cargan desde `https://img-pre.rtve.es/` (ver `app/utils/imageLoader.js`)
 - **BasePath**: `/noticias/fosas-guerra-civil-franquismo`
 
 ### En producción (`npm run build:prod`):
 - **CSS/JS**: Se espera que estén en `https://js.rtve.es/pages/fosas-comunes/0.1.0/_next/static/`
 - **AssetPrefix**: Configurado automáticamente
-- **Imágenes**: Se cargan desde `https://img.rtve.es/` (ver `lib/imageLoader.js`)
+- **Imágenes**: Se cargan desde `https://img.rtve.es/` (ver `app/utils/imageLoader.js`)
 - **BasePath**: `/noticias/fosas-guerra-civil-franquismo`
 
 ---
@@ -176,7 +176,7 @@ La configuración de cada entorno está en `props/config.json`:
 
 1. **No modificar `next.config.mjs` para desarrollo**: El `assetPrefix` se activa/desactiva automáticamente según `APP_ENV`.
 2. **CSS centralizado**: Todo el CSS está importado en `app/layout.js` → `app/styles/main.scss`.
-3. **Imágenes optimizadas**: Las imágenes externas se cargan mediante loader personalizado (`lib/imageLoader.js`).
+3. **Imágenes optimizadas**: Las imágenes externas se cargan mediante loader personalizado (`app/utils/imageLoader.js`).
 4. **CORS**: Puede ser necesario un plugin de CORS en el navegador para desarrollo local con APIs externas.
 
 ---
@@ -193,5 +193,5 @@ La configuración de cada entorno está en `props/config.json`:
 - Comprobar que los nombres de archivo incluyan la versión (`-0.1.0.js`)
 
 ### Imágenes no se cargan:
-- Verificar que `lib/imageLoader.js` esté configurado correctamente
+- Verificar que `app/utils/imageLoader.js` esté configurado correctamente
 - Comprobar que las imágenes estén en `img.rtve.es` o `img-pre.rtve.es`

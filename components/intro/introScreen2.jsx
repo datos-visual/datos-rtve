@@ -4,8 +4,9 @@ import {useState, useRef, useEffect} from "react";
 import "../../app/styles/intro/_introScreen2.scss";
 import BotonesCategorias from "../BotonesCategorias/BotonesCategorias";
 import {CATEGORIES} from "./config/constants";
-import flechaHistorias from "../../app/assets/flecha-historias-2.svg";
-import flechaMapas from "../../app/assets/flecha-mapas.svg";
+// URLs absolutas del CDN para evitar hashes
+const flechaHistorias = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/flecha-historias-2.svg";
+const flechaMapas = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/flecha-mapas.svg";
 
 export default function IntroScreen2({onNavigation}) {
     const [tooltipVisible, setTooltipVisible] = useState(false);

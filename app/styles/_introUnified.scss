@@ -20,7 +20,7 @@ intro-section {
     width: 100%;
     max-width: 100vw;
     height: 100vh;
-    background: url("../assets/bg-gente.jpg") center -150px / cover no-repeat;
+    background: url("https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/bg-gente.jpg") center -150px / cover no-repeat;
     background-color: $color-primary-transparent;
     /*background-blend-mode: multiply;*/
     filter: blur(0.5px);
@@ -29,7 +29,7 @@ intro-section {
     pointer-events: none;
 
     @include mobile {
-      background: url("../assets/bg-gente-mbl.jpg")  center top / cover no-repeat;
+      background: url("https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/bg-gente-mbl.jpg")  center top / cover no-repeat;
     }
   }
   

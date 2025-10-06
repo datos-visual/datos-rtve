@@ -1,6 +1,7 @@
 "use client";
 
-import barraIntro from "../../app/assets/barra-intro.svg";
+// URL absoluta del CDN para evitar hashes
+const barraIntro = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/barra-intro.svg";
 import ScrollButton from "../ScrollButton/ScrollButton";
 import "../../app/styles/intro/_introScreen1.scss";
 

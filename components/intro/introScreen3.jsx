@@ -6,15 +6,16 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Draggable } from "gsap/Draggable";
 import { PERSONAJES_DATA, INTRO_CONFIG } from "./config/constants";
-import flechaVolver from "../../app/assets/flecha-volver.svg";
+// URLs absolutas del CDN para evitar hashes
+const flechaVolver = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/flecha-volver.svg";
 
 // Import personajes images
-import personaje5 from "../../app/assets/personajes/5.png";
-import personaje6 from "../../app/assets/personajes/6.png";
-import personaje7 from "../../app/assets/personajes/7.png";
-import personaje8 from "../../app/assets/personajes/8.png";
-import personaje9 from "../../app/assets/personajes/9.png";
-import personaje10 from "../../app/assets/personajes/10.png";
+const personaje5 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/5.png";
+const personaje6 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/6.png";
+const personaje7 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/7.png";
+const personaje8 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/8.png";
+const personaje9 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/9.png";
+const personaje10 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/10.png";
 import ScrollButton from "../ScrollButton/ScrollButton";
 
 const PERSONAJES_IMAGES = {

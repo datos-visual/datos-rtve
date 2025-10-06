@@ -3,10 +3,11 @@ import Script from "next/script";
 // En desarrollo cargamos SCSS directamente; en PRE/PROD lo sustituimos por <link>
 import "./styles/main.scss";
 const ENV = process.env.APP_ENV || "development";
-const CSS_URL =
-  ENV === "development"
-    ? null
-    : "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/layout.css";
+// En PRE/PROD añadir dos hojas: layout.css y page.css (orden importa)
+const CSS_LAYOUT_URL =
+  ENV === "development" ? null : "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/layout.css?v=2";
+const CSS_PAGE_URL =
+  ENV === "development" ? null : "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/page.css";
 
 const merriweather = Merriweather({
   variable: "--font-merriweather",
@@ -61,7 +62,8 @@ export default function RootLayout({ children }) {
     <html lang="es">
       <head>
         {/* CSS estático RTVE en PRE/PROD */}
-        {CSS_URL && <link rel="stylesheet" href={CSS_URL} />}
+        {CSS_LAYOUT_URL && <link rel="stylesheet" href={CSS_LAYOUT_URL} />}
+        {CSS_PAGE_URL && <link rel="stylesheet" href={CSS_PAGE_URL} />}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

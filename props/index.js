@@ -57,27 +57,12 @@ function getConfig() {
   const commonConfig = configData.common || {};
 
   // Obtener la configuración específica del entorno
+  // Regla: cualquier entorno distinto de 'development' usa producción (PRE = PROD)
   let envConfig;
-  switch (environment) {
-    case "development":
-      envConfig = configData.development || {};
-      break;
-
-    case "preproduction":
-    case "pre":
-      envConfig = configData.preproduction || {};
-      break;
-
-    case "production":
-    case "prod":
-      envConfig = configData.production || {};
-      break;
-
-    default:
-      console.warn(
-        `Entorno '${environment}' no reconocido. Usando configuración de desarrollo.`
-      );
-      envConfig = configData.development || {};
+  if (environment === 'development') {
+    envConfig = configData.development || {};
+  } else {
+    envConfig = configData.production || {};
   }
 
   // Combinar configuración común con la específica del entorno
