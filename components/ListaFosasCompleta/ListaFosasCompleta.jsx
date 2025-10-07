@@ -36,6 +36,7 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
   introVisibleDefault,
   onItemClick,
   onIntroToggle,
+  totalFiltradas, // Total de fosas filtradas desde el padre
   // Nuevas props para filtro por viewport
   map,
   filtrarPorViewport = false,
@@ -291,7 +292,8 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
 
   const mensajeContador = (() => {
     // Formato simplificado: "Se muestran X resultados"
-    const cantidad = itemsBase.length || items.length;
+    // Usar totalFiltradas si está disponible (desde MapaBuscadorFosas), sino itemsBase.length
+    const cantidad = totalFiltradas || itemsBase.length || items.length;
     return `Se muestran ${cantidad.toLocaleString('es-ES')} resultados`;
   })();
 

@@ -894,6 +894,7 @@ export default function MapaBuscadorFosas({
                     descripcion={`Página ${loadingInfo.currentPage} de ${loadingInfo.totalPages} - Mostrando ${loadingInfo.loadedItems} de ${totalFiltradas} fosas`}
                     onItemClick={handleFosaSelect}
                     modoSimple={true}
+                    totalFiltradas={totalFiltradas}
                     // Habilitar filtro por viewport con toggle
                     map={mapaRef.current?.map}
                     filtrarPorViewport={true}
