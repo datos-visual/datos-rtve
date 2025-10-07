@@ -859,13 +859,13 @@ export default function MapaBuscadorFosas({
       <h2 className="mapa-fosas_title">Descubra todas las fosas en el territorio español</h2>
       <div
         className={`mapa-fosas_content buscador-layout ${
-          listaVisible ? "open" : ""
+          listaVisible || selectedFosa ? "open" : ""
         }`}
       >
         {/* Panel de búsqueda - Desktop y Mobile */}
         <div
           className={`mapa-fosas_search ${
-            !listaVisible ? "vista-completa" : ""
+            !listaVisible && !selectedFosa ? "vista-completa" : ""
           } ${isMobile ? "mobile" : ""}`}
         >
           {selectedFosa ? (

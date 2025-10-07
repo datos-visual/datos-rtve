@@ -74,7 +74,7 @@ function FosasPageContent() {
   // Configuración de cards que aparecen durante el video
   const videoCards = [
     {
-      content: "No importa la coordenada: en España no es posible estar a más de 60 kilómetros de una fosa común. Algunas contienen los restos de miles de personas; otras son enterramientos individuales.",
+      content: "No importa la coordenada: en España no es posible estar a más de XX kilómetros de una fosa común. Algunas contienen los restos de miles de personas; otras son enterramientos individuales.",
       showAt: 0,
       hideAt: 6,
       background: "transparent",
@@ -83,7 +83,7 @@ function FosasPageContent() {
     },
     {
       content:
-        "Uno de cada 60 municipios españoles tiene en su terreno al menos una fosa de la Guerra Civil o el franquismo. Se han exhumado 1.300 de las 6.000 registradas actualmente.",
+        "Uno de cada XX municipios españoles tiene en su terreno al menos una fosa de la Guerra Civil o el franquismo. Se han exhumado alrededor de 1.300 de las 6.000 registradas actualmente.",
       showAt: 6,
       hideAt: 11,
       background: "transparent",
@@ -92,7 +92,7 @@ function FosasPageContent() {
     },
     {
       content:
-        "La exhumación en Priaranza del Bierzo (León) en el año 2000 marcó un hito en la preservación de la memoria democrática. Desde entonces se han recuperado los restos de más de 18.000 personas, de las cuales solo se ha podido identificar a unas 700.",
+        "La exhumación en Priaranza del Bierzo (León) en el año 2000 marcó un hito en la preservación de la memoria democrática. Desde entonces se han recuperado los restos de más de 18.000 personas, de las cuales solo se ha podido identificar a unas 700.A medida que continúan las prospecciones, el número de fosas sigue aumentando. Es probable que algunos de los desaparecidos no se lleguen a encontrar nunca.",
       showAt: 11,
       hideAt: 16,
       background: "transparent",
