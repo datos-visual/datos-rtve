@@ -10,6 +10,7 @@ import ListadoSEO from "../../components/common/ListadoSEO";
 import HamburgerMenu from "../../components/HamburgerMenu/HamburgerMenu";
 import MenuSwitch from "../../components/common/MenuSwitch";
 import VideoScroll from "../../components/VideoScroll/VideoScroll";
+import ScrollButton from "../../components/ScrollButton/ScrollButton";
 import MapaBuscadorFosas from "../../components/MapaBuscadorFosas/MapaBuscadorFosas";
 import "../styles/_historias.scss";
 
@@ -17,6 +18,7 @@ function FosasPageContent() {
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [showScrollButton, setShowScrollButton] = useState(true);
 
   // Obtener parámetros de URL para ubicación específica
   const [urlParams, setUrlParams] = useState({});
@@ -33,6 +35,34 @@ function FosasPageContent() {
     }
   }, []);
 
+  // Detectar scroll para ocultar el botón cuando desaparezca el primer texto
+  useEffect(() => {
+    const handleScroll = () => {
+      // El primer texto desaparece a los 6 segundos (6 * 150 px/seg = 900px)
+      const firstTextEndScroll = 6 * 150;
+      const currentScroll = window.scrollY;
+      
+      // Ocultar el botón cuando desaparezca el primer texto
+      if (currentScroll >= firstTextEndScroll) {
+        setShowScrollButton(false);
+      } else {
+        setShowScrollButton(true);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Función para hacer scroll al contenido del mapa
+  const scrollToMapContent = () => {
+    const videoScrollHeight = 30 * 150; // Altura total del VideoScroll
+    window.scrollTo({
+      top: videoScrollHeight,
+      behavior: 'smooth'
+    });
+  };
+
   const handleMenuNavigation = (page) => {
     if (page === "historias") {
       router.push("/historias");
@@ -44,24 +74,36 @@ function FosasPageContent() {
   // Configuración de cards que aparecen durante el video
   const videoCards = [
     {
-      content: "",
+      content: "No importa la coordenada: en España no es posible estar a más de 60 kilómetros de una fosa común. Algunas contienen los restos de miles de personas; otras son enterramientos individuales.",
       showAt: 0,
-      hideAt: 5,
-      visible: false,
-    },
-    {
-      content: "Más de 20.000 víctimas siguen en cementerios, cunetas y pozos",
-      showAt: 5,
-      hideAt: 10,
+      hideAt: 6,
       background: "transparent",
       backdropFilter: "blur(0)",
       color: "#ffffff",
     },
     {
       content:
-        "Descubre las 6.000 fosas de España y recupera la memoria de las víctimas",
-      showAt: 10,
-      hideAt: 17,
+        "Uno de cada 60 municipios españoles tiene en su terreno al menos una fosa de la Guerra Civil o el franquismo. Se han exhumado 1.300 de las 6.000 registradas actualmente.",
+      showAt: 6,
+      hideAt: 11,
+      background: "transparent",
+      backdropFilter: "blur(0)",
+      color: "#ffffff",
+    },
+    {
+      content:
+        "La exhumación en Priaranza del Bierzo (León) en el año 2000 marcó un hito en la preservación de la memoria democrática. Desde entonces se han recuperado los restos de más de 18.000 personas, de las cuales solo se ha podido identificar a unas 700.",
+      showAt: 11,
+      hideAt: 16,
+      background: "transparent",
+      backdropFilter: "blur(0)",
+      color: "#ffffff",
+    },
+    {
+      content:
+        "A medida que continúan las prospecciones, el número de fosas sigue aumentando. Es probable que algunos de los desaparecidos no se lleguen a encontrar nunca.",
+      showAt: 16,
+      hideAt: 21,
       background: "transparent",
       backdropFilter: "blur(0)",
       color: "#ffffff",
@@ -70,7 +112,30 @@ function FosasPageContent() {
 
   return (
     <main>
-      <VideoScroll duration={23} cards={videoCards}>
+      {/* Botón fijo en la parte inferior durante el video */}
+      {showScrollButton && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "40px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 100,
+            opacity: showScrollButton ? 1 : 0,
+            transition: "opacity 0.5s ease-out",
+            pointerEvents: showScrollButton ? "auto" : "none",
+          }}
+        >
+          <ScrollButton 
+            label="Desplázate" 
+            icon="mouse" 
+            animated={true}
+            onClick={scrollToMapContent}
+          />
+        </div>
+      )}
+
+      <VideoScroll duration={30} cards={videoCards}>
         {/* Contenido del mapa */}
         <section className="buscador-mapa-fosas">
           <MenuSwitch

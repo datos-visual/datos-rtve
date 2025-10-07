@@ -121,6 +121,6 @@ const nextConfig = {
 }
 
 // Establecer assetPrefix igual que en los proyectos RTVE
-nextConfig.assetPrefix = `${properties.js2Domain}/pages/${propsPackage.distName}/${propsPackage.version}`
+// nextConfig.assetPrefix = `${properties.js2Domain}/pages/${propsPackage.distName}/${propsPackage.version}`
 
 export default nextConfig
