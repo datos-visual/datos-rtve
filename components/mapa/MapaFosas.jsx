@@ -16,7 +16,7 @@ import { getParam, normId } from "./js/utils.js";
 import { MAPBOX_TOKEN } from "./js/config.js";
 import { useMapaRecuento } from "../../app/hooks/useMapaRecuento.js";
 import { addNavButtons } from "./js/navButtons.js";
-// Estilos del mapa integrados en app/styles (modelo RTVE). No importar CSS aquí.
+import "./css/estilos.css";
 
 // Normalizar nombres para la URL
 const slugify = (str) =>

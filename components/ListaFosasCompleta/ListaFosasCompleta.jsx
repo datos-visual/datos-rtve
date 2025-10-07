@@ -36,6 +36,7 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
   introVisibleDefault,
   onItemClick,
   onIntroToggle,
+  totalFiltradas, // Total de fosas filtradas desde el padre
   // Nuevas props para filtro por viewport
   map,
   filtrarPorViewport = false,
@@ -290,28 +291,10 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
   const tituloSeccion = "Resumen de la categoría";
 
   const mensajeContador = (() => {
-    const tipoContenido = config.tipoContenido || "elementos";
-    let mensaje = `Se muestran ${items.length} ${tipoContenido}`;
-
-    if (modoViewportActivo) {
-      if (fosasVisiblesExternas) {
-        mensaje += ` visibles en el mapa`;
-        if (itemsBase.length !== items.length) {
-          mensaje += ` de ${itemsBase.length} total`;
-        }
-      } else if (mapaListo) {
-        mensaje += ` visibles en el mapa`;
-        if (itemsBase.length !== items.length) {
-          mensaje += ` de ${itemsBase.length} total`;
-        }
-      } else {
-        mensaje += ` (cargando filtro de mapa...)`;
-      }
-    } else if (config.mostrarCategoria && categoria && categoria !== "todas") {
-      mensaje += ` de ${categoria[0].toUpperCase() + categoria.slice(1)}`;
-    }
-
-    return mensaje;
+    // Formato simplificado: "Se muestran X resultados"
+    // Usar totalFiltradas si está disponible (desde MapaBuscadorFosas), sino itemsBase.length
+    const cantidad = totalFiltradas || itemsBase.length || items.length;
+    return `Se muestran ${cantidad.toLocaleString('es-ES')} resultados`;
   })();
 
   const mensajeVacio = (() => {
