@@ -92,7 +92,7 @@ function FosasPageContent() {
     },
     {
       content:
-        "La exhumación en Priaranza del Bierzo (León) en el año 2000 marcó un hito en la preservación de la memoria democrática. Desde entonces se han recuperado los restos de más de 18.000 personas, de las cuales solo se ha podido identificar a unas 700.A medida que continúan las prospecciones, el número de fosas sigue aumentando. Es probable que algunos de los desaparecidos no se lleguen a encontrar nunca.",
+        "La exhumación en Priaranza del Bierzo (León) en el año 2000 marcó un hito en la preservación de la memoria democrática. Desde entonces se han recuperado los restos de más de 18.000 personas, de las cuales solo se ha podido identificar a unas 700.",
       showAt: 11,
       hideAt: 16,
       background: "transparent",
