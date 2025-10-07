@@ -6,7 +6,7 @@ import MapaBuscadorFosas from "../../../components/MapaBuscadorFosas/MapaBuscado
 import "../../../app/styles/_historias.scss";
 import ModuloReportajes from "../../../components/common/ModuloReportajes";
 import ModuloNoticias from "../../../components/common/ModuloNoticias";
-import ListadoSEO from "../../../components/common/ListadoSEO";
+import ListadoSEOClient from "../../../components/ListadoSEOClient/ListadoSEOClient";
 import MenuSwitchClient from "../../../components/MenuSwitchClient/MenuSwitchClient";
 
 function slugify(text) {
@@ -152,7 +152,7 @@ export default async function ProvinciaPage({ params }) {
           <ModuloNoticias />
           <SobreElProyecto />
           <Creditos />
-          <ListadoSEO />
+          <ListadoSEOClient />
         </section>
       </main>
     </>

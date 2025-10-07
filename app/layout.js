@@ -22,6 +22,13 @@ const merryweatherSans = Merriweather_Sans({
 });
 
 export const metadata = {
+  metadataBase: new URL(
+    ENV === "production"
+      ? "https://www.rtve.es/noticias/fosas-guerra-civil-franquismo"
+      : ENV === "preproduction"
+      ? "https://www-pre.rtve.es/noticias/fosas-guerra-civil-franquismo"
+      : "http://localhost:3000"
+  ),
   title: "**SEO TITLE FORMADO**",
   description: "**META DESCRIPTION FORMADA**",
   robots: "index,follow,max-image-preview:large",

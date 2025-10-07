@@ -4,7 +4,7 @@ import Creditos from "../../../../../components/common/Creditos";
 import ModuloNoticias from "../../../../../components/common/ModuloNoticias";
 import ModuloReportajes from "../../../../../components/common/ModuloReportajes";
 import SobreProyecto from "../../../../../components/common/SobreProyecto";
-import ListadoSEO from "../../../../../components/common/ListadoSEO";
+import ListadoSEOClient from "../../../../../components/ListadoSEOClient/ListadoSEOClient";
 import VideoScroll from "../../../../../components/VideoScroll/VideoScroll";
 import MapaBuscadorFosas from "../../../../../components/MapaBuscadorFosas/MapaBuscadorFosas";
 import "../../../../styles/_historias.scss";
@@ -197,7 +197,7 @@ export default async function FosaEspecificaPage({ params }) {
           <ModuloNoticias style={{ zIndex: 999 }} />
           <SobreProyecto style={{ zIndex: 999 }} />
           <Creditos style={{ zIndex: 999 }} />
-          <ListadoSEO style={{ zIndex: 999 }} />
+          <ListadoSEOClient style={{ zIndex: 999 }} />
         </section>
       </main>
     </>

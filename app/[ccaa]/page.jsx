@@ -4,7 +4,7 @@ import SobreElProyecto from "../../components/common/SobreProyecto";
 import JsonLdScript from "../../components/BreadcrumbJsonLd/BreadcrumbJsonLd";
 import MapaBuscadorFosas from "../../components/MapaBuscadorFosas/MapaBuscadorFosas";
 import "../../app/styles/_historias.scss";
-import ListadoSEO from "../../components/common/ListadoSEO";
+import ListadoSEOClient from "../../components/ListadoSEOClient/ListadoSEOClient";
 import ModuloReportajes from "../../components/common/ModuloReportajes";
 import ModuloNoticias from "../../components/common/ModuloNoticias";
 import MenuSwitchClient from "../../components/MenuSwitchClient/MenuSwitchClient";
@@ -137,7 +137,7 @@ export default async function CcaaPage({ params }) {
           <ModuloNoticias />
           <Creditos />
           <SobreElProyecto />
-          <ListadoSEO />
+          <ListadoSEOClient />
         </section>
       </main>
     </>
