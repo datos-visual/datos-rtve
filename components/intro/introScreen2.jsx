@@ -32,9 +32,9 @@ export default function IntroScreen2({onNavigation}) {
     }, [tooltipVisible, currentCategoryIndex]);
 
     const textContent = [
-        "La Guerra Civil y el franquismo convirtieron a España en una gran fosa común. En las últimas décadas se han exhumado los restos de más de 18.000 víctimas. Se estima que más de 20.000 siguen en cementerios, cunetas, pozos y otros lugares donde los responsables de sus asesinatos intentaron ocultar los cuerpos o enterrarlos sin dignidad, para prolongar el castigo a ellos y a sus familias.",
-        "Además de los muertos en combate o a causa de los bombardeos, 100.000 personas fueron asesinadas por los sublevados y 55.000 por los republicanos durante la guerra. Después y hasta 1946, la dictadura mató a otras 50.000 personas, a menudo tras juicios sumarísimos sin garantías.",
-        "Este es el primer mapa audiovisual de las fosas de la Guerra Civil y el franquismo, donde puedes descubrir las 6.000 fosas de España y recuperar la memoria de algunas de las víctimas. Una parte de la historia que yace aún en la tierra.",
+        "La Guerra Civil y el franquismo convirtieron España en una gran fosa común, donde fueron enterradas las víctimas de la violencia política. Durante la contienda, y luego en el franquismo, más de 140.000 personas fueron asesinadas por los sublevados. Y más de 49.000 murieron en la retaguardia republicana.",
+        "En las últimas décadas se han exhumado los restos de más de 18.000 víctimas de la represión y se estima que aún podrían recuperarse los de otras 20.000. Sus cuerpos siguen en cementerios, cunetas, pozos y otros lugares donde los responsables de sus asesinatos intentaron ocultarlos o enterrarlos sin dignidad, para prolongar el castigo a ellos y a sus familias.",
+        "Este es el primer mapa audiovisual de las fosas de la Guerra Civil y el franquismo de toda España, donde puedes descubrir las aproximadamente 6.000 fosas y recuperar la memoria de algunas de las víctimas. Una parte de la historia que yace aún en la tierra.",
     ];
 
     const toggleTooltip = () => setTooltipVisible(!tooltipVisible);
