@@ -859,13 +859,13 @@ export default function MapaBuscadorFosas({
       <h2 className="mapa-fosas_title">Descubra todas las fosas en el territorio español</h2>
       <div
         className={`mapa-fosas_content buscador-layout ${
-          listaVisible ? "open" : ""
+          listaVisible || selectedFosa ? "open" : ""
         }`}
       >
         {/* Panel de búsqueda - Desktop y Mobile */}
         <div
           className={`mapa-fosas_search ${
-            !listaVisible ? "vista-completa" : ""
+            !listaVisible && !selectedFosa ? "vista-completa" : ""
           } ${isMobile ? "mobile" : ""}`}
         >
           {selectedFosa ? (
@@ -894,6 +894,7 @@ export default function MapaBuscadorFosas({
                     descripcion={`Página ${loadingInfo.currentPage} de ${loadingInfo.totalPages} - Mostrando ${loadingInfo.loadedItems} de ${totalFiltradas} fosas`}
                     onItemClick={handleFosaSelect}
                     modoSimple={true}
+                    totalFiltradas={totalFiltradas}
                     // Habilitar filtro por viewport con toggle
                     map={mapaRef.current?.map}
                     filtrarPorViewport={true}

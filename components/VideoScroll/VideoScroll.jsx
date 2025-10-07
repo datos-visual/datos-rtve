@@ -154,7 +154,7 @@ export default function VideoScroll({
             left: "50%",
             transform: "translate(-50%, -50%)",
             zIndex: card.zIndex || 60,
-            opacity: "0",
+            opacity: card.showAt === 0 ? "1" : "0", // Mostrar inmediatamente si showAt es 0
             transition: "opacity 0.5s ease-out, transform 0.5s ease-out",
             pointerEvents: card.interactive ? "auto" : "none",
             maxWidth: card.maxWidth || "800px",
