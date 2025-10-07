@@ -87,12 +87,14 @@
     max-width: 800px;
     width: 100%;
     position: relative;
+    opacity: 1;
+    height: auto;
 
     @media (min-width: 768px) {
       width: 70%;
     }
     @include desktop {
-      width: 67%;
+      width: 70%;
     }
 
     // .categoria-label (renderDesktopContent)
@@ -122,16 +124,18 @@
       font-family: $font-secondary;
       font-weight: 700;
       color: $text-color-primary;
-      margin: 0 0 55px 0;
+      margin: 0 0 30px 0;
       width: 80%;
-      font-size: clamp(2.5rem, 1vw + 2rem, 3.333rem);
-      line-height: clamp(2.667rem, 1.8vw + 1.767rem, 4.167rem);
+      //font-size: clamp(2.5rem, 1vw + 2rem, 3.333rem);
+      //line-height: clamp(2.667rem, 1.8vw + 1.767rem, 4.167rem);
+      font-size: 30px;
+      line-height: 42px;
 
       @include tablet {
         width: 100%;
       }
       @media (min-width: 768px) {
-        width: 70%;
+        width: 100%;
       }
       @include mobile {
         display: none;
@@ -270,7 +274,7 @@
     }
 
     @include desktop {
-      width: 33%;
+      width: 30%;
     }
 
     // .personaje-visual

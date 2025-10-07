@@ -56,7 +56,7 @@ button {
   padding: 0 20px;
 
   @media (min-width: $breakpoint-mobile) {
-    height: 100vh;
+    min-height: 100svh;
   }
 }
 
@@ -140,7 +140,7 @@ button {
   flex-wrap: wrap;
   gap: 12px;
   width: 100%;
-  margin: 0 auto 6sc0px;
+  margin: 0 auto 60px;
 
   @media (min-width: 768px) {
     flex-direction: row;
@@ -150,7 +150,7 @@ button {
   .primary-btn {
     @include button-base;
     outline: none;
-    box-sizing: content-box;
+    box-sizing: border-box;
     padding: 16px 50px;
 
     font-family: $font-secondary;
@@ -319,7 +319,7 @@ button {
         cursor: pointer;
         transition: $transition-all;
         text-decoration: none;
-        gap: 0px;
+        gap: 0!important;
         flex-shrink: 0;
         box-sizing: content-box;
         position: relative;

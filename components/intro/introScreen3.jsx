@@ -35,6 +35,7 @@ export default function IntroScreen3({ categoria = "mujeres", onNavigation }) {
   const sheetRef = useRef(null);
   const handleRef = useRef(null);
   const contentRef = useRef(null);
+  
 
   const data = PERSONAJES_DATA[currentCategoria];
   if (!data) return null;
