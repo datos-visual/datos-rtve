@@ -118,9 +118,24 @@ body {
   color: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-  padding: 15px 20px;
-  font-family: "Inter", sans-serif;
+  padding: 12px 20px;
+
+  font-family: "Public Sans", sans-serif;
+  font-weight: 700;
   font-size: 14px;
+  line-height: 16px;
+  color: #E7D6D6;
+
+ 
+}
+
+.mapboxgl-popup-content strong {
+  font-family: "Public Sans", sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 22px;
+  color: #fff;
+  display: block;
 }
 
 .mapboxgl-popup-close-button {
@@ -129,8 +144,8 @@ body {
   padding: 4px 6px;
 }
 
-.mapboxgl-popup-tip {
-  display: none;
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+    border-top-color: #333333;
 }
 
 /* Contador de fosas visibles */
@@ -194,7 +209,6 @@ body {
 /* Botones de navegación Península/Canarias */
 .navjump {
   position: absolute;
-  
   z-index: 11;
   display: flex;
   gap: 8px;
@@ -204,7 +218,13 @@ body {
   padding: 8px;
   box-sizing: border-box;
   right: 25px!important;
-  bottom: 18px!important;
+  bottom: 47px!important;
+}
+
+@media (max-width: 599.98px) {
+  .navjump {
+    display: none;
+  }
 }
 
 .navjump__btn {
@@ -266,11 +286,19 @@ body {
 
 
 .mapboxgl-ctrl-top-right {
-  bottom: 100px;
+  bottom: 130px;
   top: inherit;
   width: 46px;
   right: 25px;
 }
+
+@media (max-width: 599.98px) {
+  .mapboxgl-ctrl-top-right {
+    display: none;
+  }
+}
+
+
 
 .mapboxgl-ctrl-group:not(:empty) {
   box-shadow: none;

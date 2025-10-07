@@ -7,7 +7,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 const CONFIG = {
   HEIGHT: '80vh',
   MAX_HEIGHT: '520px',
-  PEEK_HEIGHT: 60,
+  PEEK_HEIGHT: 260,
   ANIMATION_DURATION: 0.2,
   RETRY_DELAY: 200,
   INIT_DELAY: 50,
@@ -34,9 +34,9 @@ const UTILS = {
 
   // Generar contador HTML
   contadorHTML: (loadedItems, totalFosas, hasMore) => `
-    <p class="contador-text">Se muestran ${loadedItems} de ${totalFosas} fosas</p>
+    <p class="contador-text">Se muestran ${loadedItems} resultados</p>
     ${hasMore ? 
-      `<p class="loading-info-mobile">Desplázate hacia abajo para cargar más (${totalFosas - loadedItems} restantes)...</p>` : 
+      `<p class="loading-info-mobile">Desplázate hacia abajo para ver más</p>` : 
       `<p class="loading-info-mobile">✅ Todas las fosas cargadas (${totalFosas} elementos)</p>`
     }
   `,

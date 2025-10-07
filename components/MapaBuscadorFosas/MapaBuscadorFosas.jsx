@@ -854,7 +854,9 @@ export default function MapaBuscadorFosas({
   }
 
   return (
+    
     <div className="mapa-fosas">
+      <h2 className="mapa-fosas_title">Descubra todas las fosas en el territorio español</h2>
       <div
         className={`mapa-fosas_content buscador-layout ${
           listaVisible ? "open" : ""
@@ -879,8 +881,7 @@ export default function MapaBuscadorFosas({
                 aria-live="polite"
                 className="mapa-fosas-searcher__result only_desktop"
               >
-                Se muestran <strong>{loadingInfo.loadedItems}</strong> de{" "}
-                <strong>{totalFiltradas}</strong> resultados
+                Se muestran <strong>{totalFiltradas}</strong> resultados
               </div>
               {StatusFilters}
 

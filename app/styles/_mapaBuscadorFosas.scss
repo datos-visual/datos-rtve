@@ -11,6 +11,16 @@
         display: flex;
         justify-content: space-between;
 
+        &_title {
+            position: absolute;
+            top: -60px;
+            font-family: $font-primary;
+            font-weight: 700;
+            font-size: 18px;
+            line-height: 20px;
+            color: $text-color-secundary;
+        }
+
         &_content {
             width: 100%;
             height: 900px;
@@ -371,6 +381,18 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        z-index: 99999;
+
+        &_title {
+            position: absolute;
+            top: -67px;
+            font-family: $font-primary;
+            font-weight: 700;
+            font-size: 18px;
+            line-height: 20px;
+            color: $text-color-secundary;
+            padding-left: 20px;
+        }
 
         &_content {
             width: 100%;
@@ -575,20 +597,18 @@
         }
     }
 
-        .leyend-map {
+    .leyend-map {
         position: absolute;
         display: flex;
         align-items: center;
-        gap: 20px;
+        gap: 10px;
         justify-content: center;
-        top: 37px;
-        right: 25px;
+        top: 15px;
+        right: 15px;
         background: rgba(255, 255, 255, 0.95);
-        padding: 8px 20px;
+        padding: 4px 10px;
         border-radius: 50px;
         box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
-        font-family: Arial, sans-serif;
-        font-size: 13px;
         z-index: 1000;
 
         &_container {
@@ -607,7 +627,7 @@
             &-text {
                 font-family: $font-primary;
                 font-weight: 400;
-                font-size: 14px;
+                font-size: 12px;
                 line-height: 24px;
                 color: $text-color-secundary;
                 display: block;

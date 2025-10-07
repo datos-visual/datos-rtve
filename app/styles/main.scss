@@ -33,12 +33,8 @@ body {
   font-family: $font-primary;
   background: $color-primary;
   color: $text-color-primary;
-  overflow-x: hidden; /* Prevenir scroll horizontal */
 }
 
-html {
-  overflow-x: hidden; /* Prevenir scroll horizontal en html también */
-}
 
 * {
   box-sizing: border-box; /* Asegurar que padding/border no cause overflow */

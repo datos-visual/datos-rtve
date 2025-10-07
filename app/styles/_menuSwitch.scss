@@ -5,6 +5,9 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 90px;
+  position: sticky;
+  top: 80px;
+  z-index: 9999;
 
   @media (min-width: 768px) {
     gap: 20px;
