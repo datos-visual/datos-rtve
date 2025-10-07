@@ -249,6 +249,22 @@ lista-fosas-completa {
   }
 }
 
+.contador-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  .contador_txt { 
+    font-family: $font-primary;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+    color: $color-gray-dark-3;
+    white-space: nowrap;
+  }
+}
+
 .contador {
   display: inline-flex;
   align-items: center;

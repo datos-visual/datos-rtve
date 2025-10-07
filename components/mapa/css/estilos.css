@@ -1,8 +1,4 @@
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
+
 #map {
   position: relative;
   width: 100%;
@@ -113,7 +109,7 @@ body {
   border-color: #d32f2f;
 }
 
-.mapboxgl-popup-content {
+.mapboxgl-popup {
   background: #333333;
   color: #fff;
   border-radius: 12px;
@@ -125,11 +121,14 @@ body {
   font-size: 14px;
   line-height: 16px;
   color: #E7D6D6;
+  z-index: 99999999999;
+  background: red;
+  position: relative;
 
  
 }
 
-.mapboxgl-popup-content strong {
+.mapboxgl-popup strong {
   font-family: "Public Sans", sans-serif;
   font-weight: 700;
   font-size: 18px;

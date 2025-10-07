@@ -398,6 +398,8 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
           className="contador"
           dangerouslySetInnerHTML={{ __html: mensajeContador }}
         />
+
+        <p  className="contador_txt">Desplázate hacia abajo para ver más</p>
       </div>
       <div className="lista-fosas" data-contexto={contexto}>
         {!config.modoSimple && (
