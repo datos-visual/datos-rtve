@@ -189,10 +189,12 @@ export default function VideoScroll({
           height: `${duration * pixelsPerSecond}px`,
           backgroundColor: "transparent",
         }}
-      />
+      >
+      </div>
 
       {/* Contenido que aparece después del video */}
       <div className="content-after-video">{children}</div>
     </div>
+
   );
 }

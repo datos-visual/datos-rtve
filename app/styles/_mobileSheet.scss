@@ -95,6 +95,7 @@
             font-size: 14px;
             line-height: 20px;
             color: #606060;
+            margin-bottom: 10px;
           }
         }
 
@@ -205,7 +206,7 @@
           // Estilos para los elementos de fosa (adaptados para móvil)
           .fosa {
             border-bottom: 1px solid #D1D1D1;
-            padding: 12px;
+            padding: 12px 12px 12px 0;
             margin-bottom: 8px;
             cursor: pointer;
             transition: all 0.2s ease;

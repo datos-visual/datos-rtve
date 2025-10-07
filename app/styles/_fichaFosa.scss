@@ -68,7 +68,7 @@ ficha-fosa {
     position: absolute;
     top: 0;
     right: 0;
-    z-index: 1;
+    z-index: 99;
   }
 
   .ficha-contenido {
@@ -146,13 +146,6 @@ ficha-fosa {
         }
       }
 
-      .ubicacion {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        color: #7b7b7b;
-      }
-
       .info-ubicacion {
         width: 100%;
         max-width: 100%;
@@ -176,11 +169,11 @@ ficha-fosa {
         .ubicacion {
           font-family: $font-primary;
           font-weight: 400;
-          font-size: toRem(12);
+          font-size: toRem(16);
           color: #606060;
           margin: 0;
-          line-height: 1;
-          gap: 5px;
+          line-height: 1.3;
+          margin-bottom: 5px;
 
           &:before {
             content:"";
@@ -188,6 +181,7 @@ ficha-fosa {
             display: inline-block;
             width: 13px;
             height: 16px;
+            margin-right: 8px;
           }
 
           @media (min-width: 992px) {

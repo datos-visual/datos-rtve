@@ -10,6 +10,7 @@ mapa-fosas-new {
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
 
   &__title {
     padding-block: 20px;
