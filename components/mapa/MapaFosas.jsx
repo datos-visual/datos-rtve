@@ -8,6 +8,7 @@ import {
   useImperativeHandle,
 } from "react";
 import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
 import { createMap, createGeocoder } from "./js/initMap.js";
 import { cargarFosas } from "../../app/lib/datos.js";
 import { montarCapaFosas, actualizarDatosFosas } from "./js/layers.js";

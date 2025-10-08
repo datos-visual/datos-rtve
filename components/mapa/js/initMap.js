@@ -1,8 +1,6 @@
 import { MAPBOX_TOKEN, MAP_STYLE } from "./config.js";
 import mapboxgl from "mapbox-gl";
 // import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder"; // Comentado temporalmente
-// CSS de Mapbox integrado en app/styles/_mapbox-gl.scss y compilado en layout.css
-// import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css"; // Comentado temporalmente
 
 mapboxgl.accessToken = MAPBOX_TOKEN;
 

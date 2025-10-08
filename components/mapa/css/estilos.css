@@ -109,26 +109,19 @@
   border-color: #d32f2f;
 }
 
-.mapboxgl-popup {
+.mapboxgl-popup-content {
   background: #333333;
-  color: #fff;
+  color: #E7D6D6;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
   padding: 12px 20px;
-
   font-family: "Public Sans", sans-serif;
   font-weight: 700;
   font-size: 14px;
   line-height: 16px;
-  color: #E7D6D6;
-  z-index: 99999999999;
-  background: red;
-  position: relative;
-
- 
 }
 
-.mapboxgl-popup strong {
+.mapboxgl-popup-content strong {
   font-family: "Public Sans", sans-serif;
   font-weight: 700;
   font-size: 18px;
