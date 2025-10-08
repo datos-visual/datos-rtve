@@ -187,8 +187,50 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
   );
 
   const handleToggleClick = useCallback(() => {
+    // Guardar posición actual del mapa (como en infografiasRTVE)
+    let posicionActual = null;
+    if (mapaRef.current?.map) {
+      try {
+        posicionActual = {
+          center: mapaRef.current.map.getCenter(),
+          zoom: mapaRef.current.map.getZoom(),
+        };
+      } catch (error) {
+        // Error al guardar posición
+      }
+    }
+
+    // Cambiar estado
     setListaVisible((prev) => !prev);
-    mapaRef.current?.map && setTimeout(() => mapaRef.current.map.resize(), 100);
+
+    // Forzar resize del mapa (exactamente como en infografiasRTVE)
+    if (mapaRef.current?.map) {
+      try {
+        // Resize inmediato
+        mapaRef.current.map.resize();
+        
+        // Segundo resize después de 50ms
+        setTimeout(() => {
+          if (mapaRef.current?.map) {
+            mapaRef.current.map.resize();
+          }
+        }, 50);
+        
+        // Tercer resize después de 100ms + restaurar posición
+        setTimeout(() => {
+          if (mapaRef.current?.map) {
+            mapaRef.current.map.resize();
+            if (posicionActual) {
+              mapaRef.current.map.setCenter(posicionActual.center);
+              mapaRef.current.map.setZoom(posicionActual.zoom);
+            }
+          }
+        }, 100);
+        
+      } catch (error) {
+        console.warn("Error al redimensionar el mapa:", error);
+      }
+    }
   }, []);
 
   const handleFosaSelect = useCallback((fosa) => {
