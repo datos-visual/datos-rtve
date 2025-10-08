@@ -291,10 +291,19 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
   const tituloSeccion = "Resumen de la categoría";
 
   const mensajeContador = (() => {
-    // Formato simplificado: "Se muestran X resultados"
-    // Usar totalFiltradas si está disponible (desde MapaBuscadorFosas), sino itemsBase.length
-    const cantidad = totalFiltradas || itemsBase.length || items.length;
-    return `Se muestran ${cantidad.toLocaleString('es-ES')} resultados`;
+    // Mostrar la cantidad de items actualmente cargados/visibles en la lista
+    // items.length = fosas que se están mostrando actualmente (con scroll infinito)
+    // totalFiltradas = total de fosas disponibles después de filtros
+    const cantidadCargada = items.length;
+    const cantidadTotal = totalFiltradas || itemsBase.length;
+    
+    // Si hay más fosas por cargar, mostrar "X de Y resultados"
+    if (totalFiltradas && cantidadCargada < totalFiltradas) {
+      return `Se muestran ${cantidadCargada.toLocaleString('es-ES')} de ${cantidadTotal.toLocaleString('es-ES')} resultados`;
+    }
+    
+    // Si ya se cargaron todas, mostrar solo "X resultados"
+    return `Se muestran ${cantidadCargada.toLocaleString('es-ES')} resultados`;
   })();
 
   const mensajeVacio = (() => {
