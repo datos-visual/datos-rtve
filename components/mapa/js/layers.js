@@ -85,9 +85,6 @@ export function montarCapaFosas(map, fosas, soloNarrativas = false) {
             "#D69F1A", // Color dorado para fosas con línea narrativa
             "#796060", // Color gris/marrón para fosas sin línea narrativa
           ],
-          "circle-stroke-color": "rgba(0,0,0,.6)",
-          "circle-stroke-width": 0.5,
-          "circle-blur": 0.4,
         },
       },
       "fosasShadow"
@@ -133,7 +130,13 @@ export function montarCapaFosas(map, fosas, soloNarrativas = false) {
       source: "fosas",
       paint: {
         "circle-radius": 9,
-        "circle-color": "#333333",
+        "circle-color": [
+            "case",
+            ["==", ["get", "tieneLineaNarrativa"], true],
+            "#D69F1A", // Color dorado para fosas con línea narrativa
+            "#796060", // Color gris/marrón para fosas sin línea narrativa
+          ],
+        "circle-blur": 0.2,
         "circle-opacity": 1,
       },
       filter: ["==", "id", ""],
@@ -152,10 +155,10 @@ export function montarCapaFosas(map, fosas, soloNarrativas = false) {
       .setLngLat(f.geometry.coordinates)
       .setHTML(
         `
-      <strong>${f.properties.title || "Sin título"}</strong><br>
-      ${f.properties.provincia || ""}<br>
-      ${f.properties.status || ""}
-    `
+          <p><span>${f.properties.provincia || ""}</span> /
+          ${f.properties.status || ""}</p>
+          <h4>${f.properties.title || "Sin título"}</h4>
+        `
       )
       .addTo(map);
 
