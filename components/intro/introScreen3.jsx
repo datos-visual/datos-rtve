@@ -12,9 +12,9 @@ const flechaVolver = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/
 // Import personajes images
 const personaje5 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/5.png";
 const personaje6 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/6.png";
-const personaje7 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/7.png";
+const personaje7 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/7.png?v=2";
 const personaje8 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/8.png";
-const personaje9 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/9.png";
+const personaje9 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/9.png?v=2";
 const personaje10 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/10.png";
 import ScrollButton from "../ScrollButton/ScrollButton";
 
