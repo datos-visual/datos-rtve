@@ -62,6 +62,13 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
     useState(filtrarPorViewport);
   const [fosasExternas, setFosasExternas] = useState([]);
   const actualizandoViewportRef = useRef(false);
+  
+  // === LAZY LOADING POR LOTES PARA LISTA (desktop y móvil) ===
+  const BATCH_SIZE = 50;
+  const INITIAL_ITEMS = 60;
+  const [loadedCount, setLoadedCount] = useState(INITIAL_ITEMS);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const sentinelRef = useRef(null);
 
   // usar `lista` si viene, sino `fosas` (compat)
   const itemsBase = useMemo(() => {
@@ -223,6 +230,41 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
     fosasExternas,
   ]);
 
+  // Reset del lazy loading cuando cambie la fuente de items
+  useEffect(() => {
+    setLoadedCount(Math.min(INITIAL_ITEMS, items.length || 0));
+    setIsLoadingMore(false);
+  }, [items]);
+
+  // Cargar más items cuando el sentinel entra en viewport
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+    const el = sentinelRef.current;
+    if (!el) return;
+
+    const onIntersect = (entries) => {
+      const entry = entries[0];
+      if (!entry || !entry.isIntersecting) return;
+      if (isLoadingMore) return;
+      if (loadedCount >= items.length) return;
+
+      setIsLoadingMore(true);
+      // Pequeño delay para permitir pintar placeholders
+      setTimeout(() => {
+        setLoadedCount((prev) => Math.min(prev + BATCH_SIZE, items.length));
+        setIsLoadingMore(false);
+      }, 100);
+    };
+
+    const io = new IntersectionObserver(onIntersect, {
+      root: null,
+      rootMargin: "200px 0px",
+      threshold: 0.01,
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [items.length, loadedCount, isLoadingMore]);
+
   // === TODA LA CARGA SE HACE EN useMapaBuscador.js ===
   // Este componente solo recibe imagenesDestacadas como prop
 
@@ -290,7 +332,10 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
     if (!Array.isArray(listaItems) || listaItems.length === 0)
       return <p className="no-resultados">{mensajeVacio}</p>;
 
-    return listaItems.map((fosa, index) => {
+    const visible = listaItems.slice(0, loadedCount);
+    const placeholdersCount = Math.max(0, loadedCount - visible.length);
+
+    const rendered = visible.map((fosa, index) => {
       // seguridad: garantizar id
       const key = fosa?.id ?? Math.random().toString(36).slice(2, 9);
       const ubicacion = [fosa.municipio, fosa.provincia]
@@ -341,6 +386,24 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
         </div>
       );
     });
+
+    // Placeholders invisibles para reservar espacio durante la carga
+    const placeholders = Array.from({ length: placeholdersCount }).map((_, i) => (
+      <div
+        key={`ph-${i}`}
+        className="fosa placeholder"
+        aria-hidden="true"
+        style={{ opacity: 0, pointerEvents: "none" }}
+      >
+        <div className="fosa__img" />
+        <div className="info">
+          <p className="ubicacion">&nbsp;</p>
+          <p className="descripcion">&nbsp;</p>
+        </div>
+      </div>
+    ));
+
+    return [...rendered, ...placeholders];
   };
 
   return (
@@ -398,6 +461,8 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
           ) : (
             <p className="no-resultados">{mensajeVacio}</p>
           )}
+          {/* Sentinel para lazy loading */}
+          <div ref={sentinelRef} style={{ height: 1 }} />
         </div>
       </div>
     </>
