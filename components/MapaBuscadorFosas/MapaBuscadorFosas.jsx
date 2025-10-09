@@ -726,7 +726,7 @@ export default function MapaBuscadorFosas({
                   modoSimple={true}
                   totalFiltradas={totalFiltradas}
                   map={mapaRef.current?.map}
-                  filtrarPorViewport={true}
+                  filtrarPorViewport={false}
                   permitirCambioViewport={true}
                   fosasVisiblesExternas={fosasVisiblesEnMapa}
                   imagenesDestacadas={fosasConDestacado}

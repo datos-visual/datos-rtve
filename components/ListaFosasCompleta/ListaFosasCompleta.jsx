@@ -195,17 +195,26 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
   // === DETERMINAR QUÉ ITEMS MOSTRAR ===
   // Ya vienen ordenados desde el padre (useMapaBuscador)
   const items = useMemo(() => {
-    // Si tenemos fosas visibles externas (desde useMapaRecuento), usarlas cuando el viewport esté activo
-    if (modoViewportActivo && fosasExternas.length > 0) {
-      return fosasExternas;
+    // Mantener SIEMPRE el orden del listado base (itemsBase),
+    // aplicando solo un filtrado por viewport cuando esté activo.
+    if (modoViewportActivo) {
+      // Priorizar ids de fosasExternas si existen
+      if (Array.isArray(fosasExternas) && fosasExternas.length > 0) {
+        const idSet = new Set(
+          fosasExternas.map((f) => String(f?.id))
+        );
+        return itemsBase.filter((f) => idSet.has(String(f?.id)));
+      }
+      // Si no hay externas pero el mapa está listo, usar las calculadas internamente
+      if (mapaListo && Array.isArray(fosasEnViewport)) {
+        const idSet = new Set(
+          fosasEnViewport.map((f) => String(f?.id))
+        );
+        return itemsBase.filter((f) => idSet.has(String(f?.id)));
+      }
     }
-    // Si no, usar nuestra lógica interna
-    else if (modoViewportActivo && mapaListo) {
-      return fosasEnViewport;
-    }
-    else {
-      return itemsBase;
-    }
+    // Fallback: devolver el listado tal cual
+    return itemsBase;
   }, [
     modoViewportActivo,
     mapaListo,

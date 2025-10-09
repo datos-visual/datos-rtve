@@ -29,6 +29,16 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
   // === REFS ===
   const mapaRef = useRef(null);
 
+  // Índice de orden original para mantener la posición relativa del resto
+  const ordenOriginal = useMemo(() => {
+    const indexById = new Map();
+    fosas.forEach((fosa, index) => {
+      // Usar id como clave estable
+      indexById.set(fosa?.id, index);
+    });
+    return indexById;
+  }, [fosas]);
+
   // === FUNCIONES AUXILIARES ===
   const normalizeStatus = useCallback((status) => {
     const s = String(status || "")
@@ -81,11 +91,23 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
       });
     }
 
-    // ORDENAR: Fosas con destacado primero
+    // ORDENAR: Destacados primero (con fallback provisional), el resto mantiene su orden original
     return filtradas.sort((a, b) => {
-      const aHasDestacado = fosasConDestacado[a.id] ? 1 : 0;
-      const bHasDestacado = fosasConDestacado[b.id] ? 1 : 0;
-      return bHasDestacado - aHasDestacado;
+      const aHasLn = !!(a?.linea_narrativa && String(a.linea_narrativa).toLowerCase() !== "null");
+      const bHasLn = !!(b?.linea_narrativa && String(b.linea_narrativa).toLowerCase() !== "null");
+
+      const aScore = fosasConDestacado[a?.id]
+        ? 2
+        : (a?.section_id || a?.isInDedalo || aHasLn ? 1 : 0);
+      const bScore = fosasConDestacado[b?.id]
+        ? 2
+        : (b?.section_id || b?.isInDedalo || bHasLn ? 1 : 0);
+      if (aScore !== bScore) return bScore - aScore;
+
+      // Desempatar con el orden original para no alterar la lista existente
+      const ia = ordenOriginal.get(a?.id) ?? 0;
+      const ib = ordenOriginal.get(b?.id) ?? 0;
+      return ia - ib;
     });
   }, [
     fosas,
@@ -94,9 +116,11 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     normalizeStatus,
     matchesSearchText,
     fosasConDestacado,
+    ordenOriginal,
   ]);
 
-  // === TODAS LAS FOSAS VISIBLES (SIN PAGINACIÓN) ===
+  // === TODAS LAS FOSAS VISIBLES ===
+  // Para primera carga y consistencia con lista-narrativas, exponer el array completo ya ordenado
   const fosasVisibles = fosasFiltradas;
 
   // === CARGAR DESTACADOS EN BACKGROUND ===
