@@ -12,9 +12,9 @@ const flechaVolver = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/
 // Import personajes images
 const personaje5 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/5.png";
 const personaje6 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/6.png";
-const personaje7 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/7.png";
+const personaje7 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/7.png?v=2";
 const personaje8 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/8.png";
-const personaje9 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/9.png";
+const personaje9 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/9.png?v=2";
 const personaje10 = "https://css.rtve.es/css/rtve.infografias/fosas_franquismo/i/personajes/10.png";
 import ScrollButton from "../ScrollButton/ScrollButton";
 
@@ -35,6 +35,8 @@ export default function IntroScreen3({ categoria = "mujeres", onNavigation }) {
   const sheetRef = useRef(null);
   const handleRef = useRef(null);
   const contentRef = useRef(null);
+  const contentTit = useRef(null);
+
   
 
   const data = PERSONAJES_DATA[currentCategoria];
@@ -49,28 +51,50 @@ export default function IntroScreen3({ categoria = "mujeres", onNavigation }) {
   useEffect(() => {
     cleanupAnimations();
 
-    // Desktop reveal
+// Desktop reveal
     if (
-      window.innerWidth > INTRO_CONFIG.breakpoints.tablet &&
-      contentRef.current
+        window.innerWidth > INTRO_CONFIG.breakpoints.tablet &&
+        contentRef.current
     ) {
-      gsap.set(contentRef.current, { opacity: 0, y: 20 });
-      animationsRef.current.reveal = ScrollTrigger.create({
-        trigger: "#screen3",
-        start: "top top",
-        end: "+=40%",
-        pin: true,
-        scrub: true,
-        onUpdate: (self) => {
-          const progress = Math.max(0, Math.min(1, self.progress));
-          gsap.to(contentRef.current, {
-            opacity: progress,
-            y: 20 * (1 - progress),
-            duration: 0.1,
-            ease: "power2.out",
-          });
-        },
-      });
+        // 1. Establece los estados iniciales.
+        // Asegúrate de que ambos elementos estén en el punto de partida (y=20, opacity=0)
+        // si quieres que ambos 'aparezcan'.
+        gsap.set(contentRef.current, { opacity: 0, y: 20 });
+        // Si contentTit DEBE estar visible al inicio, déjalo en opacity: 1, pero
+        // en este ejemplo lo configuraré para que también se mueva/desaparezca.
+        gsap.set(contentTit.current, { opacity: 1, y: 0 }); // Dejemos contentTit visible y solo haremos que contentRef aparezca.
+
+        // 2. Crea un Timeline para que ScrollTrigger lo controle.
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: "#screen3",
+                start: "top top",
+                end: "+=40%",
+                pin: true,
+                scrub: true, // Esto vincula el scroll al progreso del timeline
+            },
+        });
+
+        // 3. Agrega las animaciones al Timeline.
+        // Animación de 'desaparición' de contentTit (si quieres que se oculte):
+        // Pasa de opacity: 1, y: 0 a opacity: 0, y: -20 (se mueve hacia arriba).
+        tl.to(contentTit.current, {
+            opacity: 0,
+            height: 0, // Se mueve 20px hacia arriba mientras el otro aparece
+            duration: 1,
+            marginBottom: 0,
+        }, 0); // La '0' asegura que comience al mismo tiempo que contentRef
+
+        // Animación de 'aparición' de contentRef:
+        // Pasa de y: 20, opacity: 0 (el estado inicial que definiste) a y: 0, opacity: 1.
+        tl.to(contentRef.current, {
+            opacity: 1,
+            y: 0, // Posición final (sube 20px)
+            duration: 1, // Duración relativa dentro del timeline (no afecta la velocidad de scroll)
+        }, 0); // La '0' asegura que comience al inicio del timeline
+
+        // Guarda la instancia del ScrollTrigger para controlarla más tarde si es necesario
+        animationsRef.current.reveal = tl.scrollTrigger;
     }
 
     // Mobile sheet
@@ -130,9 +154,9 @@ export default function IntroScreen3({ categoria = "mujeres", onNavigation }) {
         <div className="row">
           <div className="mitad-izquierda">
             <p className="categoria-label">{data.categoria}</p>
-            <h2 className="titulo-destacado">{data.titulo}</h2>
+            <h2 className="titulo-destacado" ref={contentTit}>{data.titulo}</h2>
             <p className="personaje-resumen">
-              {data.nombre} / {data.edad}
+              <strong>{data.nombre}</strong> / {data.edad}
             </p>
 
             <div className="continuar-historias">

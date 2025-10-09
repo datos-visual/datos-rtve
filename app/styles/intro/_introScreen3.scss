@@ -130,6 +130,7 @@
       //line-height: clamp(2.667rem, 1.8vw + 1.767rem, 4.167rem);
       font-size: 30px;
       line-height: 42px;
+      overflow: hidden;
 
       @include tablet {
         width: 100%;
@@ -147,9 +148,13 @@
       font-family: $font-primary;
       color: $text-color-primary;
       font-size: 24px;
-      font-weight: 700;
+      font-weight: 500;
       line-height: 40px;
       margin: 0 0 33px 0;
+
+      strong{
+        font-weight: 700;
+      }
 
       @media (min-width: 769px) {
       }
