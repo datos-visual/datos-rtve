@@ -1,16 +1,8 @@
 /**
- * Hook para gestión de estado del buscador de fosas con filtrado, scroll infinito y paginación
+ * Hook para gestión de estado del buscador de fosas
+ * VERSIÓN SIMPLIFICADA - Sin scroll infinito, carga todo de una vez
  */
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
-
-// Configuración centralizada
-const CONFIG = {
-  ITEMS_PER_BATCH: 50,
-  INITIAL_ITEMS: 50,
-  DEBOUNCE_DELAY: 2000,
-  LOAD_DELAY: 1000,
-  DEFAULT_STATES: ["todos"],
-};
 
 // Mapeo de estados
 const STATUS_MAPPING = {
@@ -25,28 +17,29 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
   const [selectedFosa, setSelectedFosa] = useState(null);
   const [error, setError] = useState(null);
   const [listaVisible, setListaVisible] = useState(false);
-  // busquedaInput: lo que el usuario está escribiendo ahora.
-  // busquedaTexto: término de búsqueda aplicado (solo cambia al enviar el formulario)
   const [busquedaInput, setBusquedaInput] = useState("");
   const [busquedaTexto, setBusquedaTexto] = useState("");
-  const [estadosSeleccionados, setEstadosSeleccionados] = useState(
-    CONFIG.DEFAULT_STATES
-  );
+  const [estadosSeleccionados, setEstadosSeleccionados] = useState(["todos"]);
   const [statusPanelExpanded, setStatusPanelExpanded] = useState(true);
 
-  // === SCROLL INFINITO CON PAGINACIÓN ===
-  const [loadedItems, setLoadedItems] = useState(CONFIG.INITIAL_ITEMS);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  // === DESTACADOS ===
+  const [fosasConDestacado, setFosasConDestacado] = useState({});
+  const [cargandoDestacados, setCargandoDestacados] = useState(false);
 
   // === REFS ===
   const mapaRef = useRef(null);
-  const debounceTimeoutRef = useRef(null);
-  const loadingTriggerRef = useRef(null);
-  const lastLoadTimeRef = useRef(0);
-  const isLoadingRef = useRef(false);
-  const loadAttemptRef = useRef(0);
 
-  // === FUNCIONES AUXILIARES SIMPLIFICADAS ===
+  // Índice de orden original para mantener la posición relativa del resto
+  const ordenOriginal = useMemo(() => {
+    const indexById = new Map();
+    fosas.forEach((fosa, index) => {
+      // Usar id como clave estable
+      indexById.set(fosa?.id, index);
+    });
+    return indexById;
+  }, [fosas]);
+
+  // === FUNCIONES AUXILIARES ===
   const normalizeStatus = useCallback((status) => {
     const s = String(status || "")
       .toLowerCase()
@@ -75,24 +68,46 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
       .some((campo) => String(campo).toLowerCase().includes(busqueda));
   }, []);
 
-  // === FILTRADO SIMPLIFICADO ===
+  // === FILTRADO Y ORDENAMIENTO ===
   const fosasFiltradas = useMemo(() => {
-    if (estadosSeleccionados.includes("todos") && !busquedaTexto.trim())
-      return fosas;
+    let filtradas = [];
+    
+    if (estadosSeleccionados.includes("todos") && !busquedaTexto.trim()) {
+      filtradas = fosas;
+    } else {
+      filtradas = fosas.filter((fosa) => {
+        // Filtros de estado
+        if (!estadosSeleccionados.includes("todos")) {
+          const estadoNormalizado = normalizeStatus(fosa.status);
+          const estadosDeseados = estadosSeleccionados.map(
+            (sel) => STATUS_MAPPING[sel] || sel
+          );
+          if (!estadosDeseados.includes(estadoNormalizado)) return false;
+        }
 
-    return fosas.filter((fosa) => {
-      // Filtros de estado
-      if (!estadosSeleccionados.includes("todos")) {
-        const estadoNormalizado = normalizeStatus(fosa.status);
-        const estadosDeseados = estadosSeleccionados.map(
-          (sel) => STATUS_MAPPING[sel] || sel
-        );
-        if (!estadosDeseados.includes(estadoNormalizado)) return false;
-      }
+        // Filtro de texto
+        const busqueda = busquedaTexto.trim().toLowerCase();
+        return !busqueda || matchesSearchText(fosa, busqueda);
+      });
+    }
 
-      // Filtro de texto
-      const busqueda = busquedaTexto.trim().toLowerCase();
-      return !busqueda || matchesSearchText(fosa, busqueda);
+    // ORDENAR: Destacados primero (con fallback provisional), el resto mantiene su orden original
+    return filtradas.sort((a, b) => {
+      const aHasLn = !!(a?.linea_narrativa && String(a.linea_narrativa).toLowerCase() !== "null");
+      const bHasLn = !!(b?.linea_narrativa && String(b.linea_narrativa).toLowerCase() !== "null");
+
+      const aScore = fosasConDestacado[a?.id]
+        ? 2
+        : (a?.section_id || a?.isInDedalo || aHasLn ? 1 : 0);
+      const bScore = fosasConDestacado[b?.id]
+        ? 2
+        : (b?.section_id || b?.isInDedalo || bHasLn ? 1 : 0);
+      if (aScore !== bScore) return bScore - aScore;
+
+      // Desempatar con el orden original para no alterar la lista existente
+      const ia = ordenOriginal.get(a?.id) ?? 0;
+      const ib = ordenOriginal.get(b?.id) ?? 0;
+      return ia - ib;
     });
   }, [
     fosas,
@@ -100,42 +115,89 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     estadosSeleccionados,
     normalizeStatus,
     matchesSearchText,
+    fosasConDestacado,
+    ordenOriginal,
   ]);
 
-  // === ITEMS VISIBLES ===
-  const fosasVisibles = useMemo(() => {
-    return fosasFiltradas.slice(0, loadedItems);
-  }, [fosasFiltradas, loadedItems]);
+  // === TODAS LAS FOSAS VISIBLES ===
+  // Para primera carga y consistencia con lista-narrativas, exponer el array completo ya ordenado
+  const fosasVisibles = fosasFiltradas;
 
-  // === INFORMACIÓN DE CARGA SIMPLIFICADA ===
-  const loadingInfo = useMemo(() => {
-    const totalItems = fosasFiltradas.length;
-    const hasMore = loadedItems < totalItems;
-    const itemsRemaining = Math.max(0, totalItems - loadedItems);
-    const currentPage = Math.ceil(loadedItems / CONFIG.ITEMS_PER_BATCH);
-    const totalPages = Math.ceil(totalItems / CONFIG.ITEMS_PER_BATCH);
+  // === CARGAR DESTACADOS EN BACKGROUND ===
+  useEffect(() => {
+    const cargarDestacados = async () => {
+      if (fosas.length === 0 || cargandoDestacados) return;
 
-    return {
-      loadedItems,
-      totalItems,
-      hasMore,
-      itemsRemaining,
-      currentPage,
-      totalPages,
-      isComplete: !hasMore && totalItems > 0,
+      setCargandoDestacados(true);
+
+      // Filtrar fosas con potencial de tener destacados
+      const fosasConPotencial = fosas.filter(f => f.section_id || f.isInDedalo);
+      
+      if (fosasConPotencial.length === 0) {
+        setCargandoDestacados(false);
+        return;
+      }
+
+      // Cargar en lotes de 20
+      const BATCH_SIZE = 20;
+      const imagenesDestacadas = {};
+      
+      for (let i = 0; i < fosasConPotencial.length; i += BATCH_SIZE) {
+        const lote = fosasConPotencial.slice(i, i + BATCH_SIZE);
+        
+        await Promise.all(
+          lote.map(async (fosa) => {
+            try {
+              const id = fosa.id_datos || fosa.id;
+              const idFormateado = String(id).padStart(5, '0');
+              
+              const response = await fetch(
+                `https://www.rtve.es/datos-repo/test-fosas/v2/fichas/${idFormateado}.json`
+              );
+              
+              if (response.ok) {
+                const data = await response.json();
+                const contenidos = data.contenidos || [];
+                const destacado = contenidos.find(c => c.destacado === true);
+                
+                if (destacado) {
+                  const { tipo, id: contentId, url } = destacado;
+                  let thumbnail = null;
+                  
+                  if (tipo === "video") {
+                    thumbnail = `https://img.rtve.es/v/${contentId}?w=400`;
+                  } else if (tipo === "audio") {
+                    thumbnail = `https://img.rtve.es/a/${contentId}?w=400`;
+                  } else if (tipo === "foto") {
+                    thumbnail = url;
+                  }
+                  
+                  if (thumbnail) {
+                    imagenesDestacadas[fosa.id] = thumbnail;
+                  }
+                }
+              }
+            } catch (error) {
+              // Silenciar errores individuales
+            }
+          })
+        );
+        
+        // Actualizar progresivamente cada 5 lotes (100 fosas)
+        if ((i / BATCH_SIZE) % 5 === 4) {
+          setFosasConDestacado(prev => ({ ...prev, ...imagenesDestacadas }));
+        }
+      }
+      
+      // Actualización final
+      setFosasConDestacado(prev => ({ ...prev, ...imagenesDestacadas }));
+      setCargandoDestacados(false);
     };
-  }, [loadedItems, fosasFiltradas.length]);
 
-  // === HANDLERS SIMPLIFICADOS ===
-  const resetScrollState = useCallback(() => {
-    setLoadedItems(CONFIG.INITIAL_ITEMS);
-    setIsLoadingMore(false);
-    isLoadingRef.current = false;
-    lastLoadTimeRef.current = 0;
-    loadAttemptRef.current = 0;
-  }, []);
+    cargarDestacados();
+  }, [fosas]);
 
-  // Al cambiar el input NO aplicamos aún la búsqueda; solo actualizamos el valor del campo.
+  // === HANDLERS ===
   const handleBusquedaChange = useCallback((e) => {
     setBusquedaInput(e.target.value);
   }, []);
@@ -143,16 +205,56 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
   const handleFormSubmit = useCallback(
     (e) => {
       e.preventDefault();
-      // Aplicar término escrito
       setBusquedaTexto(busquedaInput.trim());
-      resetScrollState();
     },
-    [busquedaInput, resetScrollState]
+    [busquedaInput]
   );
 
   const handleToggleClick = useCallback(() => {
+    // Guardar posición actual del mapa (como en infografiasRTVE)
+    let posicionActual = null;
+    if (mapaRef.current?.map) {
+      try {
+        posicionActual = {
+          center: mapaRef.current.map.getCenter(),
+          zoom: mapaRef.current.map.getZoom(),
+        };
+      } catch (error) {
+        // Error al guardar posición
+      }
+    }
+
+    // Cambiar estado
     setListaVisible((prev) => !prev);
-    mapaRef.current?.map && setTimeout(() => mapaRef.current.map.resize(), 100);
+
+    // Forzar resize del mapa (exactamente como en infografiasRTVE)
+    if (mapaRef.current?.map) {
+      try {
+        // Resize inmediato
+        mapaRef.current.map.resize();
+        
+        // Segundo resize después de 50ms
+        setTimeout(() => {
+          if (mapaRef.current?.map) {
+            mapaRef.current.map.resize();
+          }
+        }, 50);
+        
+        // Tercer resize después de 100ms + restaurar posición
+        setTimeout(() => {
+          if (mapaRef.current?.map) {
+            mapaRef.current.map.resize();
+            if (posicionActual) {
+              mapaRef.current.map.setCenter(posicionActual.center);
+              mapaRef.current.map.setZoom(posicionActual.zoom);
+            }
+          }
+        }, 100);
+        
+      } catch (error) {
+        console.warn("Error al redimensionar el mapa:", error);
+      }
+    }
   }, []);
 
   const handleFosaSelect = useCallback((fosa) => {
@@ -161,6 +263,7 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
   }, []);
 
   const handleCloseFosa = useCallback(() => setSelectedFosa(null), []);
+  
   const handleToggleStatusPanel = useCallback(
     () => setStatusPanelExpanded((prev) => !prev),
     []
@@ -176,55 +279,6 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     });
   }, []);
 
-  // === SCROLL INFINITO SIMPLIFICADO ===
-  const loadMoreItems = useCallback(() => {
-    if (isLoadingRef.current || loadedItems >= fosasFiltradas.length)
-      return false;
-
-    const now = Date.now();
-    const timeSinceLastLoad = now - lastLoadTimeRef.current;
-
-    // Debounce: evitar cargas muy rápidas
-    if (timeSinceLastLoad < CONFIG.DEBOUNCE_DELAY) return false;
-
-    loadAttemptRef.current += 1;
-
-    // Marcar como cargando
-    isLoadingRef.current = true;
-    lastLoadTimeRef.current = now;
-    setIsLoadingMore(true);
-
-    // Simular carga asíncrona
-    setTimeout(() => {
-      setLoadedItems((prev) => {
-        const nuevoTotal = Math.min(
-          prev + CONFIG.ITEMS_PER_BATCH,
-          fosasFiltradas.length
-        );
-
-        // Marcar como terminado
-        isLoadingRef.current = false;
-        setIsLoadingMore(false);
-
-        return nuevoTotal;
-      });
-    }, CONFIG.LOAD_DELAY);
-
-    return true;
-  }, [loadedItems, fosasFiltradas.length]);
-
-  // Reset cuando cambien los filtros
-  useEffect(() => {
-    resetScrollState();
-  }, [busquedaTexto, estadosSeleccionados, resetScrollState]);
-
-  // Inicialización al cargar los datos
-  useEffect(() => {
-    if (fosas.length > 0 && !loading) {
-      resetScrollState();
-    }
-  }, [fosas.length, loading, resetScrollState]);
-
   // === EFECTOS ===
   useEffect(() => {
     if (mapaRef.current?.setFilteredFosas) {
@@ -232,15 +286,7 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     }
   }, [fosasFiltradas]);
 
-  useEffect(() => {
-    return () => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  // === FILTRADO POR UBICACIÓN SIMPLIFICADO ===
+  // === FILTRADO POR UBICACIÓN ===
   const aplicarFiltroUbicacion = useCallback(
     (fosasData, ccaa, provincia, municipio, fosaProp) => {
       if (!fosasData.length) return [];
@@ -270,77 +316,24 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     []
   );
 
-  // === FUNCIÓN DE ZOOM A ZONA BUSCADA ===
+  // === ZOOM A ZONA BUSCADA ===
   const zoomAZonaBuscada = useCallback(() => {
     if (!mapaRef.current?.map || !busquedaTexto.trim() || !fosasFiltradas.length) return;
 
-    // Filtrar fosas con coordenadas válidas
-    const fosasConCoordenadas = fosasFiltradas.filter(
-      (fosa) => fosa.lat && fosa.lon && 
-      !isNaN(parseFloat(fosa.lat)) && !isNaN(parseFloat(fosa.lon))
-    );
-
-    if (fosasConCoordenadas.length === 0) return;
-
-    const map = mapaRef.current.map;
-
-    if (fosasConCoordenadas.length === 1) {
-      // Una sola fosa: zoom a ella
-      const fosa = fosasConCoordenadas[0];
-      map.flyTo({
-        center: [parseFloat(fosa.lon), parseFloat(fosa.lat)],
+    const fosaConCoordenadas = fosasFiltradas.find((f) => f.lat && f.lon);
+    if (fosaConCoordenadas) {
+      mapaRef.current.map.flyTo({
+        center: [fosaConCoordenadas.lon, fosaConCoordenadas.lat],
         zoom: 12,
-        duration: 1500
-      });
-    } else {
-      // Múltiples fosas: calcular bounds y ajustar vista
-      const coords = fosasConCoordenadas.map(fosa => [
-        parseFloat(fosa.lon), 
-        parseFloat(fosa.lat)
-      ]);
-
-      // Calcular bounding box
-      const lons = coords.map(coord => coord[0]);
-      const lats = coords.map(coord => coord[1]);
-      
-      const minLon = Math.min(...lons);
-      const maxLon = Math.max(...lons);
-      const minLat = Math.min(...lats);
-      const maxLat = Math.max(...lats);
-
-      // Crear bounds con un pequeño padding
-      const bounds = [
-        [minLon - 0.01, minLat - 0.01], // suroeste
-        [maxLon + 0.01, maxLat + 0.01]  // noreste
-      ];
-
-      map.fitBounds(bounds, {
-        padding: 50,
-        duration: 1500,
-        maxZoom: 14
       });
     }
   }, [busquedaTexto, fosasFiltradas]);
 
-  // Efecto para hacer zoom cuando cambia la búsqueda aplicada
-  useEffect(() => {
-    if (busquedaTexto.trim()) {
-      // Pequeño delay para asegurar que el mapa y las fosas estén actualizadas
-      const timeoutId = setTimeout(() => {
-        zoomAZonaBuscada();
-      }, 300);
-      
-      return () => clearTimeout(timeoutId);
-    }
-  }, [busquedaTexto, zoomAZonaBuscada]);
-
-  // === RETURN ===
   return {
     // Estado
     loading,
     setLoading,
     selectedFosa,
-    setSelectedFosa,
     error,
     setError,
     listaVisible,
@@ -351,7 +344,6 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     fosasFiltradas,
     fosasVisibles,
     mapaRef,
-    loadingTriggerRef,
 
     // Handlers
     handleBusquedaChange,
@@ -361,7 +353,6 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     handleCloseFosa,
     handleEstadoChange,
     handleToggleStatusPanel,
-    loadMoreItems,
     setBusquedaTexto,
     setBusquedaInput,
 
@@ -374,7 +365,9 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
       (estadosSeleccionados.length > 0 &&
         !estadosSeleccionados.includes("todos")) ||
       busquedaTexto.trim(),
-    loadingInfo,
-    isLoadingMore,
+    
+    // Destacados
+    fosasConDestacado,
+    cargandoDestacados,
   };
 }

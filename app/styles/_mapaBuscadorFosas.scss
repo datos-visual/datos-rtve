@@ -30,14 +30,10 @@
 
             &.open { // LISTADO ABIERTO SOBRE MAPA
                 .mapa-fosas_search {
-                    position: absolute;
                     width: 50%;
                     height: 100%;
                     background: $text-color-primary;
-                    top: 0;
-                    left: 0;
                     padding: 60px 36px;
-                    z-index: 10;
                 }
 
                 .mapa-fosas-searcher {
@@ -93,10 +89,7 @@
         }
 
         &_map {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
+            flex: 1;
             height: 900px;
             background-color: $color-gray-light;
             display: flex;

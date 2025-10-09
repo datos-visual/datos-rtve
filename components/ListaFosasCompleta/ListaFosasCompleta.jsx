@@ -42,6 +42,7 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
   filtrarPorViewport = false,
   permitirCambioViewport = false, // Nueva prop para habilitar el toggle
   fosasVisiblesExternas = null, // Para recibir fosas visibles desde useMapaRecuento
+  imagenesDestacadas = {}, // Imágenes destacadas cargadas en el padre
 }) {
   const configBase =
     CONFIGURACIONES_CONTEXTO[contexto] ||
@@ -50,22 +51,8 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
   // === ESTADO PARA FILTRO POR VIEWPORT ===
   const [fosasEnViewport, setFosasEnViewport] = useState([]);
   
-  // === CACHE PARA IMAGENES DESTACADAS ===
-  const [imagenesDestacadas, setImagenesDestacadas] = useState({});
-  
-  // Función para generar thumbnail según tipo de contenido
-  const generarThumbnail = useCallback((contenido, size = 400) => {
-    const { tipo, id, url } = contenido;
-    
-    if (tipo === "video") {
-      return `https://img.rtve.es/v/${id}?w=${size}`;
-    } else if (tipo === "audio") {
-      return `https://img.rtve.es/a/${id}?w=${size}`;
-    } else if (tipo === "foto") {
-      return url;
-    }
-    return null;
-  }, []);
+  // === RECIBIR IMAGENES DESTACADAS DESDE EL PADRE ===
+  // (Ya no se cargan aquí, vienen como prop)
 
   // Necesitamos mover este useEffect después de que itemsBase esté definido
   // Por ahora lo comentamos y lo moveremos más abajo
@@ -75,6 +62,13 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
     useState(filtrarPorViewport);
   const [fosasExternas, setFosasExternas] = useState([]);
   const actualizandoViewportRef = useRef(false);
+  
+  // === LAZY LOADING POR LOTES PARA LISTA (desktop y móvil) ===
+  const BATCH_SIZE = 50;
+  const INITIAL_ITEMS = 60;
+  const [loadedCount, setLoadedCount] = useState(INITIAL_ITEMS);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const sentinelRef = useRef(null);
 
   // usar `lista` si viene, sino `fosas` (compat)
   const itemsBase = useMemo(() => {
@@ -206,16 +200,27 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
   }, [modoViewportActivo, map, mapaListo, actualizarFosasViewport]);
 
   // === DETERMINAR QUÉ ITEMS MOSTRAR ===
+  // Ya vienen ordenados desde el padre (useMapaBuscador)
   const items = useMemo(() => {
-    // Si tenemos fosas visibles externas (desde useMapaRecuento), usarlas cuando el viewport esté activo
-    if (modoViewportActivo && fosasExternas.length > 0) {
-      return fosasExternas;
+    // Mantener SIEMPRE el orden del listado base (itemsBase),
+    // aplicando solo un filtrado por viewport cuando esté activo.
+    if (modoViewportActivo) {
+      // Priorizar ids de fosasExternas si existen
+      if (Array.isArray(fosasExternas) && fosasExternas.length > 0) {
+        const idSet = new Set(
+          fosasExternas.map((f) => String(f?.id))
+        );
+        return itemsBase.filter((f) => idSet.has(String(f?.id)));
+      }
+      // Si no hay externas pero el mapa está listo, usar las calculadas internamente
+      if (mapaListo && Array.isArray(fosasEnViewport)) {
+        const idSet = new Set(
+          fosasEnViewport.map((f) => String(f?.id))
+        );
+        return itemsBase.filter((f) => idSet.has(String(f?.id)));
+      }
     }
-    // Si no, usar nuestra lógica interna
-    if (modoViewportActivo && mapaListo) {
-      return fosasEnViewport;
-    }
-
+    // Fallback: devolver el listado tal cual
     return itemsBase;
   }, [
     modoViewportActivo,
@@ -225,53 +230,43 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
     fosasExternas,
   ]);
 
-  // === CARGAR IMAGENES DESTACADAS ===
+  // Reset del lazy loading cuando cambie la fuente de items
   useEffect(() => {
-    const cargarImagenesDestacadas = async () => {
-      const nuevasImagenes = {};
-      
-      // Solo cargar las primeras 20 fosas para no saturar
-      const fosasACargar = items.slice(0, 20);
+    setLoadedCount(Math.min(INITIAL_ITEMS, items.length || 0));
+    setIsLoadingMore(false);
+  }, [items]);
 
-      for (const fosa of fosasACargar) {
-        // Solo intentar cargar si la fosa tiene section_id o isInDedalo
-        if (fosa.section_id || fosa.isInDedalo) {
-          // Usar id_datos si existe, sino usar id
-          const id = fosa.id_datos || fosa.id;
-          const idFormateado = String(id).padStart(5, '0');
-          
-          try {
-            const response = await fetch(
-              `https://www.rtve.es/datos-repo/test-fosas/v2/fichas/${idFormateado}.json`
-            );
-            
-            if (response.ok) {
-              const data = await response.json();
-              const contenidos = data.contenidos || [];
-              
-              // Buscar primer contenido destacado
-              const destacado = contenidos.find(c => c.destacado === true);
-              
-              if (destacado) {
-                const thumbnail = generarThumbnail(destacado, 400);
-                nuevasImagenes[fosa.id] = thumbnail;
-              }
-            }
-          } catch (error) {
-            // Error silenciado
-          }
-        }
-      }
+  // Cargar más items cuando el sentinel entra en viewport
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+    const el = sentinelRef.current;
+    if (!el) return;
 
-      if (Object.keys(nuevasImagenes).length > 0) {
-        setImagenesDestacadas(prev => ({...prev, ...nuevasImagenes}));
-      }
+    const onIntersect = (entries) => {
+      const entry = entries[0];
+      if (!entry || !entry.isIntersecting) return;
+      if (isLoadingMore) return;
+      if (loadedCount >= items.length) return;
+
+      setIsLoadingMore(true);
+      // Pequeño delay para permitir pintar placeholders
+      setTimeout(() => {
+        setLoadedCount((prev) => Math.min(prev + BATCH_SIZE, items.length));
+        setIsLoadingMore(false);
+      }, 100);
     };
 
-    if (items.length > 0) {
-      cargarImagenesDestacadas();
-    }
-  }, [items, generarThumbnail]);
+    const io = new IntersectionObserver(onIntersect, {
+      root: null,
+      rootMargin: "200px 0px",
+      threshold: 0.01,
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [items.length, loadedCount, isLoadingMore]);
+
+  // === TODA LA CARGA SE HACE EN useMapaBuscador.js ===
+  // Este componente solo recibe imagenesDestacadas como prop
 
   const config = {
     ...configBase,
@@ -291,19 +286,9 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
   const tituloSeccion = "Resumen de la categoría";
 
   const mensajeContador = (() => {
-    // Mostrar la cantidad de items actualmente cargados/visibles en la lista
-    // items.length = fosas que se están mostrando actualmente (con scroll infinito)
-    // totalFiltradas = total de fosas disponibles después de filtros
-    const cantidadCargada = items.length;
-    const cantidadTotal = totalFiltradas || itemsBase.length;
-    
-    // Si hay más fosas por cargar, mostrar "X de Y resultados"
-    if (totalFiltradas && cantidadCargada < totalFiltradas) {
-      return `Se muestran ${cantidadCargada.toLocaleString('es-ES')} de ${cantidadTotal.toLocaleString('es-ES')} resultados`;
-    }
-    
-    // Si ya se cargaron todas, mostrar solo "X resultados"
-    return `Se muestran ${cantidadCargada.toLocaleString('es-ES')} resultados`;
+    // Mostrar todos los resultados de una vez (sin scroll infinito)
+    const cantidad = items.length;
+    return `Se muestran ${cantidad.toLocaleString('es-ES')} resultados`;
   })();
 
   const mensajeVacio = (() => {
@@ -347,7 +332,10 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
     if (!Array.isArray(listaItems) || listaItems.length === 0)
       return <p className="no-resultados">{mensajeVacio}</p>;
 
-    return listaItems.map((fosa) => {
+    const visible = listaItems.slice(0, loadedCount);
+    const placeholdersCount = Math.max(0, loadedCount - visible.length);
+
+    const rendered = visible.map((fosa, index) => {
       // seguridad: garantizar id
       const key = fosa?.id ?? Math.random().toString(36).slice(2, 9);
       const ubicacion = [fosa.municipio, fosa.provincia]
@@ -398,6 +386,24 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
         </div>
       );
     });
+
+    // Placeholders invisibles para reservar espacio durante la carga
+    const placeholders = Array.from({ length: placeholdersCount }).map((_, i) => (
+      <div
+        key={`ph-${i}`}
+        className="fosa placeholder"
+        aria-hidden="true"
+        style={{ opacity: 0, pointerEvents: "none" }}
+      >
+        <div className="fosa__img" />
+        <div className="info">
+          <p className="ubicacion">&nbsp;</p>
+          <p className="descripcion">&nbsp;</p>
+        </div>
+      </div>
+    ));
+
+    return [...rendered, ...placeholders];
   };
 
   return (
@@ -455,6 +461,8 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
           ) : (
             <p className="no-resultados">{mensajeVacio}</p>
           )}
+          {/* Sentinel para lazy loading */}
+          <div ref={sentinelRef} style={{ height: 1 }} />
         </div>
       </div>
     </>

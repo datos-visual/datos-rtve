@@ -26,7 +26,6 @@ export default function MapaBuscadorFosas({
   // Estado de datos
   const [fosas, setFosas] = useState(fosasProp || []);
   const [fosasVisiblesEnMapa, setFosasVisiblesEnMapa] = useState([]);
-  const [imagenesDestacadas, setImagenesDestacadas] = useState({});
 
   // Estado para autocompletar
   const [sugerencias, setSugerencias] = useState([]);
@@ -56,14 +55,13 @@ export default function MapaBuscadorFosas({
     handleCloseFosa,
     handleEstadoChange,
     handleToggleStatusPanel,
-    loadMoreItems,
     aplicarFiltroUbicacion,
     zoomAZonaBuscada,
     totalFiltradas,
-    loadingInfo,
-    isLoadingMore,
     setBusquedaTexto,
     setBusquedaInput,
+    fosasConDestacado,
+    cargandoDestacados,
   } = useMapaBuscador(fosas, isMobile);
 
   // Índice geográfico para coincidencias jerárquicas
@@ -332,89 +330,16 @@ export default function MapaBuscadorFosas({
     [fosasFiltradas, handleFosaSelect]
   );
 
-  const handleMobileLoadMore = useCallback(
-    (event) => {
-      if (isMobile && !isLoadingMore && loadingInfo.hasMore) {
-        loadMoreItems();
-      }
-    },
-    [isMobile, isLoadingMore, loadingInfo.hasMore, loadMoreItems]
-  );
+  // Eliminado handleMobileLoadMore - No hay scroll infinito
 
   // === EFECTOS PRINCIPALES ===
-
-  // === CARGAR IMAGENES DESTACADAS PARA MÓVIL ===
-  useEffect(() => {
-    if (!isMobile) return;
-
-    const cargarImagenesDestacadas = async () => {
-      const fosasACargar = fosasVisibles.slice(0, 20);
-      const nuevasImagenes = {};
-
-      for (const fosa of fosasACargar) {
-        if (fosa.section_id || fosa.isInDedalo) {
-          const id = fosa.id_datos || fosa.id;
-          const idFormateado = String(id).padStart(5, '0');
-          
-          try {
-            const response = await fetch(
-              `https://www.rtve.es/datos-repo/test-fosas/v2/fichas/${idFormateado}.json`
-            );
-            
-            if (response.ok) {
-              const data = await response.json();
-              const contenidos = data.contenidos || [];
-              const destacado = contenidos.find(c => c.destacado === true);
-              
-              if (destacado) {
-                const { tipo, id: contentId, url } = destacado;
-                let thumbnail = null;
-                
-                if (tipo === "video") {
-                  thumbnail = `https://img.rtve.es/v/${contentId}?w=400`;
-                } else if (tipo === "audio") {
-                  thumbnail = `https://img.rtve.es/a/${contentId}?w=400`;
-                } else if (tipo === "foto") {
-                  thumbnail = url;
-                }
-                
-                if (thumbnail) {
-                  nuevasImagenes[fosa.id] = thumbnail;
-                }
-              }
-            }
-          } catch (error) {
-            // Silenciar errores
-          }
-        }
-      }
-
-      if (Object.keys(nuevasImagenes).length > 0) {
-        setImagenesDestacadas(prev => ({...prev, ...nuevasImagenes}));
-      }
-    };
-
-    if (fosasVisibles.length > 0) {
-      cargarImagenesDestacadas();
-    }
-  }, [fosasVisibles, isMobile]);
-
-  // Combinar fosas visibles con imágenes destacadas para móvil
-  const fosasConImagenes = useMemo(() => {
-    if (!isMobile) return fosasVisibles;
-    
-    return fosasVisibles.map(fosa => ({
-      ...fosa,
-      imagenDestacada: imagenesDestacadas[fosa.id] || null
-    }));
-  }, [fosasVisibles, imagenesDestacadas, isMobile]);
 
   // Actualizar mobile sheet cuando cambien las fosas visibles
   useEffect(() => {
     if (isMobile && mobileSheet.updateContent) {
-      mobileSheet.updateContent(fosasConImagenes, loadingInfo, isLoadingMore);
+      mobileSheet.updateContent(fosasVisibles);
     }
-  }, [fosasConImagenes, loadingInfo, isLoadingMore, isMobile, mobileSheet]);
+  }, [fosasVisibles, isMobile, mobileSheet]);
 
   // === TRACKEAR FOSAS VISIBLES DEL MAPA ===
   useEffect(() => {
@@ -430,71 +355,13 @@ export default function MapaBuscadorFosas({
   // Event listeners optimizados
   useEffect(() => {
     document.addEventListener("fosa-click", handleFosaClick);
-    document.addEventListener("mobile-load-more", handleMobileLoadMore);
 
     return () => {
       document.removeEventListener("fosa-click", handleFosaClick);
-      document.removeEventListener("mobile-load-more", handleMobileLoadMore);
     };
-  }, [handleFosaClick, handleMobileLoadMore]);
+  }, [handleFosaClick]);
 
-  // Sistema de scroll optimizado
-  useEffect(() => {
-    if (typeof window === "undefined" || !loadingInfo.hasMore) return;
-
-    let listaContainer = document.querySelector(".lista-narrativas");
-
-    if (!listaContainer) {
-      const retryTimeout = setTimeout(() => {
-        listaContainer = document.querySelector(".lista-narrativas");
-        if (listaContainer) setupScrollListener(listaContainer);
-      }, 500);
-      return () => clearTimeout(retryTimeout);
-    }
-
-    const setupScrollListener = (container) => {
-      let scrollTimeout = null;
-
-      const handleScroll = () => {
-        if (isLoadingMore || !loadingInfo.hasMore) return;
-
-        const { scrollTop, scrollHeight, clientHeight } = container;
-        const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
-
-        if (isNearBottom && !isLoadingMore) {
-          if (scrollTimeout) clearTimeout(scrollTimeout);
-          scrollTimeout = setTimeout(() => loadMoreItems(), 300);
-        }
-      };
-
-      container.addEventListener("scroll", handleScroll, { passive: true });
-
-      let observer = null;
-      if (loadingTriggerRef.current) {
-        observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting && !isLoadingMore) {
-                loadMoreItems();
-              }
-            });
-          },
-          { threshold: 0.1, rootMargin: "0px" }
-        );
-        observer.observe(loadingTriggerRef.current);
-      }
-
-      return () => {
-        container.removeEventListener("scroll", handleScroll);
-        if (scrollTimeout) clearTimeout(scrollTimeout);
-        if (observer && loadingTriggerRef.current) {
-          observer.unobserve(loadingTriggerRef.current);
-        }
-      };
-    };
-
-    return setupScrollListener(listaContainer);
-  }, [loadMoreItems, loadingInfo.hasMore, isLoadingMore]);
+  // Eliminado sistema de scroll infinito - Carga todo de una vez
 
   // === COMPONENTES MEMOIZADOS ===
 
@@ -733,42 +600,7 @@ export default function MapaBuscadorFosas({
     handleToggleClick,
   ]);
 
-  const LoadingTrigger = useMemo(() => {
-    if (!loadingInfo.hasMore) {
-      return loadingInfo.isComplete && totalFiltradas > 0 ? (
-        <div className="completion-message">
-          <p>
-            Se han cargado todas las fosas disponibles ({totalFiltradas}{" "}
-            elementos)
-          </p>
-        </div>
-      ) : null;
-    }
-
-    return (
-      <div ref={loadingTriggerRef} className="loading-trigger">
-        <div className="loading-content">
-          <p>Desplázate hacia abajo para cargar más</p>
-          <p className="loading-details">
-            ({loadingInfo.itemsRemaining} fosas restantes)
-          </p>
-          <button
-            onClick={loadMoreItems}
-            disabled={isLoadingMore}
-            className="load-more-btn"
-          >
-            {isLoadingMore ? "Cargando..." : "Cargar 50 más"}
-          </button>
-        </div>
-      </div>
-    );
-  }, [
-    loadingInfo,
-    totalFiltradas,
-    loadingTriggerRef,
-    loadMoreItems,
-    isLoadingMore,
-  ]);
+  // Eliminado LoadingTrigger - No hay scroll infinito
 
   // Cargar datos
   useEffect(() => {
@@ -885,25 +717,20 @@ export default function MapaBuscadorFosas({
               </div>
               {StatusFilters}
 
-              {/* Lista con scroll infinito en desktop */}
+              {/* Lista completa en desktop */}
               {listaVisible && isDesktop && (
-                <>
-                  <ListaFosasCompleta
-                    contexto="mapaBuscadorFosas"
-                    lista={fosasVisibles}
-                    descripcion={`Página ${loadingInfo.currentPage} de ${loadingInfo.totalPages} - Mostrando ${loadingInfo.loadedItems} de ${totalFiltradas} fosas`}
-                    onItemClick={handleFosaSelect}
-                    modoSimple={true}
-                    totalFiltradas={totalFiltradas}
-                    // Habilitar filtro por viewport con toggle
-                    map={mapaRef.current?.map}
-                    filtrarPorViewport={true}
-                    permitirCambioViewport={true}
-                    // Usar fosas visibles desde useMapaRecuento para consistencia
-                    fosasVisiblesExternas={fosasVisiblesEnMapa}
-                  />
-                  {LoadingTrigger}
-                </>
+                <ListaFosasCompleta
+                  contexto="mapaBuscadorFosas"
+                  lista={fosasVisibles}
+                  onItemClick={handleFosaSelect}
+                  modoSimple={true}
+                  totalFiltradas={totalFiltradas}
+                  map={mapaRef.current?.map}
+                  filtrarPorViewport={false}
+                  permitirCambioViewport={true}
+                  fosasVisiblesExternas={fosasVisiblesEnMapa}
+                  imagenesDestacadas={fosasConDestacado}
+                />
               )}
             </div>
           )}
