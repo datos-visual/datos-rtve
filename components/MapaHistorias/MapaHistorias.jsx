@@ -73,6 +73,11 @@ export default function MapaHistorias({
   const mapaRef = useRef(null);
   const cargaIniciadaRef = useRef(false);
   const { isMobile, isHydrated } = useResponsive();
+  // Destacados
+  const [fosasConDestacado, setFosasConDestacado] = useState({});
+  const [cargandoDestacados, setCargandoDestacados] = useState(false);
+  // Visibles en mapa para sincronizar contador/viewport
+  const [fosasVisiblesEnMapa, setFosasVisiblesEnMapa] = useState([]);
 
   // Obtener instancia del mapa cuando esté disponible
   useEffect(() => {
@@ -88,6 +93,17 @@ export default function MapaHistorias({
     // Verificar periódicamente hasta que el mapa esté disponible
     const interval = setInterval(checkMapa, 100);
     
+    return () => clearInterval(interval);
+  }, []);
+
+  // Track visibilidad del mapa (para contador/filtrado por viewport si se desea)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const current = mapaRef.current;
+      if (current && Array.isArray(current.fosasVisibles)) {
+        setFosasVisiblesEnMapa(current.fosasVisibles);
+      }
+    }, 500);
     return () => clearInterval(interval);
   }, []);
 
@@ -139,6 +155,76 @@ export default function MapaHistorias({
     [categoriaSeleccionada]
   );
 
+  // Cargar destacados en background (sin bloquear)
+  useEffect(() => {
+    if (fosas.length === 0 || cargandoDestacados) return;
+
+    const cargarDestacados = async () => {
+      setCargandoDestacados(true);
+
+      // Filtrar fosas con potencial de tener destacados
+      const fosasConPotencial = fosas.filter(f => f.section_id || f.isInDedalo);
+      
+      if (fosasConPotencial.length === 0) {
+        setCargandoDestacados(false);
+        return;
+      }
+
+      // Cargar en lotes de 20
+      const BATCH_SIZE = 20;
+      const imagenesDestacadas = {};
+      
+      for (let i = 0; i < fosasConPotencial.length; i += BATCH_SIZE) {
+        const lote = fosasConPotencial.slice(i, i + BATCH_SIZE);
+        
+        await Promise.all(
+          lote.map(async (fosa) => {
+            try {
+              const id = fosa.id_datos || fosa.id;
+              const idFormateado = String(id).padStart(5, '0');
+              
+              const response = await fetch(
+                `https://www.rtve.es/datos-repo/test-fosas/v2/fichas/${idFormateado}.json`
+              );
+              
+              if (response.ok) {
+                const data = await response.json();
+                const contenidos = data.contenidos || [];
+                const destacado = contenidos.find(c => c.destacado === true);
+                
+                if (destacado) {
+                  const { tipo, id: contentId, url } = destacado;
+                  let thumbnail = null;
+                  
+                  if (tipo === "video") {
+                    thumbnail = `https://img.rtve.es/v/${contentId}?w=400`;
+                  } else if (tipo === "audio") {
+                    thumbnail = `https://img.rtve.es/a/${contentId}?w=400`;
+                  } else if (tipo === "foto") {
+                    thumbnail = url;
+                  }
+                  
+                  if (thumbnail) {
+                    imagenesDestacadas[fosa.id] = thumbnail;
+                  }
+                }
+              }
+            } catch (error) {
+              // Silenciar errores individuales
+            }
+          })
+        );
+        
+        // Actualizar estado con el lote procesado
+        setFosasConDestacado((prev) => ({ ...prev, ...imagenesDestacadas }));
+      }
+      
+      setCargandoDestacados(false);
+    };
+
+    cargarDestacados();
+  }, [fosas, cargandoDestacados]);
+
   // Filtrado de fosas
   const fosasFiltradas = useMemo(() => {
     let res = fosas;
@@ -159,6 +245,28 @@ export default function MapaHistorias({
     }
     return res;
   }, [fosas, categoriaSeleccionada, estadoSeleccionado]);
+
+  // Ordenación: destacados primero
+  const ordenOriginal = useMemo(() => {
+    const map = new Map();
+    fosasFiltradas.forEach((f, idx) => map.set(f.id, idx));
+    return map;
+  }, [fosasFiltradas]);
+
+  const fosasOrdenadas = useMemo(() => {
+    return [...fosasFiltradas].sort((a, b) => {
+      const scoreA =
+        fosasConDestacado[a.id] ? 2
+        : (a.section_id || a.isInDedalo || a.linea_narrativa) ? 1
+        : 0;
+      const scoreB =
+        fosasConDestacado[b.id] ? 2
+        : (b.section_id || b.isInDedalo || b.linea_narrativa) ? 1
+        : 0;
+      if (scoreA !== scoreB) return scoreB - scoreA;
+      return (ordenOriginal.get(a.id) || 0) - (ordenOriginal.get(b.id) || 0);
+    });
+  }, [fosasFiltradas, fosasConDestacado, ordenOriginal]);
 
   const toggleVista = () => setMostrarMapa((prev) => !prev);
   const abrirModalFosa = (fosa) => {
@@ -215,11 +323,15 @@ export default function MapaHistorias({
                 />
                 <ListaFosasCompleta
                   contexto="mapaHistorias"
-                  lista={fosasFiltradas}
+                  lista={fosasOrdenadas}
                   map={mapaInstance}
                   descripcion={descripcionCategoria}
                   introVisibleDefault={introVisible}
                   onItemClick={abrirModalFosa}
+                  imagenesDestacadas={fosasConDestacado}
+                  filtrarPorViewport={true}
+                  permitirCambioViewport={false}
+                  fosasVisiblesExternas={fosasVisiblesEnMapa}
                 />
               </>
             )}
@@ -264,11 +376,15 @@ export default function MapaHistorias({
 
               <ListaFosasCompleta
                 contexto="mapaHistorias"
-                lista={fosasFiltradas}
+                lista={fosasOrdenadas}
                 map={mapaInstance}
                 descripcion={descripcionCategoria}
                 introVisibleDefault={introVisible}
                 onItemClick={abrirModalFosa}
+                imagenesDestacadas={fosasConDestacado}
+                filtrarPorViewport={true}
+                permitirCambioViewport={false}
+                fosasVisiblesExternas={fosasVisiblesEnMapa}
               />
             </>
           )}

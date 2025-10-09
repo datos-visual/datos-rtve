@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { cargarFosas } from "../../app/lib/datos.js";
 import MapaFosas from "../mapa/MapaFosas";
 import FichaFosa from "../FichaFosa/FichaFosa.jsx";
@@ -31,6 +31,9 @@ export default function MapaBuscadorFosas({
   const [sugerencias, setSugerencias] = useState([]);
   const [sugerenciasVisibles, setSugerenciasVisibles] = useState(false);
   const [indiceSugerencia, setIndiceSugerencia] = useState(-1);
+  
+  // Ref para el contenedor de lista (lazy loading)
+  const listContainerRef = useRef(null);
 
   // Hook consolidado
   const {
@@ -711,26 +714,39 @@ export default function MapaBuscadorFosas({
               <div
                 id="resultados"
                 aria-live="polite"
-                className="mapa-fosas-searcher__result only_desktop"
+                className="mapa-fosas-searcher__result"
               >
-                Se muestran <strong>{totalFiltradas}</strong> resultados
+                {(() => {
+                  const visible = Array.isArray(fosasVisiblesEnMapa)
+                    ? fosasVisiblesEnMapa.length
+                    : 0;
+                  const total = visible > 0 ? visible : totalFiltradas;
+                  return (
+                    <>
+                      Se muestran <strong>{total}</strong> resultados
+                    </>
+                  );
+                })()}
               </div>
               {StatusFilters}
 
               {/* Lista completa en desktop */}
               {listaVisible && isDesktop && (
-                <ListaFosasCompleta
-                  contexto="mapaBuscadorFosas"
-                  lista={fosasVisibles}
-                  onItemClick={handleFosaSelect}
-                  modoSimple={true}
-                  totalFiltradas={totalFiltradas}
-                  map={mapaRef.current?.map}
-                  filtrarPorViewport={false}
-                  permitirCambioViewport={true}
-                  fosasVisiblesExternas={fosasVisiblesEnMapa}
-                  imagenesDestacadas={fosasConDestacado}
-                />
+                <div ref={listContainerRef} style={{ overflowY: 'auto', flex: 1 }}>
+                  <ListaFosasCompleta
+                    contexto="mapaBuscadorFosas"
+                    lista={fosasVisibles}
+                    onItemClick={handleFosaSelect}
+                    modoSimple={true}
+                    totalFiltradas={totalFiltradas}
+                    map={mapaRef.current?.map}
+                    filtrarPorViewport={true}
+                    permitirCambioViewport={false}
+                    fosasVisiblesExternas={fosasVisiblesEnMapa}
+                    imagenesDestacadas={fosasConDestacado}
+                    listContainerRef={listContainerRef}
+                  />
+                </div>
               )}
             </div>
           )}

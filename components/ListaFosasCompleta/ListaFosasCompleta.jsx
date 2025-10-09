@@ -286,9 +286,9 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
   const tituloSeccion = "Resumen de la categoría";
 
   const mensajeContador = (() => {
-    // Mostrar todos los resultados de una vez (sin scroll infinito)
-    const cantidad = items.length;
-    return `Se muestran ${cantidad.toLocaleString('es-ES')} resultados`;
+    // Mostrar el total actual (igual que cabecera): visibles si hay filtro por mapa, sino total de la lista
+    const total = items.length;
+    return `Se muestran ${total.toLocaleString('es-ES')} resultados`;
   })();
 
   const mensajeVacio = (() => {
