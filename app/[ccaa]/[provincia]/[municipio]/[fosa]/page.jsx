@@ -172,21 +172,24 @@ export default async function FosaEspecificaPage({ params }) {
               y el franquismo, donde puedes descubrir las 6.000 fosas de España
               y recuperar la memoria de algunas de las víctimas. Una parte de la
               historia que yace aún en la tierra.
-              <br />
-              <br />
+             </p>
+             <p className="buscador-intro__text">
               1. No importa la coordenada: en España no es posible estar a más
               de X kilómetros de una fosa común. Algunas contienen los restos de
               miles de personas; otras son enterramientos individuales.
-              <br />
+              </p>
+             <p className="buscador-intro__text">
               2. Uno de cada XX municipios españoles tiene en su terreno al
               menos una fosa de la Guerra Civil o el franquismo. Se han exhumado
               1.300 de las 6.000 registradas actualmente.
-              <br />
+              </p>
+              <p className="buscador-intro__text">
               3. La exhumación en Priaranza del Bierzo (León) en el año 2000
               marcó un hito en la preservación de la memoria democrática. Desde
               entonces se han recuperado los restos de más de 18.000 personas,
               de las cuales solo se han podido identificar unas 700.
-              <br />
+              </p>
+            <p className="buscador-intro__text">
               4. A medida que continúan las prospecciones, el número de fosas
               sigue aumentando. Es probable que algunos de los desaparecidos no
               se lleguen a encontrar nunca.
