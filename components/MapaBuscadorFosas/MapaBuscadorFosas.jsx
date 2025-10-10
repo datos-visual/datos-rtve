@@ -691,7 +691,6 @@ export default function MapaBuscadorFosas({
   return (
     
     <div className="mapa-fosas">
-      <h2 className="mapa-fosas_title">Descubra todas las fosas en el territorio español</h2>
       <div
         className={`mapa-fosas_content buscador-layout ${
           listaVisible || selectedFosa ? "open" : ""
