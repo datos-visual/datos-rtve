@@ -41,7 +41,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
       const idFormateado = String(idDatos).padStart(5, '0');
       
       fetch(
-        `https://www.rtve.es/datos-repo/test-fosas/v2/fichas/${idFormateado}.json`
+        `https://www.rtve.es/datos-repo/test-fosas/v3/fichas/${idFormateado}.json`
       )
         .then((resp) => {
           if (!resp.ok) {
