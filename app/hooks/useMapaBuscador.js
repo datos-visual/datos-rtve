@@ -152,7 +152,7 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
               const idFormateado = String(id).padStart(5, '0');
               
               const response = await fetch(
-                `https://www.rtve.es/datos-repo/test-fosas/v2/fichas/${idFormateado}.json`
+                `https://www.rtve.es/datos-repo/test-fosas/v3/fichas/${idFormateado}.json`
               );
               
               if (response.ok) {

@@ -37,11 +37,15 @@
       background-color: transparent;
       font-weight: 700;
       color: $color-primary;
+      position: relative;
 
-      .category-text {
-        @media (min-width: 768px) {
-          text-decoration: underline;
-        }
+      &:after {
+        content: "";
+        width: 30px;
+        height: 6px;
+        background: #fff;
+        position: absolute;
+        bottom: 10px;
       }
     }
 
@@ -203,6 +207,16 @@
 
       &:hover {
         background-color: $color-primary;
+        position: relative;
+
+        &:after {
+          content: "";
+          width: 30px;
+          height: 6px;
+          background: #fff;
+          position: absolute;
+          bottom: 10px;
+        }
 
         .category-text {
           color: $color-white;
@@ -213,7 +227,7 @@
 }
 
 
-@media (max-width: $breakpoint-mobile) {
+@media (max-width: $breakpoint-tablet-medium-start) {
 
   /* Dropdown personalizado para móvil */
   .custom-dropdown {

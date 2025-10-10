@@ -62,7 +62,9 @@ export default function MapaEmbed() {
   }
 
   return (
+
     <div className={styles.mapaEmbedContainer}>
+      <h2 className="mapa-fosas_title">Descubra todas las fosas en el territorio español</h2>
       <MapaBuscadorFosas fosas={fosas} />
 
       <div className={styles.attribution}>

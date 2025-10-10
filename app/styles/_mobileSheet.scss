@@ -164,9 +164,9 @@
         // Lista de narrativas/fosas (adaptada para móvil)
         .mobile-lista-narrativas {
           // Configurar scroll solo en esta sección
-          max-height: 250px; // Reducido de 300px a 250px para dar espacio al trigger
-          overflow-y: auto; // Scroll vertical
-          overflow-x: hidden; // Sin scroll horizontal
+          //max-height: 250px; // Reducido de 300px a 250px para dar espacio al trigger
+          //overflow-y: auto; // Scroll vertical
+          //overflow-x: hidden; // Sin scroll horizontal
           margin-bottom: 80px; // Espacio para el trigger sticky
           
           // Optimizaciones de scroll

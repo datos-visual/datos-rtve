@@ -36,9 +36,6 @@ const nextConfig = {
   },
   trailingSlash: true,
   images: {
-    loader:
-      env === "preproduction" || env === "production" ? "custom" : "default",
-    loaderFile: "./app/utils/imageLoader.js",
     remotePatterns: [
       {
         protocol: "https",
@@ -127,6 +124,6 @@ const nextConfig = {
 };
 
 // Establecer assetPrefix igual que en los proyectos RTVE
-nextConfig.assetPrefix = `${properties.js2Domain}/pages/${propsPackage.distName}/${propsPackage.version}`;
+// nextConfig.assetPrefix = `${properties.js2Domain}/pages/${propsPackage.distName}/${propsPackage.version}`;
 
 export default nextConfig;
