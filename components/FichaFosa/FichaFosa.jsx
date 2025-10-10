@@ -97,8 +97,11 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
   } = fosa;
 
   // Datos de fichaExtra (API v2)
-  const descripcion =
+  const descripcionRaw =
     fichaExtra?.texto || fichaExtra?.titular || linea_narrativa || "Sin descripción disponible";
+  
+  // Agregar clases a los párrafos del HTML
+  const descripcion = descripcionRaw ? descripcionRaw.replace(/<p>/g, '<p class="resumen-parrafo">') : descripcionRaw;
   const fuenteInfo = fichaExtra?.fuente_info || fuente_info;
   const fuenteEnlace = fichaExtra?.fuente_enlace || fuente_enlace;
   
@@ -114,6 +117,62 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
   const interventionsDateEnd = fichaExtra?.ref_interventions_date_end;
   const titular = fichaExtra?.titular;
   const texto = fichaExtra?.texto;
+
+  // Lógica para mostrar datos de víctimas según el estado de la fosa
+  const statusLower = statusExtra?.toLowerCase() || '';
+  const isExhumada = statusLower.includes('exhumada') && !statusLower.includes('no exhumada');
+  const isNoExhumada = statusLower.includes('no exhumada');
+  const isExhumadaParcial = statusLower.includes('parcial');
+  
+  // Determinar qué mostrar según la lógica
+  let mostrarInhumados = false;
+  let mostrarExhumados = false;
+  let etiquetaInhumados = 'NÚMERO DE INHUMADOS';
+  
+  // Si no hay datos de inhumados ni exhumados, no se muestra nada
+  if (!nBuriedExtra && !nExhumed) {
+    mostrarInhumados = false;
+    mostrarExhumados = false;
+  }
+  // No exhumada -> solo inhumados
+  else if (isNoExhumada) {
+    mostrarInhumados = !!nBuriedExtra;
+    mostrarExhumados = false;
+  }
+  // Exhumada parcial
+  else if (isExhumadaParcial) {
+    if (nExhumed && nBuriedExtra) {
+      // Tiene ambos datos -> mostrar inhumados | exhumados
+      mostrarInhumados = true;
+      mostrarExhumados = true;
+    } else if (nExhumed && !nBuriedExtra) {
+      // Solo exhumados
+      mostrarInhumados = false;
+      mostrarExhumados = true;
+    } else if (!nExhumed && nBuriedExtra) {
+      // Solo inhumados -> cambiar etiqueta a VÍCTIMAS
+      mostrarInhumados = true;
+      mostrarExhumados = false;
+      etiquetaInhumados = 'NÚMERO DE VÍCTIMAS';
+    }
+  }
+  // Exhumada (total)
+  else if (isExhumada) {
+    if (nExhumed) {
+      // Tiene dato de exhumados
+      mostrarInhumados = false;
+      mostrarExhumados = true;
+    } else if (nBuriedExtra) {
+      // No tiene exhumados pero sí inhumados
+      mostrarInhumados = true;
+      mostrarExhumados = false;
+    }
+  }
+  // Cualquier otro estado
+  else {
+    mostrarInhumados = !!nBuriedExtra;
+    mostrarExhumados = !!nExhumed;
+  }
   
   // Víctimas y contenidos
   const victimas = fichaExtra?.victimas || [];
@@ -242,13 +301,16 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                   <span className="datos__value">{statusExtra}</span>
                 </li>
               )}
-              {nBuriedExtra && (
+              {mostrarInhumados && (
                 <li className="datos__item">
-                  <label className="datos__label">NÚMERO DE INHUMADOS</label>
-                  <span className="datos__value">{formatearNumero(nBuriedExtra)}</span>
+                  <label className="datos__label">{etiquetaInhumados}</label>
+                  <span className="datos__value">
+                    {formatearNumero(nBuriedExtra)}
+                    {mostrarExhumados && nExhumed && ` | ${formatearNumero(nExhumed)}`}
+                  </span>
                 </li>
               )}
-              {nExhumed && (
+              {mostrarExhumados && !mostrarInhumados && (
                 <li className="datos__item">
                   <label className="datos__label">NÚMERO DE EXHUMADOS</label>
                   <span className="datos__value">{formatearNumero(nExhumed)}</span>
@@ -305,7 +367,10 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
         <div className="resumen">
           <div className="resumen-datos">
             {/*<h3>Resumen / Descripción / Label</h3>*/}
-            <p>{descripcion}</p>
+            <div 
+              className="resumen-descripcion" 
+              dangerouslySetInnerHTML={{ __html: descripcion }}
+            />
 
             {fuenteInfo && (
             <>
