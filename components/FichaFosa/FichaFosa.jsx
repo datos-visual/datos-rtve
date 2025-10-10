@@ -262,7 +262,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
               {deathContext && (
                 <li className="datos__item">
                   <label className="datos__label">CONTEXTO DE MUERTE</label>
-                  <span className="datos__value" style={{ fontSize: '13px', lineHeight: '1.4' }}>
+                  <span className="datos__value">
                     {deathContext}
                   </span>
                 </li>
@@ -416,25 +416,27 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                           className="multimedia-card"
                           onClick={() => handleOpenModal()}
                         >
-                          {video.destacado && (
+                          {/*video.destacado && (
                             <span className="destacado-badge">
-                              ⭐ Destacado
+                              Destacado
                             </span>
-                          )}
-                          <img 
-                            src={generarThumbnail(video, 400)} 
-                            alt={video.titulo || 'Video'}
-                            onError={(e) => {
-                              e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="225"%3E%3Crect fill="%23cccccc" width="400" height="225"/%3E%3Ctext fill="%23666666" font-family="Arial" font-size="20" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3EImagen no disponible%3C/text%3E%3C/svg%3E';
-                            }}
-                          />
-                          
-                          <div className="play-icon">
-                            ▶
+                          )*/}
+                          <div className="content-img">
+                            <img 
+                              src={generarThumbnail(video, 400)} 
+                              alt={video.titulo || 'Video'}
+                              onError={(e) => {
+                                e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="225"%3E%3Crect fill="%23cccccc" width="400" height="225"/%3E%3Ctext fill="%23666666" font-family="Arial" font-size="20" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3EImagen no disponible%3C/text%3E%3C/svg%3E';
+                              }}
+                            />
                           </div>
-                          
-                          <div className="card-title">
-                            {video.titulo}
+                          <div className="card-text">
+                            <div className="card-title">
+                              {video.titulo}
+                            </div>
+                            <div className="card-date">
+                              Fecha
+                            </div>
                           </div>
                         </div>
                       ))}

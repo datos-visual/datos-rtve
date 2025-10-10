@@ -86,6 +86,7 @@ export default async function CcaaPage({ params }) {
         <section className="buscador-mapa-fosas">
           <MenuSwitchClient />
           <section style={{ width: "100%", marginBottom: "160px" }}>
+            <h2 className="mapa-fosas_title">Descubra todas las fosas en el territorio español</h2>
             <MapaBuscadorFosas ccaa={params.ccaa} fosas={ccaaFosas} />
           </section>
 
