@@ -26,6 +26,14 @@ const iconosCategorias = {
   exhumaciones: iconExhumados,
 };
 
+// Función para formatear números con separadores de miles
+const formatearNumero = (numero) => {
+  if (!numero && numero !== 0) return null;
+  const num = typeof numero === 'string' ? parseInt(numero, 10) : numero;
+  if (isNaN(num)) return null;
+  return new Intl.NumberFormat('es-ES').format(num);
+};
+
 const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
   const [fichaExtra, setFichaExtra] = useState(null);
   const [activeTab, setActiveTab] = useState("imagenes");
@@ -95,7 +103,6 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
   const fuenteEnlace = fichaExtra?.fuente_enlace || fuente_enlace;
   
   // Campos adicionales de fichaExtra
-  const sectionId = fichaExtra?.section_id;
   const statusExtra = fichaExtra?.status || status;
   const eventDateExtra = fichaExtra?.event_date || event_date;
   const eventDateEnd = fichaExtra?.event_date_end;
@@ -220,18 +227,12 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
             </div>
 
             <ul className="datos">
-              {sectionId && (
-                <li className="datos__item">
-                  <label className="datos__label">ID SECCIÓN</label>
-                  <span className="datos__value">{sectionId}</span>
-                </li>
-              )}
               {(eventDateExtra || eventDateEnd) && (
                 <li className="datos__item">
                   <label className="datos__label">FECHA DE LA FOSA</label>
                   <span className="datos__value">
                     {eventDateExtra || "-"}
-                    {eventDateEnd && ` / ${eventDateEnd}`}
+                    {eventDateEnd && ` a ${eventDateEnd}`}
                   </span>
                 </li>
               )}
@@ -244,13 +245,13 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
               {nBuriedExtra && (
                 <li className="datos__item">
                   <label className="datos__label">NÚMERO DE INHUMADOS</label>
-                  <span className="datos__value">{nBuriedExtra}</span>
+                  <span className="datos__value">{formatearNumero(nBuriedExtra)}</span>
                 </li>
               )}
               {nExhumed && (
                 <li className="datos__item">
                   <label className="datos__label">NÚMERO DE EXHUMADOS</label>
-                  <span className="datos__value">{nExhumed}</span>
+                  <span className="datos__value">{formatearNumero(nExhumed)}</span>
                 </li>
               )}
               {bandoRepresor && (
@@ -522,7 +523,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                         <strong>{nombreCompleto}</strong>
                         {victima.gender && ` (${victima.gender})`}
                       </h5>
-                      {victima.dead_date && (
+                      {/* {victima.dead_date && (
                         <span className="victimas_fecha">
                           {new Date(victima.dead_date).toLocaleDateString('es-ES', {
                             year: 'numeric',
@@ -530,7 +531,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                             day: 'numeric'
                           })}
                         </span>
-                      )}
+                      )} */}
                     </div>
                   </div>
                 );
