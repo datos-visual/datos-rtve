@@ -2,7 +2,7 @@ import Creditos from "../../../components/common/Creditos";
 import { cargarFosas } from "../../lib/datos";
 import SobreElProyecto from "../../../components/common/SobreProyecto";
 import JsonLdScript from "../../../components/BreadcrumbJsonLd/BreadcrumbJsonLd";
-import MapaBuscadorFosas from "../../../components/MapaBuscadorFosas/MapaBuscadorFosas";
+import MapaBuscadorWithBreadcrumbClient from "../../../components/MapaBuscadorFosas/MapaBuscadorWithBreadcrumbClient";
 import "../../../app/styles/_historias.scss";
 import ModuloReportajes from "../../../components/common/ModuloReportajes";
 import ModuloNoticias from "../../../components/common/ModuloNoticias";
@@ -123,7 +123,7 @@ export default async function ProvinciaPage({ params }) {
         <section className="buscador-mapa-fosas">
           <MenuSwitchClient />
           <section style={{ width: "100%", marginBottom: "160px" }}>
-            <MapaBuscadorFosas
+            <MapaBuscadorWithBreadcrumbClient
               ccaa={params.ccaa}
               provincia={params.provincia}
               fosas={provinciaFosas}

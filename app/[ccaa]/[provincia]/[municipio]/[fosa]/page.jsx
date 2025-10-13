@@ -6,7 +6,7 @@ import ModuloReportajes from "../../../../../components/common/ModuloReportajes"
 import SobreProyecto from "../../../../../components/common/SobreProyecto";
 import ListadoSEOClient from "../../../../../components/ListadoSEOClient/ListadoSEOClient";
 import VideoScroll from "../../../../../components/VideoScroll/VideoScroll";
-import MapaBuscadorFosas from "../../../../../components/MapaBuscadorFosas/MapaBuscadorFosas";
+import MapaBuscadorWithBreadcrumbClient from "../../../../../components/MapaBuscadorFosas/MapaBuscadorWithBreadcrumbClient";
 import "../../../../styles/_historias.scss";
 import MenuSwitchClient from "@/components/MenuSwitchClient/MenuSwitchClient";
 
@@ -166,7 +166,7 @@ export default async function FosaEspecificaPage({ params }) {
 
           <section style={{ width: "100%", marginBottom: "160px" }}>
             {/* Componente principal del buscador de fosas con parámetros de ubicación y fosa específica */}
-            <MapaBuscadorFosas
+            <MapaBuscadorWithBreadcrumbClient
               ccaa={ccaa}
               provincia={provincia}
               municipio={municipio}

@@ -11,7 +11,7 @@ import HamburgerMenu from "../../components/HamburgerMenu/HamburgerMenu";
 import MenuSwitch from "../../components/common/MenuSwitch";
 import VideoScroll from "../../components/VideoScroll/VideoScroll";
 import ScrollButton from "../../components/ScrollButton/ScrollButton";
-import MapaBuscadorFosas from "../../components/MapaBuscadorFosas/MapaBuscadorFosas";
+import MapaBuscadorWithBreadcrumbClient from "../../components/MapaBuscadorFosas/MapaBuscadorWithBreadcrumbClient";
 import "../styles/_historias.scss";
 
 function FosasPageContent() {
@@ -19,6 +19,7 @@ function FosasPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [showScrollButton, setShowScrollButton] = useState(true);
+  // El breadcrumb del mapa se renderiza desde un wrapper cliente
 
   // Obtener parámetros de URL para ubicación específica
   const [urlParams, setUrlParams] = useState({});
@@ -145,7 +146,7 @@ function FosasPageContent() {
           <HamburgerMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
 
           {/* Componente principal del buscador de fosas */}
-          <MapaBuscadorFosas
+          <MapaBuscadorWithBreadcrumbClient
             ccaa={urlParams.ccaa}
             provincia={urlParams.provincia}
             municipio={urlParams.municipio}

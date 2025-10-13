@@ -19,6 +19,7 @@ export default function MapaBuscadorFosas({
   municipio,
   fosa: fosaProp,
   fosas: fosasProp = null,
+  onFiltrosChange,
 }) {
   const { isMobile, isDesktop } = useResponsive();
   const mobileSheet = useMobileSheetManager(isMobile);
@@ -31,7 +32,7 @@ export default function MapaBuscadorFosas({
   const [sugerencias, setSugerencias] = useState([]);
   const [sugerenciasVisibles, setSugerenciasVisibles] = useState(false);
   const [indiceSugerencia, setIndiceSugerencia] = useState(-1);
-  
+
   // Ref para el contenedor de lista (lazy loading)
   const listContainerRef = useRef(null);
 
@@ -603,6 +604,70 @@ export default function MapaBuscadorFosas({
     handleToggleClick,
   ]);
 
+  // Envolver selección para notificar al instante al breadcrumb externo
+  const handleFosaSelectAndNotify = useCallback(
+    (fosaSel) => {
+      handleFosaSelect(fosaSel);
+      if (typeof onFiltrosChange === "function" && fosaSel) {
+        onFiltrosChange({
+          estadosSeleccionados,
+
+          ccaa: (fosaSel.ccaa || fosaSel.ccaa_seo || "").trim(),
+          provincia: (fosaSel.provincia || fosaSel.provincia_seo || "").trim(),
+          ciudad: (fosaSel.municipio || "").trim(),
+          nombreFosa: (fosaSel.title || fosaSel.title_seo || "").trim(),
+        });
+      }
+    },
+    [handleFosaSelect, onFiltrosChange, estadosSeleccionados]
+  );
+
+  // Notificar cambios de filtros (para breadcrumb en la page)
+  useEffect(() => {
+    if (typeof onFiltrosChange !== "function") return;
+
+    const payload = {
+      estadosSeleccionados,
+
+      ccaa: (ccaa || selectedFosa?.ccaa || selectedFosa?.ccaa_seo || "").trim(),
+      provincia: (
+        provincia ||
+        selectedFosa?.provincia ||
+        selectedFosa?.provincia_seo ||
+        ""
+      ).trim(),
+      ciudad: (municipio || selectedFosa?.municipio || "").trim(),
+      nombreFosa: (
+        fosaProp ||
+        selectedFosa?.title ||
+        selectedFosa?.title_seo ||
+        ""
+      ).trim(),
+    };
+
+    // Evitar notificaciones idénticas que pueden provocar render loops aguas arriba
+    try {
+      if (
+        JSON.stringify(payload) !==
+        JSON.stringify((window.__lastFiltrosPayload ||= {}))
+      ) {
+        window.__lastFiltrosPayload = payload;
+        onFiltrosChange(payload);
+      }
+    } catch (e) {
+      onFiltrosChange(payload);
+    }
+  }, [
+    onFiltrosChange,
+    estadosSeleccionados,
+
+    ccaa,
+    provincia,
+    municipio,
+    fosaProp,
+    selectedFosa,
+  ]);
+
   // Eliminado LoadingTrigger - No hay scroll infinito
 
   // Cargar datos
@@ -689,7 +754,6 @@ export default function MapaBuscadorFosas({
   }
 
   return (
-    
     <div className="mapa-fosas">
       <div
         className={`mapa-fosas_content buscador-layout ${
@@ -731,11 +795,14 @@ export default function MapaBuscadorFosas({
 
               {/* Lista completa en desktop */}
               {listaVisible && isDesktop && (
-                <div ref={listContainerRef} style={{ overflowY: 'auto', flex: 1 }}>
+                <div
+                  ref={listContainerRef}
+                  style={{ overflowY: "auto", flex: 1 }}
+                >
                   <ListaFosasCompleta
                     contexto="mapaBuscadorFosas"
                     lista={fosasVisibles}
-                    onItemClick={handleFosaSelect}
+                    onItemClick={handleFosaSelectAndNotify}
                     modoSimple={true}
                     totalFiltradas={totalFiltradas}
                     map={mapaRef.current?.map}
@@ -759,11 +826,13 @@ export default function MapaBuscadorFosas({
           <MapaFosas
             ref={mapaRef}
             sinGeocoder={true}
-            onFosaSelect={handleFosaSelect}
+            onFosaSelect={handleFosaSelectAndNotify}
             fosasFiltradas={fosasFiltradas}
           />
         </div>
       </div>
+
+      {/* Breadcrumb se muestra desde la page, no aquí */}
     </div>
   );
 }

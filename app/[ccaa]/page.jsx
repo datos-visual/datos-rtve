@@ -2,7 +2,7 @@ import Creditos from "../../components/common/Creditos";
 import { cargarFosas } from "../lib/datos";
 import SobreElProyecto from "../../components/common/SobreProyecto";
 import JsonLdScript from "../../components/BreadcrumbJsonLd/BreadcrumbJsonLd";
-import MapaBuscadorFosas from "../../components/MapaBuscadorFosas/MapaBuscadorFosas";
+import MapaBuscadorWithBreadcrumbClient from "../../components/MapaBuscadorFosas/MapaBuscadorWithBreadcrumbClient";
 import "../../app/styles/_historias.scss";
 import ListadoSEOClient from "../../components/ListadoSEOClient/ListadoSEOClient";
 import ModuloReportajes from "../../components/common/ModuloReportajes";
@@ -115,7 +115,10 @@ export default async function CcaaPage({ params }) {
             <h2 className="mapa-fosas_title">
               Descubra todas las fosas en el territorio español
             </h2>
-            <MapaBuscadorFosas ccaa={params.ccaa} fosas={ccaaFosas} />
+            <MapaBuscadorWithBreadcrumbClient
+              ccaa={params.ccaa}
+              fosas={ccaaFosas}
+            />
           </section>
 
           {/* Contenido informativo */}
