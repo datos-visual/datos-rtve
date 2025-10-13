@@ -392,42 +392,6 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
             </>
           )}
 
-            {noticias.length > 0 && (
-              <>
-                <h4>Notas relacionadas ({noticias.length})</h4>
-                <ul className="news-related">
-                  {noticias.map((noticia, idx) => (
-                    <li key={idx} className="news-related_list">
-                      <img src="" alt="" />
-                      <div className="news-related_description">
-                        {noticia.destacado && (
-                          <span className="destacado-badge">
-                            DESTACADO
-                          </span>
-                        )}
-                        <a
-                          className="news-related_title"
-                          href={noticia.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {noticia.titulo}
-                        </a>
-                        <p className="news-related_date">
-                          {noticia.fecha ? new Date(noticia.fecha).toLocaleDateString('es-ES') : '-'} | {noticia.programa || 'Web'} | ID: {noticia.id_material || noticia.id}
-                        </p>
-                        {noticia.texto && (
-                          <div
-                            className="news-related_excerpt"
-                            dangerouslySetInnerHTML={{ __html: noticia.texto }}
-                          />
-                        )}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
           </div>
 
           {/* Multimedia - Solo mostrar si hay contenidos disponibles */}
@@ -454,6 +418,12 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                   onClick={() => setActiveTab("audios")}
                 >
                   Voces <span className="badge">{audiosContenido.length}</span>
+                </button>
+                <button
+                  className={`tab-btn ${activeTab === "noticias" ? "active" : ""}`}
+                  onClick={() => setActiveTab("noticias")}
+                >
+                  Noticias <span className="badge">{noticias.length}</span>
                 </button>
               </div>
 
@@ -487,11 +457,11 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                           className="multimedia-card"
                           onClick={() => handleOpenModal()}
                         >
-                          {/*video.destacado && (
+                          {video.destacado && (
                             <span className="destacado-badge">
-                              Destacado
+                              DESTACADO
                             </span>
-                          )*/}
+                          )}
                           <div className="content-img video">
                             <img 
                               src={generarThumbnail(video, 400)} 
@@ -502,11 +472,17 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                             />
                           </div>
                           <div className="card-text">
-                            <div className="card-title">
+                            <a 
+                              className="card-title"
+                              href={video.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                            >
                               {video.titulo}
-                            </div>
+                            </a>
                             <div className="card-date">
-                              Fecha
+                              {video.fecha ? new Date(video.fecha).toLocaleDateString('es-ES') : '-'}
                             </div>
                           </div>
                         </div>
@@ -528,11 +504,11 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                           className="multimedia-card"
                           onClick={() => handleOpenModal()}
                         >
-                          {/*audio.destacado && (
+                          {audio.destacado && (
                             <span className="destacado-badge">
-                              ⭐ Destacado
+                              DESTACADO
                             </span>
-                          )*/}
+                          )}
                           <div className="content-img audio">
                             <img 
                               src={audio.thumbnail} 
@@ -554,14 +530,61 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                             />
                           </div>
                           
-                          <div className="card-title">
-                            {audio.titulo}
+                          <div className="card-text">
+                            <a 
+                              className="card-title"
+                              href={audio.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {audio.titulo}
+                            </a>
+                            <div className="card-date">
+                              {audio.fecha ? new Date(audio.fecha).toLocaleDateString('es-ES') : '-'}
+                            </div>
                           </div>
                         </div>
                       ))}
                     </div>
                   ) : (
                     <p>No hay audios disponibles.</p>
+                  )}
+                </div>
+              )}
+              {activeTab === "noticias" && (
+                <div className="tab-content active">
+                  <h4>Noticias</h4>
+                  {noticias.length > 0 ? (
+                    <div className="multimedia-grid">
+                      {noticias.map((noticia, i) => (
+                        <div 
+                          key={`noticia-${i}`} 
+                          className="multimedia-card noticia-card"
+                        >
+                          {noticia.destacado && (
+                            <span className="destacado-badge">
+                              DESTACADO
+                            </span>
+                          )}
+                          <div className="card-text">
+                            <a 
+                              className="card-title"
+                              href={noticia.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {noticia.titulo}
+                            </a>
+                            <div className="card-date">
+                              {noticia.fecha ? new Date(noticia.fecha).toLocaleDateString('es-ES') : '-'}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p>No hay noticias disponibles.</p>
                   )}
                 </div>
               )}
