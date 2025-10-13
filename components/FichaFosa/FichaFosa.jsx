@@ -96,7 +96,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
     audio,
   } = fosa;
 
-  // Datos de fichaExtra (API v2)
+  // Datos de fichaExtra (API v3)
   const descripcionRaw =
     fichaExtra?.texto || fichaExtra?.titular || linea_narrativa || "Sin descripción disponible";
   
@@ -308,15 +308,15 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                 <li className="datos__item">
                   <label className="datos__label">{etiquetaInhumados}</label>
                   <span className="datos__value">
-                    {formatearNumero(nBuriedExtra)}
-                    {mostrarExhumados && nExhumed && ` | ${formatearNumero(nExhumed)}`}
+                    {formatearNumero(nBuriedExtra)} {nBuriedExtra === 1 ? 'inhumado' : 'inhumados'}
+                    {mostrarExhumados && nExhumed && ` | ${formatearNumero(nExhumed)} ${nExhumed === 1 ? 'exhumado' : 'exhumados'}`}
                   </span>
                 </li>
               )}
               {mostrarExhumados && !mostrarInhumados && (
                 <li className="datos__item">
                   <label className="datos__label">NÚMERO DE EXHUMADOS</label>
-                  <span className="datos__value">{formatearNumero(nExhumed)}</span>
+                  <span className="datos__value">{formatearNumero(nExhumed)} {nExhumed === 1 ? 'exhumado' : 'exhumados'}</span>
                 </li>
               )}
               {bandoRepresor && (
