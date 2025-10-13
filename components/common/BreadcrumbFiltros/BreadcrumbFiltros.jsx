@@ -4,8 +4,8 @@ import React, { useMemo } from "react";
 
 /**
  * BreadcrumbFiltros
- * Muestra una línea tipo "Se está mostrando:" seguida de los filtros activos
- * en el orden: Status | CCAA | Provincia | Ciudad | Nombre fosa.
+ * Muestra una línea tipo "Se está mostrando:" seguida de la ubicación activa
+ * en el orden: CCAA | Provincia | Ciudad | Nombre fosa.
  *
  * Props
  * - estadosSeleccionados: array de claves de estado ["todos" | "exhumados" | "no-exhumados" | "trasladada"]
@@ -17,7 +17,7 @@ import React, { useMemo } from "react";
  * - labelsMap: opcional, para sobrescribir etiquetas de estados
  */
 export default function BreadcrumbFiltros({
-  estadosSeleccionados = ["todos"],
+  estadosSeleccionados = ["todos"], // Ignorado en la UI del breadcrumb a petición
   ciudad = "",
   ccaa = "",
   provincia = "",
@@ -30,30 +30,12 @@ export default function BreadcrumbFiltros({
     todos: "Todos",
   },
 }) {
-  const statusLabel = useMemo(() => {
-    if (
-      !Array.isArray(estadosSeleccionados) ||
-      estadosSeleccionados.length === 0
-    ) {
-      return labelsMap.todos || "Todos";
-    }
-    if (estadosSeleccionados.includes("todos")) {
-      return labelsMap.todos || "Todos";
-    }
-    return estadosSeleccionados.map((k) => labelsMap[k] || k).join(", ");
-  }, [estadosSeleccionados, labelsMap]);
 
   const items = useMemo(() => {
     const safe = (s) => (s || "").toString().trim();
-    return [
-      statusLabel,
-
-      safe(ccaa),
-      safe(provincia),
-      safe(ciudad),
-      safe(nombreFosa),
-    ].filter(Boolean);
-  }, [statusLabel, ciudad, ccaa, provincia, nombreFosa]);
+    // Orden: CCAA | Provincia | Ciudad | Fosa
+    return [safe(ccaa), safe(provincia), safe(ciudad), safe(nombreFosa)].filter(Boolean);
+  }, [ciudad, ccaa, provincia, nombreFosa]);
 
   return (
     <div className={className} role="status" aria-live="polite">
@@ -63,7 +45,7 @@ export default function BreadcrumbFiltros({
           <li className="muted">{labelsMap.todos || "Todos"}</li>
         ) : (
           items.map((txt, i) => {
-            const isLast = i === items.length - 1 && i > 0; // nunca convertir el Status en h1
+            const isLast = i === items.length - 1; // la última instancia va como H1
             return (
               <li key={`${txt}-${i}`} className={isLast ? "last" : undefined}>
                 {isLast ? (

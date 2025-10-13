@@ -31,7 +31,11 @@ export default function HistoriasPage() {
         <HamburgerMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
 
         <section style={{ width: "100%" }}>
-          <MapaHistorias key={categoriaInicial} initialCategoria={categoriaInicial} />
+          <h2>Descubra todas las historias explorando el mapa</h2>
+          <MapaHistorias
+            key={categoriaInicial}
+            initialCategoria={categoriaInicial}
+          />
         </section>
         <div className="historias-intro">
           <h2 className="historias-intro__title">Historias</h2>
