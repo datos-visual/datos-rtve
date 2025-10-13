@@ -5,7 +5,7 @@ import React, { useMemo } from "react";
 /**
  * BreadcrumbFiltros
  * Muestra una línea tipo "Se está mostrando:" seguida de los filtros activos
- * en el orden: Status | Ciudad | CCAA | Provincia | Nombre fosa.
+ * en el orden: Status | CCAA | Provincia | Ciudad | Nombre fosa.
  *
  * Props
  * - estadosSeleccionados: array de claves de estado ["todos" | "exhumados" | "no-exhumados" | "trasladada"]
@@ -62,7 +62,23 @@ export default function BreadcrumbFiltros({
         {items.length === 0 ? (
           <li className="muted">{labelsMap.todos || "Todos"}</li>
         ) : (
-          items.map((txt, i) => <li key={`${txt}-${i}`}>{txt}</li>)
+          items.map((txt, i) => {
+            const isLast = i === items.length - 1 && i > 0; // nunca convertir el Status en h1
+            return (
+              <li key={`${txt}-${i}`} className={isLast ? "last" : undefined}>
+                {isLast ? (
+                  <h1
+                    className={`${className}-h1`}
+                    style={{ display: "inline", margin: 0, font: "inherit" }}
+                  >
+                    {txt}
+                  </h1>
+                ) : (
+                  txt
+                )}
+              </li>
+            );
+          })
         )}
       </ul>
     </div>
