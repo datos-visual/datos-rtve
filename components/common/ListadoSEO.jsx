@@ -34,18 +34,14 @@ const capitalizar = (str) => str.replace(/\b\w/g, (l) => l.toUpperCase());
 const capitalizarPrimera = (str) =>
   str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
-// Convertir nombre a formato URL (reemplazar espacios por guiones y minúsculas)
+// Convertir nombre a formato URL robusto (minúsculas, sin acentos, sin barras)
 const toUrlFormat = (str) => {
-  return str
+  return String(str || "")
     .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/á/g, "a")
-    .replace(/é/g, "e")
-    .replace(/í/g, "i")
-    .replace(/ó/g, "o")
-    .replace(/ú/g, "u")
-    .replace(/ñ/g, "n")
-    .replace(/ü/g, "u");
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // quitar acentos
+    .replace(/[^a-z0-9]+/g, "-") // cualquier no alfanumérico (incluye "/") -> "-"
+    .replace(/^-+|-+$/g, ""); // recortar guiones extremos
 };
 
 export default function ListadoSEO({ fosaSeleccionada = null, fosas = [] }) {
