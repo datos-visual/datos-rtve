@@ -100,20 +100,6 @@ const BotonesCategorias = forwardRef(
             className={`btn-cat btn-cat--${cat} ${activa ? "activa" : ""}`}
             data-cat={cat}
             onClick={() => handleSelect(cat)}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "flex-start",
-              minWidth: "clamp(90px, 10vw + 60px, 32%)",
-              maxWidth: "clamp(90px, 10vw + 60px, 32%)",
-              flexShrink: 0,
-              gap: "0px",
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-            }}
           >
             <img
               src={
@@ -173,23 +159,9 @@ const BotonesCategorias = forwardRef(
     if (isMobile) {
       if (useTooltipStyles) {
       return (
-        <div className="botones-categorias tooltip-version" ref={ref}>
+        <div className=" tooltip-version" ref={ref}>
           <div
-            className="botones-categorias"
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "flex-start",
-              gap: "clamp(8px, 3vw, 12px)",
-              overflowX: "auto",
-              overflowY: "hidden",
-              padding: "8px clamp(12px, 4vw, 20px)",
-              WebkitOverflowScrolling: "touch",
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-            }}
-          >
+            className="botones-categorias">
             {renderTooltipButtons()}
           </div>
         </div>
