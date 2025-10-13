@@ -607,22 +607,36 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                   .filter(Boolean)
                   .join(' ') || "Nombre desconocido";
                 
+                // Calcular edad
+                let edad = null;
+                if (victima.birthdate && victima.dead_date) {
+                  const fechaNacimiento = new Date(victima.birthdate);
+                  const fechaMuerte = new Date(victima.dead_date);
+                  edad = fechaMuerte.getFullYear() - fechaNacimiento.getFullYear();
+                  
+                  // Ajustar si aún no había cumplido años ese año
+                  const mesNacimiento = fechaNacimiento.getMonth();
+                  const mesMuerte = fechaMuerte.getMonth();
+                  const diaNacimiento = fechaNacimiento.getDate();
+                  const diaMuerte = fechaMuerte.getDate();
+                  
+                  if (mesMuerte < mesNacimiento || (mesMuerte === mesNacimiento && diaMuerte < diaNacimiento)) {
+                    edad--;
+                  }
+                }
+                
+                // Construir información adicional (profesión / edad)
+                const infoAdicional = [];
+                if (victima.profession) infoAdicional.push(victima.profession);
+                if (edad !== null) infoAdicional.push(`${edad} años`);
+                
                 return (
                   <div key={idx} className="victimas_item">
                     <div className="victimas_item-title">
                       <h5>
                         <strong>{nombreCompleto}</strong>
-                        {victima.gender && ` (${victima.gender})`}
+                        {infoAdicional.length > 0 && ` (${infoAdicional.join(' / ')})`}
                       </h5>
-                      {/* {victima.dead_date && (
-                        <span className="victimas_fecha">
-                          {new Date(victima.dead_date).toLocaleDateString('es-ES', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                          })}
-                        </span>
-                      )} */}
                     </div>
                   </div>
                 );
