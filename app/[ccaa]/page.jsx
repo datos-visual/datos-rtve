@@ -18,6 +18,31 @@ function slugify(text) {
     .replace(/[^a-z0-9-]/g, "");
 }
 
+// Alias de CCAA para aceptar variantes en la URL
+function normalizeCcaaSlug(slug) {
+  const s = String(slug || "").toLowerCase();
+  switch (s) {
+    case "comunidad-valenciana":
+      return "comunitat-valenciana";
+    case "asturias":
+      return "principado-de-asturias";
+    case "principado-de-asturas":
+      return "principado-de-asturias";
+    case "baleares":
+      return "illes-balears";
+    case "cataluna":
+      return "catalunya";
+    case "ceuta":
+      return "ciudad-de-ceuta";
+    case "melilla":
+      return "ciudad-de-melilla";
+    case "navarra":
+      return "comunidad-foral-de-navarra";
+    default:
+      return s;
+  }
+}
+
 export async function generateStaticParams() {
   const fosas = await cargarFosas();
   return fosas
@@ -29,8 +54,9 @@ export async function generateStaticParams() {
 
 export default async function CcaaPage({ params }) {
   const fosas = await cargarFosas();
+  const ccaaParam = normalizeCcaaSlug(params.ccaa);
   const ccaaFosas = fosas.filter(
-    (f) => (f.ccaa_seo || slugify(f.ccaa)) === params.ccaa
+    (f) => normalizeCcaaSlug(f.ccaa_seo || slugify(f.ccaa)) === ccaaParam
   );
 
   if (!ccaaFosas.length) return <p>No hay fosas en esta comunidad</p>;
@@ -86,7 +112,9 @@ export default async function CcaaPage({ params }) {
         <section className="buscador-mapa-fosas">
           <MenuSwitchClient />
           <section style={{ width: "100%", marginBottom: "160px" }}>
-            <h2 className="mapa-fosas_title">Descubra todas las fosas en el territorio español</h2>
+            <h2 className="mapa-fosas_title">
+              Descubra todas las fosas en el territorio español
+            </h2>
             <MapaBuscadorFosas ccaa={params.ccaa} fosas={ccaaFosas} />
           </section>
 
@@ -113,23 +141,23 @@ export default async function CcaaPage({ params }) {
               y el franquismo, donde puedes descubrir las 6.000 fosas de España
               y recuperar la memoria de algunas de las víctimas. Una parte de la
               historia que yace aún en la tierra.
-             </p>
-             <p className="buscador-intro__text">
+            </p>
+            <p className="buscador-intro__text">
               1. No importa la coordenada: en España no es posible estar a más
               de X kilómetros de una fosa común. Algunas contienen los restos de
               miles de personas; otras son enterramientos individuales.
-              </p>
-             <p className="buscador-intro__text">
+            </p>
+            <p className="buscador-intro__text">
               2. Uno de cada XX municipios españoles tiene en su terreno al
               menos una fosa de la Guerra Civil o el franquismo. Se han exhumado
               1.300 de las 6.000 registradas actualmente.
-              </p>
-              <p className="buscador-intro__text">
+            </p>
+            <p className="buscador-intro__text">
               3. La exhumación en Priaranza del Bierzo (León) en el año 2000
               marcó un hito en la preservación de la memoria democrática. Desde
               entonces se han recuperado los restos de más de 18.000 personas,
               de las cuales solo se han podido identificar unas 700.
-              </p>
+            </p>
             <p className="buscador-intro__text">
               4. A medida que continúan las prospecciones, el número de fosas
               sigue aumentando. Es probable que algunos de los desaparecidos no
