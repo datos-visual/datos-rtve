@@ -8,7 +8,6 @@ import BotonesCategorias from "../BotonesCategorias/BotonesCategorias";
 import ListaFosasCompleta from "../ListaFosasCompleta/ListaFosasCompleta";
 import { cargarFosas } from "../../app/lib/datos.js";
 import { useResponsive } from "../../app/hooks/useResponsive";
-import { getFosasData } from "../../app/services/fosasService";
 import pinLineaNarrativa from "../../app/assets/pinUbicacionLineaNarrativa.svg";
 import mapIconButton from "../../app/assets/mapIconButton.svg";
 import listIconButton from "../../app/assets/listIconButton.svg";
@@ -163,18 +162,66 @@ export default function MapaHistorias({
     const cargarDestacados = async () => {
       setCargandoDestacados(true);
 
-      try {
-        // Usar el servicio centralizado para obtener todos los datos de una vez
-        const { imagenesDestacadas } = await getFosasData(fosas);
-        
-        // Actualizar estado con todas las imágenes destacadas
-        setFosasConDestacado(imagenesDestacadas || {});
-      } catch (error) {
-        console.warn('Error al cargar destacados:', error);
-        setFosasConDestacado({});
-      } finally {
+      // Filtrar fosas con potencial de tener destacados
+      const fosasConPotencial = fosas.filter(
+        (f) => f.section_id || f.isInDedalo
+      );
+
+      if (fosasConPotencial.length === 0) {
         setCargandoDestacados(false);
+        return;
       }
+
+      // Cargar en lotes de 20
+      const BATCH_SIZE = 20;
+      const imagenesDestacadas = {};
+
+      for (let i = 0; i < fosasConPotencial.length; i += BATCH_SIZE) {
+        const lote = fosasConPotencial.slice(i, i + BATCH_SIZE);
+
+        await Promise.all(
+          lote.map(async (fosa) => {
+            try {
+              const id = fosa.id_datos || fosa.id;
+              const idFormateado = String(id).padStart(5, "0");
+
+              const response = await fetch(
+                `https://www.rtve.es/datos-repo/test-fosas/v3/fichas/${idFormateado}.json`
+              );
+
+              if (response.ok) {
+                const data = await response.json();
+                const contenidos = data.contenidos || [];
+                const destacado = contenidos.find((c) => c.destacado === true);
+
+                if (destacado) {
+                  const { tipo, id: contentId, url } = destacado;
+                  let thumbnail = null;
+
+                  if (tipo === "video") {
+                    thumbnail = `https://img.rtve.es/v/${contentId}?w=400`;
+                  } else if (tipo === "audio") {
+                    thumbnail = `https://img.rtve.es/a/${contentId}?w=400`;
+                  } else if (tipo === "foto") {
+                    thumbnail = url;
+                  }
+
+                  if (thumbnail) {
+                    imagenesDestacadas[fosa.id] = thumbnail;
+                  }
+                }
+              }
+            } catch (error) {
+              // Silenciar errores individuales
+            }
+          })
+        );
+
+        // Actualizar estado con el lote procesado
+        setFosasConDestacado((prev) => ({ ...prev, ...imagenesDestacadas }));
+      }
+
+      setCargandoDestacados(false);
     };
 
     cargarDestacados();

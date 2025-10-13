@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
-import { getFosaData } from "../../app/services/fosasService";
 import "../../app/styles/_fichaFosa.scss";
 
 import iconFiltro from "../../app/assets/iconFiltro.svg";
@@ -47,25 +46,32 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
   const modalRef = useRef(null);
 
   useEffect(() => {
-    const cargarFichaExtra = async () => {
-      const idDatos = fosa?.id;
+    // El campo id_datos del JSON se normaliza a "id" en datos.js
+    const idDatos = fosa?.id;
+    
+    if (idDatos) {
+      // Formatear ID con padding de ceros (ej: 257 → 00257)
+      const idFormateado = String(idDatos).padStart(5, '0');
       
-      if (idDatos) {
-        try {
-          // Usar el servicio centralizado
-          const data = await getFosaData(idDatos);
+      fetch(
+        `https://www.rtve.es/datos-repo/test-fosas/v3/fichas/${idFormateado}.json`
+      )
+        .then((resp) => {
+          if (!resp.ok) {
+            return null;
+          }
+          return resp.json();
+        })
+        .then((data) => {
           if (data) {
             setFichaExtra(data);
           }
-        } catch (error) {
+        })
+        .catch((e) => {
           // Silenciar errores de CORS/404 ya que son esperados para muchas fosas
-          console.warn('Error al cargar ficha extra:', error);
-        }
-      }
-    };
-
-    cargarFichaExtra();
-  }, [fosa?.id]); // Solo depender del ID para evitar re-renderizados innecesarios
+        });
+    }
+  }, [fosa]);
 
   const handleOpenModal = useCallback(() => {
     if (modalRef.current && modalRef.current.open) {
