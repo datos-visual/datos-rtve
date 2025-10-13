@@ -351,8 +351,10 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
               <Image
                 src={imagenDestacada}
                 alt={`${title} - Imagen destacada`}
-                width={500}
-                height={300}
+                unoptimized
+                width={0}
+                height={0}
+                style={{ width: "100%", height: "auto" }}
               />
             </div>
           )}
@@ -490,7 +492,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                               Destacado
                             </span>
                           )*/}
-                          <div className="content-img">
+                          <div className="content-img video">
                             <img 
                               src={generarThumbnail(video, 400)} 
                               alt={video.titulo || 'Video'}
@@ -526,32 +528,30 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                           className="multimedia-card"
                           onClick={() => handleOpenModal()}
                         >
-                          {audio.destacado && (
+                          {/*audio.destacado && (
                             <span className="destacado-badge">
                               ⭐ Destacado
                             </span>
-                          )}
-                          <img 
-                            src={audio.thumbnail} 
-                            alt={audio.titulo || 'Audio'}
-                            onError={(e) => {
-                              // Si la imagen falla, usar gradiente de fallback
-                              e.target.style.display = 'none';
-                              const parent = e.target.parentElement;
-                              parent.classList.add('audio-fallback');
-                              
-                              // Agregar icono grande de audio si no existe
-                              if (!parent.querySelector('.audio-fallback-icon')) {
-                                const iconDiv = document.createElement('div');
-                                iconDiv.className = 'audio-fallback-icon';
-                                iconDiv.textContent = '🎵';
-                                parent.insertBefore(iconDiv, parent.lastChild);
-                              }
-                            }}
-                          />
-                          
-                          <div className="play-icon">
-                            ▶
+                          )*/}
+                          <div className="content-img audio">
+                            <img 
+                              src={audio.thumbnail} 
+                              alt={audio.titulo || 'Audio'}
+                              onError={(e) => {
+                                // Si la imagen falla, usar gradiente de fallback
+                                e.target.style.display = 'none';
+                                const parent = e.target.parentElement;
+                                parent.classList.add('audio-fallback');
+                                
+                                // Agregar icono grande de audio si no existe
+                                if (!parent.querySelector('.audio-fallback-icon')) {
+                                  const iconDiv = document.createElement('div');
+                                  iconDiv.className = 'audio-fallback-icon';
+                                  iconDiv.textContent = '🎵';
+                                  parent.insertBefore(iconDiv, parent.lastChild);
+                                }
+                              }}
+                            />
                           </div>
                           
                           <div className="card-title">
