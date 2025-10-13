@@ -20,6 +20,7 @@ export const NARRATIVE_MAPPINGS = {
   exhumaciones: "exhumación temprana",
   represaliado: "represión",
   represaliados: "represión",
+  "nombres propios": "personajes",
   lugares: "lugares",
   objetos: "objetos",
   mujeres: "mujeres",

@@ -96,7 +96,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
     audio,
   } = fosa;
 
-  // Datos de fichaExtra (API v2)
+  // Datos de fichaExtra (API v3)
   const descripcionRaw =
     fichaExtra?.texto || fichaExtra?.titular || linea_narrativa || "Sin descripción disponible";
   
@@ -127,7 +127,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
   // Determinar qué mostrar según la lógica
   let mostrarInhumados = false;
   let mostrarExhumados = false;
-  let etiquetaInhumados = 'NÚMERO DE INHUMADOS';
+  let etiquetaInhumados = 'NÚMERO DE VÍCTIMAS';
   
   // REGLA 1: Si no hay datos de inhumados ni exhumados -> no se muestra nada
   if (!nBuriedExtra && !nExhumed) {
@@ -308,15 +308,15 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                 <li className="datos__item">
                   <label className="datos__label">{etiquetaInhumados}</label>
                   <span className="datos__value">
-                    {formatearNumero(nBuriedExtra)}
-                    {mostrarExhumados && nExhumed && ` | ${formatearNumero(nExhumed)}`}
+                    {formatearNumero(nBuriedExtra)} {nBuriedExtra === 1 ? 'inhumado' : 'inhumados'}
+                    {mostrarExhumados && nExhumed && ` | ${formatearNumero(nExhumed)} ${nExhumed === 1 ? 'exhumado' : 'exhumados'}`}
                   </span>
                 </li>
               )}
               {mostrarExhumados && !mostrarInhumados && (
                 <li className="datos__item">
                   <label className="datos__label">NÚMERO DE EXHUMADOS</label>
-                  <span className="datos__value">{formatearNumero(nExhumed)}</span>
+                  <span className="datos__value">{formatearNumero(nExhumed)} {nExhumed === 1 ? 'exhumado' : 'exhumados'}</span>
                 </li>
               )}
               {bandoRepresor && (
@@ -351,8 +351,10 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
               <Image
                 src={imagenDestacada}
                 alt={`${title} - Imagen destacada`}
-                width={500}
-                height={300}
+                unoptimized
+                width={0}
+                height={0}
+                style={{ width: "100%", height: "auto" }}
               />
             </div>
           )}
@@ -390,42 +392,6 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
             </>
           )}
 
-            {noticias.length > 0 && (
-              <>
-                <h4>Notas relacionadas ({noticias.length})</h4>
-                <ul className="news-related">
-                  {noticias.map((noticia, idx) => (
-                    <li key={idx} className="news-related_list">
-                      <img src="" alt="" />
-                      <div className="news-related_description">
-                        {noticia.destacado && (
-                          <span className="destacado-badge">
-                            DESTACADO
-                          </span>
-                        )}
-                        <a
-                          className="news-related_title"
-                          href={noticia.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {noticia.titulo}
-                        </a>
-                        <p className="news-related_date">
-                          {noticia.fecha ? new Date(noticia.fecha).toLocaleDateString('es-ES') : '-'} | {noticia.programa || 'Web'} | ID: {noticia.id_material || noticia.id}
-                        </p>
-                        {noticia.texto && (
-                          <div
-                            className="news-related_excerpt"
-                            dangerouslySetInnerHTML={{ __html: noticia.texto }}
-                          />
-                        )}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
           </div>
 
           {/* Multimedia - Solo mostrar si hay contenidos disponibles */}
@@ -452,6 +418,12 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                   onClick={() => setActiveTab("audios")}
                 >
                   Voces <span className="badge">{audiosContenido.length}</span>
+                </button>
+                <button
+                  className={`tab-btn ${activeTab === "noticias" ? "active" : ""}`}
+                  onClick={() => setActiveTab("noticias")}
+                >
+                  Noticias <span className="badge">{noticias.length}</span>
                 </button>
               </div>
 
@@ -485,12 +457,12 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                           className="multimedia-card"
                           onClick={() => handleOpenModal()}
                         >
-                          {/*video.destacado && (
+                          {video.destacado && (
                             <span className="destacado-badge">
-                              Destacado
+                              DESTACADO
                             </span>
-                          )*/}
-                          <div className="content-img">
+                          )}
+                          <div className="content-img video">
                             <img 
                               src={generarThumbnail(video, 400)} 
                               alt={video.titulo || 'Video'}
@@ -500,11 +472,17 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                             />
                           </div>
                           <div className="card-text">
-                            <div className="card-title">
+                            <a 
+                              className="card-title"
+                              href={video.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                            >
                               {video.titulo}
-                            </div>
+                            </a>
                             <div className="card-date">
-                              Fecha
+                              {video.fecha ? new Date(video.fecha).toLocaleDateString('es-ES') : '-'}
                             </div>
                           </div>
                         </div>
@@ -528,40 +506,85 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                         >
                           {audio.destacado && (
                             <span className="destacado-badge">
-                              ⭐ Destacado
+                              DESTACADO
                             </span>
                           )}
-                          <img 
-                            src={audio.thumbnail} 
-                            alt={audio.titulo || 'Audio'}
-                            onError={(e) => {
-                              // Si la imagen falla, usar gradiente de fallback
-                              e.target.style.display = 'none';
-                              const parent = e.target.parentElement;
-                              parent.classList.add('audio-fallback');
-                              
-                              // Agregar icono grande de audio si no existe
-                              if (!parent.querySelector('.audio-fallback-icon')) {
-                                const iconDiv = document.createElement('div');
-                                iconDiv.className = 'audio-fallback-icon';
-                                iconDiv.textContent = '🎵';
-                                parent.insertBefore(iconDiv, parent.lastChild);
-                              }
-                            }}
-                          />
-                          
-                          <div className="play-icon">
-                            ▶
+                          <div className="content-img audio">
+                            <img 
+                              src={audio.thumbnail} 
+                              alt={audio.titulo || 'Audio'}
+                              onError={(e) => {
+                                // Si la imagen falla, usar gradiente de fallback
+                                e.target.style.display = 'none';
+                                const parent = e.target.parentElement;
+                                parent.classList.add('audio-fallback');
+                                
+                                // Agregar icono grande de audio si no existe
+                                if (!parent.querySelector('.audio-fallback-icon')) {
+                                  const iconDiv = document.createElement('div');
+                                  iconDiv.className = 'audio-fallback-icon';
+                                  iconDiv.textContent = '🎵';
+                                  parent.insertBefore(iconDiv, parent.lastChild);
+                                }
+                              }}
+                            />
                           </div>
                           
-                          <div className="card-title">
-                            {audio.titulo}
+                          <div className="card-text">
+                            <a 
+                              className="card-title"
+                              href={audio.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {audio.titulo}
+                            </a>
+                            <div className="card-date">
+                              {audio.fecha ? new Date(audio.fecha).toLocaleDateString('es-ES') : '-'}
+                            </div>
                           </div>
                         </div>
                       ))}
                     </div>
                   ) : (
                     <p>No hay audios disponibles.</p>
+                  )}
+                </div>
+              )}
+              {activeTab === "noticias" && (
+                <div className="tab-content active">
+                  <h4>Noticias</h4>
+                  {noticias.length > 0 ? (
+                    <div className="multimedia-grid">
+                      {noticias.map((noticia, i) => (
+                        <div 
+                          key={`noticia-${i}`} 
+                          className="multimedia-card noticia-card"
+                        >
+                          {noticia.destacado && (
+                            <span className="destacado-badge">
+                              DESTACADO
+                            </span>
+                          )}
+                          <div className="card-text">
+                            <a 
+                              className="card-title"
+                              href={noticia.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {noticia.titulo}
+                            </a>
+                            <div className="card-date">
+                              {noticia.fecha ? new Date(noticia.fecha).toLocaleDateString('es-ES') : '-'}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p>No hay noticias disponibles.</p>
                   )}
                 </div>
               )}
@@ -584,22 +607,36 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                   .filter(Boolean)
                   .join(' ') || "Nombre desconocido";
                 
+                // Calcular edad
+                let edad = null;
+                if (victima.birthdate && victima.dead_date) {
+                  const fechaNacimiento = new Date(victima.birthdate);
+                  const fechaMuerte = new Date(victima.dead_date);
+                  edad = fechaMuerte.getFullYear() - fechaNacimiento.getFullYear();
+                  
+                  // Ajustar si aún no había cumplido años ese año
+                  const mesNacimiento = fechaNacimiento.getMonth();
+                  const mesMuerte = fechaMuerte.getMonth();
+                  const diaNacimiento = fechaNacimiento.getDate();
+                  const diaMuerte = fechaMuerte.getDate();
+                  
+                  if (mesMuerte < mesNacimiento || (mesMuerte === mesNacimiento && diaMuerte < diaNacimiento)) {
+                    edad--;
+                  }
+                }
+                
+                // Construir información adicional (profesión / edad)
+                const infoAdicional = [];
+                if (victima.profession) infoAdicional.push(victima.profession);
+                if (edad !== null) infoAdicional.push(`${edad} años`);
+                
                 return (
                   <div key={idx} className="victimas_item">
                     <div className="victimas_item-title">
                       <h5>
                         <strong>{nombreCompleto}</strong>
-                        {victima.gender && ` (${victima.gender})`}
+                        {infoAdicional.length > 0 && ` (${infoAdicional.join(' / ')})`}
                       </h5>
-                      {/* {victima.dead_date && (
-                        <span className="victimas_fecha">
-                          {new Date(victima.dead_date).toLocaleDateString('es-ES', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                          })}
-                        </span>
-                      )} */}
                     </div>
                   </div>
                 );

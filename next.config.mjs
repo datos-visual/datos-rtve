@@ -76,8 +76,15 @@ const nextConfig = {
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {
-      config.output.filename =
-        "static/chunks/[name]-" + propsPackage.version + ".js";
+      // En desarrollo no modificamos los nombres de los chunks para evitar
+      // desajustes con el runtime de Next (que espera rutas como app/.../page.js)
+      if (env !== "development") {
+        config.output.filename =
+          "static/chunks/[name]-" + propsPackage.version + ".js";
+        // Nota: si en PRE/PROD se necesita aplicar el mismo patrón a los chunks no-entrada,
+        // se podría definir también config.output.chunkFilename. Lo evitamos aquí para no
+        // interferir con la estrategia de cacheado/hash de Next por defecto.
+      }
       // En PRE/PROD ignoramos solo main.scss porque se sirve estático desde css.rtve.es
       if (env !== "development") {
         config.module.rules.push({
