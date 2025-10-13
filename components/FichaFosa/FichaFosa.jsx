@@ -28,10 +28,15 @@ const iconosCategorias = {
 
 // Función para formatear números con separadores de miles
 const formatearNumero = (numero) => {
-  if (!numero && numero !== 0) return null;
-  const num = typeof numero === 'string' ? parseInt(numero, 10) : numero;
-  if (isNaN(num)) return null;
-  return new Intl.NumberFormat('es-ES').format(num);
+  if (!numero && numero !== 0) return numero;
+  // Convertir a número
+  let num = numero;
+  if (typeof numero === 'string') {
+    num = parseInt(numero.trim().replace(/\s/g, ''), 10);
+  }
+  if (isNaN(num)) return numero;
+  // Formatear manualmente con puntos como separadores de miles
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 };
 
 const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
