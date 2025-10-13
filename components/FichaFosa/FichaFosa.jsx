@@ -127,7 +127,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
   // Determinar qué mostrar según la lógica
   let mostrarInhumados = false;
   let mostrarExhumados = false;
-  let etiquetaInhumados = 'NÚMERO DE INHUMADOS';
+  let etiquetaInhumados = 'NÚMERO DE VÍCTIMAS';
   
   // REGLA 1: Si no hay datos de inhumados ni exhumados -> no se muestra nada
   if (!nBuriedExtra && !nExhumed) {
