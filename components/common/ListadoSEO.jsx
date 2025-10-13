@@ -127,6 +127,22 @@ export default function ListadoSEO({ fosaSeleccionada = null, fosas = [] }) {
     a.localeCompare(b)
   );
 
+  // Helpers: obtener slugs SEO desde datos cuando existan
+  const getCcaaSlug = (ccaaNombre) => {
+    const f = fosasData.find((x) => x.ccaa === ccaaNombre && x.ccaa_seo);
+    return f?.ccaa_seo || toUrlFormat(ccaaNombre);
+  };
+
+  const getProvinciaSlug = (ccaaNombre, provinciaNombre) => {
+    const f = fosasData.find(
+      (x) =>
+        x.ccaa === ccaaNombre &&
+        x.provincia === provinciaNombre &&
+        x.provincia_seo
+    );
+    return f?.provincia_seo || toUrlFormat(provinciaNombre);
+  };
+
   return (
     <section className="listado-seo">
       <div className="listado-seo-wrapper">
@@ -139,7 +155,7 @@ export default function ListadoSEO({ fosaSeleccionada = null, fosas = [] }) {
             : todasCCAA.length > 0
             ? todasCCAA.map((ccaa, index) => (
                 <span key={ccaa}>
-                  <Link href={`/${toUrlFormat(ccaa)}`}>
+                  <Link href={`/${getCcaaSlug(ccaa)}`}>
                     {capitalizarPrimera(ccaa)}
                   </Link>
                   {index < todasCCAA.length - 1 && " / "}
@@ -163,7 +179,10 @@ export default function ListadoSEO({ fosaSeleccionada = null, fosas = [] }) {
                 return (
                   <span key={provincia}>
                     <Link
-                      href={`/${toUrlFormat(ccaa)}/${toUrlFormat(provincia)}`}
+                      href={`/${getCcaaSlug(ccaa)}/${getProvinciaSlug(
+                        ccaa,
+                        provincia
+                      )}`}
                     >
                       {capitalizarPrimera(provincia)}
                     </Link>
