@@ -114,6 +114,9 @@ const MapaFosas = forwardRef(
       [map, fosas, allFosas, fosasVisibles, navButtons]
     );
 
+    // Flag: si recibimos fosasFiltradas como prop, el control es externo y no debemos sobreescribir
+    const externalControl = Array.isArray(fosasFiltradas);
+
     // Cargar fosas y crear mapa
     useEffect(() => {
       if (!mapContainer.current) return;
@@ -135,7 +138,10 @@ const MapaFosas = forwardRef(
             );
           }
           setAllFosas(fosasData);
-          setFosas(fosasData);
+          // Solo inicializar con todas si NO hay control externo
+          if (!externalControl) {
+            setFosas(fosasData);
+          }
         })
         .catch((err) => {});
 
@@ -147,7 +153,7 @@ const MapaFosas = forwardRef(
 
     // Actualizar fosas cuando cambie fosasFiltradas
     useEffect(() => {
-      if (fosasFiltradas && Array.isArray(fosasFiltradas)) {
+      if (Array.isArray(fosasFiltradas)) {
         setFosas(fosasFiltradas);
       }
     }, [fosasFiltradas]);
@@ -193,8 +199,9 @@ const MapaFosas = forwardRef(
       }
     }, [map, fosas, soloNarrativas, capaMontada]);
 
-    // Filtrar por categoría
+    // Filtrar por categoría (solo si no hay control externo)
     useEffect(() => {
+      if (externalControl) return; // no tocar si viene de fuera
       if (!allFosas.length) return;
       if (initialCategoria === "todas") {
         setFosas(allFosas);
@@ -206,7 +213,7 @@ const MapaFosas = forwardRef(
         );
         setFosas(filtradas);
       }
-    }, [initialCategoria, allFosas]);
+    }, [initialCategoria, allFosas, externalControl]);
 
     // Crear geocoder
     useEffect(() => {
@@ -235,7 +242,7 @@ const MapaFosas = forwardRef(
     // Agregar botones de navegación Península/Canarias
     useEffect(() => {
       if (!map) return;
-      
+
       const buttons = addNavButtons(map, {
         peninsulaCenter: [-3, 40],
         peninsulaZoom: 5,
@@ -247,7 +254,7 @@ const MapaFosas = forwardRef(
         left: 16,
         margin: 8,
       });
-      
+
       setNavButtons(buttons);
 
       return () => {
