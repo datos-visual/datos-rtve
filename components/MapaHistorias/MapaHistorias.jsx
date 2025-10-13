@@ -13,13 +13,13 @@ import mapIconButton from "../../app/assets/mapIconButton.svg";
 import listIconButton from "../../app/assets/listIconButton.svg";
 
 const CATEGORIAS = [
-  "todas",
-  "mujeres",
-  "lugares",
-  "personajes",
-  "objetos",
-  "represion",
-  "Exhumaciones",
+  "todas", // TODOS
+  "represion", // REPRESALIADOS
+  "mujeres", // MUJERES
+  "lugares", // LUGARES
+  "objetos", // OBJETOS
+  "personajes", // NOMBRES PROPIOS
+  "Exhumaciones", // EXHUMACIONES TEMPRANAS
 ];
 
 const ESTADOS = [

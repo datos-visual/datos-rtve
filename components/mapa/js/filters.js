@@ -1,6 +1,6 @@
 export function initToolbar(toolbar, onFilter) {
-  // Etiquetas visibles en UI, no cambian la clave interna usada en filtros.
-  ["Represaliados", "Objetos", "Mujeres", "Lugares", "Nombres propios"].forEach(
+  // Orden solicitado: REPRESALIADOS, MUJERES, LUGARES, OBJETOS, NOMBRES PROPIOS
+  ["Represaliados", "Mujeres", "Lugares", "Objetos", "Nombres propios"].forEach(
     (tag) => {
       const b = document.createElement("button");
       b.className = "toolbar-btn";

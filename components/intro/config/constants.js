@@ -2,11 +2,12 @@
 export const INTRO_CONFIG = {
   breakpoints: { mobile: 600, tablet: 768 },
   categories: [
+    // Orden solicitado: REPRESALIADOS, MUJERES, LUGARES, OBJETOS, NOMBRES PROPIOS, EXHUMACIONES TEMPRANAS
+    "represion",
     "mujeres",
     "lugares",
-    "personajes",
     "objetos",
-    "represion",
+    "personajes",
     "Exhumaciones",
   ],
 };
