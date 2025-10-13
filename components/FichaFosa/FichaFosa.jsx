@@ -28,10 +28,15 @@ const iconosCategorias = {
 
 // Función para formatear números con separadores de miles
 const formatearNumero = (numero) => {
-  if (!numero && numero !== 0) return null;
-  const num = typeof numero === 'string' ? parseInt(numero, 10) : numero;
-  if (isNaN(num)) return null;
-  return new Intl.NumberFormat('es-ES').format(num);
+  if (!numero && numero !== 0) return numero;
+  // Convertir a número
+  let num = numero;
+  if (typeof numero === 'string') {
+    num = parseInt(numero.trim().replace(/\s/g, ''), 10);
+  }
+  if (isNaN(num)) return numero;
+  // Formatear manualmente con puntos como separadores de miles
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 };
 
 const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
@@ -399,57 +404,41 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
             <div className="multimedia">
               <h3>MATERIAL MULTIMEDIA</h3>
               <div className="multimedia-tabs">
-                <button
-                  className={`tab-btn ${
-                    activeTab === "imagenes" ? "active" : ""
-                  }`}
-                  onClick={() => setActiveTab("imagenes")}
-                >
-                  Fotos <span className="badge">{fotos.length}</span>
-                </button>
-                <button
-                  className={`tab-btn ${activeTab === "videos" ? "active" : ""}`}
-                  onClick={() => setActiveTab("videos")}
-                >
+                <button className="tab-btn">
                   Videos <span className="badge">{videosContenido.length}</span>
                 </button>
-                <button
-                  className={`tab-btn ${activeTab === "audios" ? "active" : ""}`}
-                  onClick={() => setActiveTab("audios")}
-                >
-                  Voces <span className="badge">{audiosContenido.length}</span>
+                <button className="tab-btn">
+                  Audios <span className="badge">{audiosContenido.length}</span>
                 </button>
-                <button
-                  className={`tab-btn ${activeTab === "noticias" ? "active" : ""}`}
-                  onClick={() => setActiveTab("noticias")}
-                >
+                <button className="tab-btn">
+                  Fotos <span className="badge">{fotos.length}</span>
+                </button>
+                <button className="tab-btn">
                   Noticias <span className="badge">{noticias.length}</span>
                 </button>
               </div>
+              
+              <div className="multimedia-content">
+                {/* FOTOS */}
+                {fotos.length > 0 && (
+                  <div className="multimedia-section">
+                    <h4>FOTOS</h4>
+                    <div className="multimedia-grid">
+                      {fotos.map((f, i) => (
+                        <div key={`foto-${i}`} className="multimedia-card">
+                          <div className="content-img">
+                            <img src={f} alt="Imagen" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
-            <div className="multimedia-content">
-              {activeTab === "imagenes" && (
-                <div className="tab-content active">
-                  <h4>Fotos</h4>
-                  {fotos.length ? (
-                    fotos.map((f, i) => (
-                      <Image
-                        key={i}
-                        src={f}
-                        alt="Imagen"
-                        width={400}
-                        height={250}
-                      />
-                    ))
-                  ) : (
-                    <p>No hay imágenes disponibles.</p>
-                  )}
-                </div>
-              )}
-              {activeTab === "videos" && (
-                <div className="tab-content active">
-                  <h4>Videos</h4>
-                  {videosContenido.length > 0 ? (
+                {/* VIDEOS */}
+                {videosContenido.length > 0 && (
+                  <div className="multimedia-section">
+                    <h4>VIDEOS</h4>
                     <div className="multimedia-grid">
                       {videosContenido.map((video, i) => (
                         <div 
@@ -488,15 +477,13 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                         </div>
                       ))}
                     </div>
-                  ) : (
-                    <p>No hay videos disponibles.</p>
-                  )}
-                </div>
-              )}
-              {activeTab === "audios" && (
-                <div className="tab-content active">
-                  <h4>Audios</h4>
-                  {audiosContenido.length > 0 ? (
+                  </div>
+                )}
+
+                {/* AUDIOS */}
+                {audiosContenido.length > 0 && (
+                  <div className="multimedia-section">
+                    <h4>AUDIOS</h4>
                     <div className="multimedia-grid">
                       {audiosContenido.map((audio, i) => (
                         <div 
@@ -547,15 +534,13 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                         </div>
                       ))}
                     </div>
-                  ) : (
-                    <p>No hay audios disponibles.</p>
-                  )}
-                </div>
-              )}
-              {activeTab === "noticias" && (
-                <div className="tab-content active">
-                  <h4>Noticias</h4>
-                  {noticias.length > 0 ? (
+                  </div>
+                )}
+
+                {/* NOTICIAS */}
+                {noticias.length > 0 && (
+                  <div className="multimedia-section">
+                    <h4>NOTICIAS</h4>
                     <div className="multimedia-grid">
                       {noticias.map((noticia, i) => (
                         <div 
@@ -583,12 +568,9 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                         </div>
                       ))}
                     </div>
-                  ) : (
-                    <p>No hay noticias disponibles.</p>
-                  )}
-                </div>
-              )}
-            </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
