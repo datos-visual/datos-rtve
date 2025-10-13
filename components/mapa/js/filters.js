@@ -1,10 +1,19 @@
 export function initToolbar(toolbar, onFilter) {
-  ["Represión", "Objetos", "Mujeres", "Lugares", "Personajes"].forEach(
+  // Etiquetas visibles en UI, no cambian la clave interna usada en filtros.
+  ["Represaliados", "Objetos", "Mujeres", "Lugares", "Nombres propios"].forEach(
     (tag) => {
       const b = document.createElement("button");
       b.className = "toolbar-btn";
       b.textContent = tag;
-      b.onclick = () => onFilter(tag);
+      // Normaliza las etiquetas visibles a claves internas
+      const key = (
+        tag === "Represión" || tag === "Represaliados"
+          ? "represion"
+          : tag === "Personajes" || tag === "Nombres propios"
+          ? "personajes"
+          : tag.toLowerCase()
+      );
+      b.onclick = () => onFilter(key);
       toolbar.append(b);
     }
   );

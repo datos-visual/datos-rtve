@@ -63,6 +63,22 @@ const BotonesCategorias = forwardRef(
 
     const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
+    // Mapea la clave de categoría al label visible en UI
+    const labelForCategory = (cat) => {
+      switch (cat) {
+        case "Exhumaciones":
+          return "Exhumaciones Tempranas";
+        case "lugares":
+          return "Lugares";
+        case "personajes":
+          return "Nombres propios";
+        case "represion":
+          return "Represaliados";
+        default:
+          return cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase();
+      }
+    };
+
     const handleSelect = (cat) => {
       setSeleccionada(cat);
       setDropdownOpen(false);
@@ -76,12 +92,7 @@ const BotonesCategorias = forwardRef(
     const renderTooltipButtons = () => {
       return categorias.map((cat) => {
         const activa = seleccionada === cat;
-        const label =
-          cat === "Exhumaciones"
-            ? "Exhumaciones Tempranas"
-            : cat === "lugares"
-            ? "Lugares"
-            : cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase();
+        const label = labelForCategory(cat);
 
         return (
           <button
@@ -127,12 +138,7 @@ const BotonesCategorias = forwardRef(
     const renderNormalButtons = () => {
       return categorias.map((cat) => {
         const activa = seleccionada === cat;
-        const label =
-          cat === "Exhumaciones"
-            ? "Exhumaciones Tempranas"
-            : cat === "lugares"
-            ? "Lugares"
-            : cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase();
+        const label = labelForCategory(cat);
 
         return (
           <button
@@ -194,11 +200,9 @@ const BotonesCategorias = forwardRef(
         ICONOS_POR_DEFECTO[seleccionada] ||
         "";
       const labelSeleccionada =
-        seleccionada === "Exhumaciones"
-          ? "Exhumaciones tempranas"
-          : seleccionada === "lugares"
+        seleccionada === "lugares"
           ? "Lugares destacados"
-          : capitalize(seleccionada);
+          : labelForCategory(seleccionada);
 
       const menu = (
         <div
@@ -214,11 +218,7 @@ const BotonesCategorias = forwardRef(
         >
           {categorias.map((cat) => {
             const label =
-              cat === "Exhumaciones"
-                ? "Exhumaciones tempranas"
-                : cat === "lugares"
-                ? "Lugares destacados"
-                : capitalize(cat);
+              cat === "lugares" ? "Lugares destacados" : labelForCategory(cat);
 
             return (
               <div

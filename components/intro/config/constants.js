@@ -34,7 +34,7 @@ export const PERSONAJES_DATA = {
     nombre: "María Domínguez Remón",
     edad: " 54 años",
     historia:
-      '“Si sucumbimos en el transcurso de la lucha, las que nos sigan ocuparán la brecha que nosotras dejemos, pero caeremos con la conciencia tranquila”, escribió Domínguez.',
+      "“Si sucumbimos en el transcurso de la lucha, las que nos sigan ocuparán la brecha que nosotras dejemos, pero caeremos con la conciencia tranquila”, escribió Domínguez.",
     contexto:
       "Un 3 % de los cuerpos recuperados de las fosas son femeninos. Las mujeres sufrieron otro tipo de represión, con violaciones, torturas y humillaciones públicas. Tras la guerra, el franquismo deshizo los avances hacia la igualdad.",
   },
@@ -42,7 +42,7 @@ export const PERSONAJES_DATA = {
     svg: "6.png",
     categoria: "LUGARES",
     titulo:
-      'Fue arrojado a 50 metros en el pozo Tenoya, en Gran Canaria, junto con otras 13 personas. Su hija Pino prometió a su madre que lo encontraría: “Sabía que estaban ahí abajo”.',
+      "Fue arrojado a 50 metros en el pozo Tenoya, en Gran Canaria, junto con otras 13 personas. Su hija Pino prometió a su madre que lo encontraría: “Sabía que estaban ahí abajo”.",
     nombre: "José Sosa",
     edad: "31 años",
     historia:
@@ -58,7 +58,7 @@ export const PERSONAJES_DATA = {
     nombre: "Aurora Picornell",
     edad: "24 años",
     historia:
-      '“Fue una mujer muy destacada en la época, avanzada, autodidacta, que escribía muchísimo, muy conocida en toda la isla y también fuera”, explica Maria Antonia Oliver, de la asociación Memòria de Mallorca.',
+      "“Fue una mujer muy destacada en la época, avanzada, autodidacta, que escribía muchísimo, muy conocida en toda la isla y también fuera”, explica Maria Antonia Oliver, de la asociación Memòria de Mallorca.",
     contexto:
       "Otros personajes de la vida social, política y cultural española acabaron en una fosa común durante la guerra o el franquismo. Lorca, Blas Infante, Pedro Muñoz Seca, el artista oscense Ramón Acín o el sacerdote y escritor vasco Aitzol son algunos de ellos. Muchos permanecen desaparecidos.",
   },
@@ -94,8 +94,8 @@ export const PERSONAJES_DATA = {
     nombre: "Jesús Moreno Sádaba",
     edad: "41 años",
     historia:
-      'En la localidad navarra de Sartaguda, ‘el pueblo de las viudas’, fueron asesinados 84 hombres, más de la mitad de la población masculina de entre 16 y 50 años.',
+      "En la localidad navarra de Sartaguda, ‘el pueblo de las viudas’, fueron asesinados 84 hombres, más de la mitad de la población masculina de entre 16 y 50 años.",
     contexto:
-      'A finales de los 70, en Navarra, La Rioja, Extremadura, Murcia o Andalucía hubo ‘exhumaciones tempranas’, llevadas a cabo por los propios familiares y vecinos a mano y sin criterios científicos para dar sepultura digna a las víctimas.',
+      "A finales de los 70, en Navarra, La Rioja, Extremadura, Murcia o Andalucía hubo ‘exhumaciones tempranas’, llevadas a cabo por los propios familiares y vecinos a mano y sin criterios científicos para dar sepultura digna a las víctimas.",
   },
 };

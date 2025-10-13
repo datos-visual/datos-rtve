@@ -231,11 +231,27 @@ export default function MapaHistorias({
   const fosasFiltradas = useMemo(() => {
     let res = fosas;
     if (categoriaSeleccionada !== "todas") {
-      res = res.filter((f) =>
-        f.linea_narrativa
-          ?.toLowerCase()
-          .includes(categoriaSeleccionada.toLowerCase())
-      );
+      const getSynonyms = (cat) => {
+        const c = (cat || "").toLowerCase();
+        if (c === "personajes") return ["personajes", "nombres propios"];
+        if (c === "represion")
+          return ["represion", "represión", "represaliado", "represaliados"];
+        if (c === "exhumaciones")
+          return [
+            "exhumacion",
+            "exhumación",
+            "exhumaciones",
+            "exhumacion temprana",
+            "exhumación temprana",
+          ];
+        return [c];
+      };
+
+      const synonyms = getSynonyms(categoriaSeleccionada);
+      res = res.filter((f) => {
+        const ln = (f.linea_narrativa || "").toLowerCase();
+        return synonyms.some((s) => ln.includes(s));
+      });
     }
     if (estadoSeleccionado !== "todos") {
       const filtroEstado = {
