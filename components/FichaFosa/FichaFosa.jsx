@@ -129,46 +129,49 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
   let mostrarExhumados = false;
   let etiquetaInhumados = 'NÚMERO DE INHUMADOS';
   
-  // Si no hay datos de inhumados ni exhumados, no se muestra nada
+  // REGLA 1: Si no hay datos de inhumados ni exhumados -> no se muestra nada
   if (!nBuriedExtra && !nExhumed) {
     mostrarInhumados = false;
     mostrarExhumados = false;
   }
-  // No exhumada -> solo inhumados
+  // REGLA 2: No exhumada -> solo mostrar datos de inhumados
   else if (isNoExhumada) {
     mostrarInhumados = !!nBuriedExtra;
     mostrarExhumados = false;
   }
-  // Exhumada parcial
+  // REGLAS 5, 6 y 7: Exhumada parcial
   else if (isExhumadaParcial) {
+    // REGLA 5: Exhumada parcial con dato de exhumados Y de inhumados -> mostrar inhumados | exhumados
     if (nExhumed && nBuriedExtra) {
-      // Tiene ambos datos -> mostrar inhumados | exhumados
       mostrarInhumados = true;
       mostrarExhumados = true;
-    } else if (nExhumed && !nBuriedExtra) {
-      // Solo exhumados
+    } 
+    // REGLA 6: Exhumada parcial con dato de exhumados pero SIN dato de inhumados -> solo exhumados
+    else if (nExhumed && !nBuriedExtra) {
       mostrarInhumados = false;
       mostrarExhumados = true;
-    } else if (!nExhumed && nBuriedExtra) {
-      // Solo inhumados -> cambiar etiqueta a VÍCTIMAS
+    } 
+    // REGLA 7: Exhumada parcial con dato de inhumados pero SIN dato de exhumados -> solo inhumados (etiqueta: VÍCTIMAS)
+    else if (!nExhumed && nBuriedExtra) {
       mostrarInhumados = true;
       mostrarExhumados = false;
       etiquetaInhumados = 'NÚMERO DE VÍCTIMAS';
     }
   }
-  // Exhumada (total)
+  // REGLAS 3 y 4: Exhumada (total)
   else if (isExhumada) {
+    // REGLA 3: Exhumada con dato de exhumados -> solo mostrar exhumados
     if (nExhumed) {
-      // Tiene dato de exhumados
       mostrarInhumados = false;
       mostrarExhumados = true;
-    } else if (nBuriedExtra) {
-      // No tiene exhumados pero sí inhumados
+    } 
+    // REGLA 4: Exhumada SIN dato de exhumados pero CON dato de inhumados -> solo mostrar inhumados
+    else if (nBuriedExtra) {
       mostrarInhumados = true;
       mostrarExhumados = false;
     }
   }
-  // Cualquier otro estado
+  // Cualquier otro estado: mostrar lo que haya disponible
   else {
     mostrarInhumados = !!nBuriedExtra;
     mostrarExhumados = !!nExhumed;
