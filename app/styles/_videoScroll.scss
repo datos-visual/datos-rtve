@@ -24,5 +24,6 @@
 }
 
 .intro-text {
-  font-size: clamp(2.167rem, calc(4vw + 1rem), 4.167rem);
+  font-size: clamp(2.167rem, calc(1.3vw + 1rem), 4.167rem);
+  line-height: 4rem;
 }

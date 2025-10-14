@@ -10,7 +10,6 @@ import SobreElProyecto from "../../components/common/SobreProyecto";
 import HamburgerMenu from "../../components/HamburgerMenu/HamburgerMenu";
 import MapaHistorias from "../../components/MapaHistorias/MapaHistorias";
 import "../../app/styles/_historias.scss";
-import ListadoSEO from "@/components/common/ListadoSEO";
 
 export default function HistoriasPage() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -31,7 +30,9 @@ export default function HistoriasPage() {
         <HamburgerMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
 
         <section className="historias_container">
-          <h2 className="historias_title">Descubra todas las historias explorando el mapa</h2>
+          <h2 className="historias_title">
+            Descubra todas las historias explorando el mapa
+          </h2>
           <MapaHistorias
             key={categoriaInicial}
             initialCategoria={categoriaInicial}

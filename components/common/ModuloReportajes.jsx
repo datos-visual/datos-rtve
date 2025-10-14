@@ -65,7 +65,7 @@ export default function ModuloReportajes() {
   return (
     <section className="modulo-reportajes">
       <div className="modulo-reportajes-wrapper">
-        <h3>Título para módulo de Reportajes</h3>
+        <h3>Descubre las histórias</h3>
         <div className="cards-container">
           {reportajes.map((r, i) => (
             <a
