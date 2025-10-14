@@ -10,9 +10,13 @@
     display: flex;
     justify-content: space-between;
 
-    &_title {
-      position: absolute;
-      top: -60px;
+    &_container {
+      width: 100%;
+    }
+
+    &_container-title {
+      padding-left: 40px;
+      margin-bottom: 20px;
       font-family: $font-primary;
       font-weight: 700;
       font-size: 18px;
@@ -52,8 +56,12 @@
         }
 
         .mapa-fosas-searcher__form {
-          width: 412px;
+          width: 562px;
         }
+
+        .mapa-fosas-searcher__input {
+          max-width: inherit;
+        } 
 
         .mapa-fosas-searcher__btnFilter {
           position: absolute;
@@ -79,8 +87,8 @@
       width: 400px;
       padding: 36px 0 0 60px;
       z-index: 10;
-      transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-      
+      transition: width 0.6s ease-out, opacity 0.3s ease-out, transform 0.3s ease-out;
+
       &.vista-completa {
         position: absolute;
         top: 36px;
@@ -289,7 +297,11 @@
       margin: 0;
       border: 2px solid $color-gray-dark-2;
       appearance: none;
-      border-radius: 2px;
+      border-radius: 50%;
+
+      &.checked {
+        border: 4px solid $color-gray-dark-2;
+      }
 
       svg {
         margin: -2px;

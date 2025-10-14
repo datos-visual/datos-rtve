@@ -384,13 +384,13 @@ export default function MapaBuscadorFosas({
           onSubmit={handleFormSubmit}
         >
           <label htmlFor="busqueda" className="sr-only">
-            Buscar por Comunidad, Localidad...
+            Buscar por Fosas, Municipio, Provincia, Comunidad, Víctimas.
           </label>
           <input
             type="search"
             id="busqueda"
             name="busqueda"
-            placeholder="Buscar por Comunidad, Localidad..."
+            placeholder="Buscar por Fosas, Municipio, Provincia, Comunidad, Víctimas."
             className="mapa-fosas-searcher__input"
             value={busquedaInput}
             onChange={handleBusquedaChangeConSugerencias}
@@ -573,11 +573,11 @@ export default function MapaBuscadorFosas({
             {statusOptions.map(({ key, label }) => (
               <div key={key} className="mapa-fosas-searcher__statusItem">
                 <div
-                  className="mapa-fosas-searcher__statusCheck"
+                  className={`mapa-fosas-searcher__statusCheck ${
+                    estadosSeleccionados.includes(key) ? "checked" : ""
+                  }`}
                   onClick={() => handleEstadoChange(key)}
-                >
-                  {estadosSeleccionados.includes(key) && <CheckIcon />}
-                </div>
+                ></div>
                 <label
                   className="mapa-fosas-searcher__statusLabel"
                   onClick={() => handleEstadoChange(key)}
@@ -775,9 +775,6 @@ export default function MapaBuscadorFosas({
             <FichaFosa fosa={selectedFosa} onClose={handleCloseFosa} />
           ) : (
             <div className="mapa-fosas-searcher">
-              <h2 className="mapa-fosas-searcher__title">
-                Buscar en el mapa de fosas
-              </h2>
               {SearchForm}
               <div
                 id="resultados"
