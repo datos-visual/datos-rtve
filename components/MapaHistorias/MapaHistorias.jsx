@@ -155,77 +155,29 @@ export default function MapaHistorias({
     [categoriaSeleccionada]
   );
 
-  // Cargar destacados en background (sin bloquear)
+  // Construir destacados desde JSON_URL (sin fetch por fosa)
   useEffect(() => {
-    if (fosas.length === 0 || cargandoDestacados) return;
-
-    const cargarDestacados = async () => {
-      setCargandoDestacados(true);
-
-      // Filtrar fosas con potencial de tener destacados
-      const fosasConPotencial = fosas.filter(
-        (f) => f.section_id || f.isInDedalo
-      );
-
-      if (fosasConPotencial.length === 0) {
-        setCargandoDestacados(false);
-        return;
-      }
-
-      // Cargar en lotes de 20
-      const BATCH_SIZE = 20;
-      const imagenesDestacadas = {};
-
-      for (let i = 0; i < fosasConPotencial.length; i += BATCH_SIZE) {
-        const lote = fosasConPotencial.slice(i, i + BATCH_SIZE);
-
-        await Promise.all(
-          lote.map(async (fosa) => {
-            try {
-              const id = fosa.id_datos || fosa.id;
-              const idFormateado = String(id).padStart(5, "0");
-
-              const response = await fetch(
-                `https://www.rtve.es/datos-repo/test-fosas/v3/fichas/${idFormateado}.json`
-              );
-
-              if (response.ok) {
-                const data = await response.json();
-                const contenidos = data.contenidos || [];
-                const destacado = contenidos.find((c) => c.destacado === true);
-
-                if (destacado) {
-                  const { tipo, id: contentId, url } = destacado;
-                  let thumbnail = null;
-
-                  if (tipo === "video") {
-                    thumbnail = `https://img.rtve.es/v/${contentId}?w=400`;
-                  } else if (tipo === "audio") {
-                    thumbnail = `https://img.rtve.es/a/${contentId}?w=400`;
-                  } else if (tipo === "foto") {
-                    thumbnail = url;
-                  }
-
-                  if (thumbnail) {
-                    imagenesDestacadas[fosa.id] = thumbnail;
-                  }
-                }
-              }
-            } catch (error) {
-              // Silenciar errores individuales
-            }
-          })
-        );
-
-        // Actualizar estado con el lote procesado
-        setFosasConDestacado((prev) => ({ ...prev, ...imagenesDestacadas }));
-      }
-
+    if (!Array.isArray(fosas) || fosas.length === 0) {
+      setFosasConDestacado({});
       setCargandoDestacados(false);
-    };
+      return;
+    }
 
-    cargarDestacados();
-  }, [fosas, cargandoDestacados]);
+    const imagenes = {};
+    for (const fosa of fosas) {
+      if (fosa?.destacado && fosa?.destacado_thumbnail) {
+        imagenes[fosa.id] = {
+          thumbnail: fosa.destacado_thumbnail,
+          tipo: fosa.destacado.tipo,
+          url: fosa.destacado.url ?? null,
+          id: fosa.destacado.id ?? null,
+        };
+      }
+    }
+
+    setFosasConDestacado(imagenes);
+    setCargandoDestacados(false);
+  }, [fosas]);
 
   // Filtrado de fosas
   const fosasFiltradas = useMemo(() => {

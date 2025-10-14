@@ -124,78 +124,28 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
   // Para primera carga y consistencia con lista-narrativas, exponer el array completo ya ordenado
   const fosasVisibles = fosasFiltradas;
 
-  // === CARGAR DESTACADOS EN BACKGROUND ===
+  // === CONSTRUIR DESTACADOS DESDE JSON_URL (sin fetch por fosa) ===
   useEffect(() => {
-    const cargarDestacados = async () => {
-      if (fosas.length === 0 || cargandoDestacados) return;
-
-      setCargandoDestacados(true);
-
-      // Filtrar fosas con potencial de tener destacados
-      const fosasConPotencial = fosas.filter(f => f.section_id || f.isInDedalo);
-      
-      if (fosasConPotencial.length === 0) {
-        setCargandoDestacados(false);
-        return;
-      }
-
-      // Cargar en lotes de 20
-      const BATCH_SIZE = 20;
-      const imagenesDestacadas = {};
-      
-      for (let i = 0; i < fosasConPotencial.length; i += BATCH_SIZE) {
-        const lote = fosasConPotencial.slice(i, i + BATCH_SIZE);
-        
-        await Promise.all(
-          lote.map(async (fosa) => {
-            try {
-              const id = fosa.id_datos || fosa.id;
-              const idFormateado = String(id).padStart(5, '0');
-              
-              const response = await fetch(
-                `https://www.rtve.es/datos-repo/test-fosas/v3/fichas/${idFormateado}.json`
-              );
-              
-              if (response.ok) {
-                const data = await response.json();
-                const contenidos = data.contenidos || [];
-                const destacado = contenidos.find(c => c.destacado === true);
-                
-                if (destacado) {
-                  const { tipo, id: contentId, url } = destacado;
-                  let thumbnail = null;
-                  
-                  if (tipo === "video") {
-                    thumbnail = `https://img.rtve.es/v/${contentId}?w=400`;
-                  } else if (tipo === "audio") {
-                    thumbnail = `https://img.rtve.es/a/${contentId}?w=400`;
-                  } else if (tipo === "foto") {
-                    thumbnail = url;
-                  }
-                  
-                  if (thumbnail) {
-                    imagenesDestacadas[fosa.id] = thumbnail;
-                  }
-                }
-              }
-            } catch (error) {
-              // Silenciar errores individuales
-            }
-          })
-        );
-        
-        // Actualizar progresivamente cada 5 lotes (100 fosas)
-        if ((i / BATCH_SIZE) % 5 === 4) {
-          setFosasConDestacado(prev => ({ ...prev, ...imagenesDestacadas }));
-        }
-      }
-      
-      // Actualización final
-      setFosasConDestacado(prev => ({ ...prev, ...imagenesDestacadas }));
+    if (!Array.isArray(fosas) || fosas.length === 0) {
+      setFosasConDestacado({});
       setCargandoDestacados(false);
-    };
+      return;
+    }
 
-    cargarDestacados();
+    const imagenesDestacadas = {};
+    for (const fosa of fosas) {
+      if (fosa?.destacado && fosa?.destacado_thumbnail) {
+        imagenesDestacadas[fosa.id] = {
+          thumbnail: fosa.destacado_thumbnail,
+          tipo: fosa.destacado.tipo,
+          url: fosa.destacado.url ?? null,
+          id: fosa.destacado.id ?? null,
+        };
+      }
+    }
+
+    setFosasConDestacado(imagenesDestacadas);
+    setCargandoDestacados(false);
   }, [fosas]);
 
   // === HANDLERS ===

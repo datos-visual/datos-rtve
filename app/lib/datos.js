@@ -100,6 +100,17 @@ const crearObjetoFosa = (rawData) => {
     deposit_type: rawData.deposit_type ?? null,
     cod_ine: rawData.cod_ine ?? null,
     destacado: rawData.destacado ?? null,
+    // Precomputar miniatura del destacado para no recalcular en cada render
+    destacado_thumbnail:
+      rawData.destacado && typeof rawData.destacado === "object"
+        ? (rawData.destacado.tipo === "video" && rawData.destacado.id
+            ? `https://img.rtve.es/v/${rawData.destacado.id}?w=400`
+            : rawData.destacado.tipo === "audio" && rawData.destacado.id
+            ? `https://img.rtve.es/a/${rawData.destacado.id}?w=400`
+            : rawData.destacado.tipo === "foto" && rawData.destacado.url
+            ? rawData.destacado.url
+            : null)
+        : null,
     vitaminada: Boolean(rawData.vitaminada),
   };
 };
