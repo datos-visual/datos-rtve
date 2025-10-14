@@ -89,8 +89,11 @@ button {
           color: $text-color-primary;
           text-align: center;
           line-height: 1.4;
-          max-width: var(--text-width);
           margin: 0 auto var(--fluid-spacing-lg);
+
+          @media (min-width: 600px) {
+            max-width: var(--text-width);
+          }
         }
       }
     }
@@ -112,13 +115,10 @@ button {
       }
 
       @include mobile {
-        margin-bottom: 10px;
         max-height: 200px;
-        overflow-y: hidden;
-        overflow-x: hidden;
         justify-content: flex-start;
         gap: clamp(5px, 3vw, 8px);
-        padding: 8px clamp(12px, 4vw, 20px);
+        padding: 8px 30px;
         overflow-x: auto;
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
@@ -246,6 +246,7 @@ button {
       overflow-x: auto;
       padding: $spacing-sm 0;
       margin: 0;
+      flex-direction: row;
 
       @include desktop {
         align-items: flex-start;
@@ -256,28 +257,23 @@ button {
 
       @include mobile {
         justify-content: flex-start;
-        gap: clamp(5px, 3vw, 8px);
-        padding: 8px clamp(12px, 4vw, 20px);
-        overflow-x: auto;
-        overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
         @include hide-scrollbars;
         display: flex;
         flex-direction: row;
-        align-items: center;
-        justify-content: flex-start;
-        gap: clamp(8px, 3vw, 12px);
+        gap: 0;
+        align-items: flex-start;
         overflow: auto hidden;
-        padding: 8px clamp(12px, 4vw, 20px);
         scrollbar-width: none;
       }
 
       .btn-cat {
         width: 100%;
+        min-width: 33.3333333%;
         max-width: 100%;
         flex: 1 0 0;
-
         height: auto;
+        padding-inline: 6px;
         background: transparent;
         border: none;
         display: inline-flex; /* inline-flex asegura misma baseline entre elementos */
@@ -288,15 +284,20 @@ button {
         transition: $transition-all;
         text-decoration: none;
         gap: 10px !important;
-        box-sizing: content-box;
         position: relative;
 
         //min-width: clamp(90px, 10vw + 60px, $spacing-xxxl);
         //max-width: clamp(90px, 10vw + 60px, $spacing-xxxl);
 
+        @media (min-width: 600px) {
+          padding-inline: 0;
+          min-width: auto;
+          box-sizing: content-box;
+        }
+
         .category-icon {
           width: 100%;
-          min-width: 82px;
+          max-width: 62px;
           border-radius: 50%;
           display: block;
           object-fit: contain;
@@ -305,7 +306,7 @@ button {
           box-shadow: none;
           transition: $transition-all;
 
-          @media (min-width: 600px) {
+          @media (min-width: 680px) {
             max-width: 80px;
             min-width: auto;
           }
@@ -317,10 +318,9 @@ button {
 
         .category-text {
           font-family: $font-primary;
-          font-size: clamp(0.8333rem, 1.3vw, 1.333rem);
+          font-size: clamp(1rem, 1.3vw, 1.333rem);
           font-weight: 400;
           color: $text-color-primary;
-          text-transform: uppercase;
           text-align: center;
           line-height: 1.1;
           white-space: normal;
