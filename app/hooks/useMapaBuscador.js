@@ -270,12 +270,15 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
   );
 
   const handleEstadoChange = useCallback((estado) => {
+    // Solo permitir un filtro activo a la vez
+    // Si ya está seleccionado, no hacer nada (siempre debe haber uno activo)
     setEstadosSeleccionados((prev) => {
-      if (estado === "todos") return ["todos"];
-      const nuevos = prev.filter((e) => e !== "todos");
-      return nuevos.includes(estado)
-        ? nuevos.filter((e) => e !== estado)
-        : [...nuevos, estado];
+      // Si intenta clickear el que ya está activo, no hacer nada
+      if (prev.includes(estado)) {
+        return prev;
+      }
+      // Cambiar al nuevo estado seleccionado (solo uno a la vez)
+      return [estado];
     });
   }, []);
 
