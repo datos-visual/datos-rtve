@@ -15,6 +15,7 @@ import pointIcon from "../../app/assets/pointIcon.svg";
 import iconClose from "../../app/assets/icon-close.svg";
 
 import ModalCarrousel from "../common/ModalCarrousel";
+import ContentImage from "../common/ContentImage";
 
 const iconosCategorias = {
   todas: iconFiltro,
@@ -354,13 +355,10 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
           {imagenDestacada && (
             <div className="foto" onClick={handleOpenModal}>
               <h2 className="datos__title">{title || "Sin título"}</h2>
-              <Image
+              <ContentImage
                 src={imagenDestacada}
                 alt={`${title} - Imagen destacada`}
-                unoptimized
-                width={0}
-                height={0}
-                style={{ width: "100%", height: "auto" }}
+                tipo={contenidosDestacados[0]?.tipo}
               />
             </div>
           )}
@@ -411,9 +409,11 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                     <div className="multimedia-grid">
                       {fotos.map((f, i) => (
                         <div key={`foto-${i}`} className="multimedia-card">
-                          <div className="content-img">
-                            <img src={f} alt="Imagen" />
-                          </div>
+                          <ContentImage
+                            src={f}
+                            alt="Imagen"
+                            tipo="foto"
+                          />
                         </div>
                       ))}
                     </div>
@@ -431,15 +431,14 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                           className="multimedia-card"
                           onClick={() => handleOpenModal()}
                         >
-                          <div className="content-img video">
-                            <img 
-                              src={generarThumbnail(video, 400)} 
-                              alt={video.titulo || 'Video'}
-                              onError={(e) => {
-                                e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="225"%3E%3Crect fill="%23cccccc" width="400" height="225"/%3E%3Ctext fill="%23666666" font-family="Arial" font-size="20" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3EImagen no disponible%3C/text%3E%3C/svg%3E';
-                              }}
-                            />
-                          </div>
+                          <ContentImage
+                            src={generarThumbnail(video, 400)}
+                            alt={video.titulo || 'Video'}
+                            tipo="video"
+                            onError={(e) => {
+                              e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="225"%3E%3Crect fill="%23cccccc" width="400" height="225"/%3E%3Ctext fill="%23666666" font-family="Arial" font-size="20" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3EImagen no disponible%3C/text%3E%3C/svg%3E';
+                            }}
+                          />
                           <div className="card-text">
                             <a 
                               className="card-title"
@@ -471,26 +470,14 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                           className="multimedia-card"
                           onClick={() => handleOpenModal()}
                         >
-                          <div className="content-img audio">
-                            <img 
-                              src={audio.thumbnail} 
-                              alt={audio.titulo || 'Audio'}
-                              onError={(e) => {
-                                // Si la imagen falla, usar gradiente de fallback
-                                e.target.style.display = 'none';
-                                const parent = e.target.parentElement;
-                                parent.classList.add('audio-fallback');
-                                
-                                // Agregar icono grande de audio si no existe
-                                if (!parent.querySelector('.audio-fallback-icon')) {
-                                  const iconDiv = document.createElement('div');
-                                  iconDiv.className = 'audio-fallback-icon';
-                                  iconDiv.textContent = '🎵';
-                                  parent.insertBefore(iconDiv, parent.lastChild);
-                                }
-                              }}
-                            />
-                          </div>
+                          <ContentImage
+                            src={audio.thumbnail}
+                            alt={audio.titulo || 'Audio'}
+                            tipo="audio"
+                            onError={(e) => {
+                              e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="225"%3E%3Crect fill="%2366bb6a" width="400" height="225"/%3E%3Ctext fill="%23ffffff" font-family="Arial" font-size="20" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3E🎵 Audio%3C/text%3E%3C/svg%3E';
+                            }}
+                          />
                           
                           <div className="card-text">
                             <a 
