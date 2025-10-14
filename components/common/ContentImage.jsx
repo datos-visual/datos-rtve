@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import "./ContentImage.scss";
+import "../../app/styles/_contentImage.scss";
 
 /**
  * ContentImage - Componente para renderizar imágenes con indicadores de tipo de contenido
