@@ -264,8 +264,16 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
 
   const handleFosaSelect = useCallback((fosa) => {
     setSelectedFosa(fosa);
-    mapaRef.current?.focusFosa?.(fosa.id);
-  }, []);
+    // Asegurar panel visible y dar tiempo a la transición antes de centrar
+    if (!listaVisible) {
+      setListaVisible(true);
+    }
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        mapaRef.current?.focusFosa?.(fosa.id);
+      }, 300);
+    });
+  }, [listaVisible]);
 
   const handleCloseFosa = useCallback(() => setSelectedFosa(null), []);
   
@@ -328,7 +336,39 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     requestAnimationFrame(() => {
       requestAnimationFrame(resizeMap);
     });
-  }, [listaVisible]); // Se ejecuta cada vez que cambia listaVisible
+  }, [listaVisible, selectedFosa]); // Ejecutar también al abrir ficha
+
+  // Redimensionar al finalizar la transición CSS (sincronizado con transitionend)
+  useEffect(() => {
+    const mapInstance = mapaRef.current?.map;
+    if (!mapInstance) return;
+
+    const handler = (e) => {
+      const prop = e?.propertyName || "";
+      if (prop === "width" || prop === "left" || prop === "right") {
+        try {
+          mapInstance.resize();
+          // Asegurar un segundo ajuste tras el reflow
+          setTimeout(() => mapInstance.resize(), 0);
+          setTimeout(() => mapInstance.resize(), 120);
+        } catch (err) {}
+      }
+    };
+
+    const searchEl = document.querySelector('.mapa-fosas_search');
+    const contentEl = document.querySelector('.mapa-fosas_content');
+    const mapEl = document.querySelector('.mapa-fosas_map');
+
+    searchEl?.addEventListener('transitionend', handler);
+    contentEl?.addEventListener('transitionend', handler);
+    mapEl?.addEventListener('transitionend', handler);
+
+    return () => {
+      searchEl?.removeEventListener('transitionend', handler);
+      contentEl?.removeEventListener('transitionend', handler);
+      mapEl?.removeEventListener('transitionend', handler);
+    };
+  }, []);
 
   useEffect(() => {
     if (mapaRef.current?.setFilteredFosas) {

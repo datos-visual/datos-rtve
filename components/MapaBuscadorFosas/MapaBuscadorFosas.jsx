@@ -768,7 +768,7 @@ export default function MapaBuscadorFosas({
         {/* Panel de búsqueda - Desktop y Mobile */}
         <div
           className={`mapa-fosas_search ${
-            !listaVisible && !selectedFosa ? "vista-completa" : ""
+            listaVisible || selectedFosa ? "" : "vista-completa"
           } ${isMobile ? "mobile" : ""}`}
         >
           {selectedFosa ? (
@@ -823,7 +823,7 @@ export default function MapaBuscadorFosas({
         {/* Mapa */}
         <div
           ref={mobileSheet.mapContainerRef}
-          className={`mapa-fosas_map ${!listaVisible ? "vista-completa" : ""}`}
+          className={`mapa-fosas_map ${listaVisible || selectedFosa ? "" : "vista-completa"}`}
         >
           <MapaFosas
             ref={mapaRef}
