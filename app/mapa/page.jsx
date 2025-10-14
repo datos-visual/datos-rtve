@@ -147,8 +147,8 @@ function FosasPageContent() {
           <HamburgerMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
 
           {/* Componente principal del buscador de fosas */}
-          <section style={{ width: "100%" }}>
-            <h2>Descubra todas las fosas en el territorio español</h2>
+          <section className="mapa-fosas_container">
+            <h2 className="mapa-fosas_container-title">Descubra todas las fosas en el territorio español</h2>
             <MapaBuscadorWithBreadcrumbClient
               ccaa={urlParams.ccaa}
               provincia={urlParams.provincia}
