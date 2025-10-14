@@ -282,7 +282,7 @@ button {
         cursor: pointer;
         transition: $transition-all;
         text-decoration: none;
-        gap: 10px !important;
+        gap: 20px !important;
         position: relative;
 
         //min-width: clamp(90px, 10vw + 60px, $spacing-xxxl);
@@ -321,7 +321,7 @@ button {
           font-weight: 400;
           color: $text-color-primary;
           text-align: center;
-          line-height: 1.1;
+          line-height: 20px;
           white-space: normal;
           display: block;
           position: relative;
