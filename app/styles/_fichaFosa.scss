@@ -14,22 +14,29 @@ ficha-fosa {
   padding-top: 40px;
   display: flex;
   flex-direction: column;
+  position: relative;
+  width: 100%;
+  background: $text-color-primary;   
+  max-height: 860px;
+  overflow: auto;
+  padding-right: 10px;
 
-  &.inline {
-    position: relative;
-    width: 100%;
-    background: $text-color-primary;   
-    max-height: 860px;
-    overflow: auto;
-    padding-right: 10px;
+  @media (min-width: 768px) {
+    height: 100%;
+    padding-top: 40px; /* este se repite si quieres asegurarlo */
+    padding: 0 10px 0 0;
+    margin: 0;
+  }
 
-    @media (min-width: 768px) {
-      height: 100%;
-      padding-top: 40px; /* este se repite si quieres asegurarlo */
-      padding: 0 10px 0 0;
-      margin: 0;
+  &.vitamin {
+    .info {
+      padding: 40px;
+      background-color: #ffffff;
+      box-shadow: 0 17px 14px rgba(0, 0, 0, 0.1);
+      margin-top: 50px;
     }
   }
+  
 
   &::-webkit-scrollbar:vertical {
     background: transparent;
@@ -118,15 +125,13 @@ ficha-fosa {
 
     .info {
       flex: 1;
-      padding: 24px 16px 16px;
-      background-color: #ffffff;
-      box-shadow: 0 17px 14px rgba(0, 0, 0, 0.1);
+      
       margin-bottom: 30px;
 
       @media (min-width: 992px) {
         margin-bottom: 60px;
-        padding: 40px;
-        margin-top: 50px;
+        padding-top: 50px;
+       
       }
 
       .info-cabecera {
@@ -347,7 +352,6 @@ ficha-fosa {
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 2rem;
       position: relative;
       z-index: 1;
       clear: both;
@@ -427,7 +431,8 @@ ficha-fosa {
         
     }
     .multimedia {
-      flex: 1 1 45%;
+      margin-bottom: 20px;
+     
 
       h3 {
         font-family: $font-primary;
@@ -440,20 +445,20 @@ ficha-fosa {
 
       .multimedia-tabs {
         display: flex;
-        gap: 24px;
-        margin-bottom: 10px;
-        padding-bottom: 12px;
+        gap: 12px;
+        padding: 0 0 12px 0;
+        margin-bottom: 30px;
         border-bottom: 1px solid #AAAAAA;
       }
 
-      .tab-btn {
+      .tab {
         background-color: transparent;
         border: none;
         text-decoration: none;
 
         font-family :$font-primary;
         font-weight: 400;
-        font-size: 16px;
+        font-size: 15px;
         line-height: 24px;
         color: $color-blue-dark;
 
@@ -475,13 +480,16 @@ ficha-fosa {
           justify-content: center;
           text-decoration: none;
         }
-      }
 
-      .tab-btn.active {
-        text-decoration: underline;
+        @media (min-width: $breakpoint-mobile) {
+           font-size: 16px;
+        }
       }
 
       .multimedia-content {
+        border-bottom: 1px solid #D1D1D1;
+        margin-bottom: 32px;
+
         h4 {
           font-family: $font-primary;
           font-weight: 400;
@@ -489,6 +497,8 @@ ficha-fosa {
           line-height: 24px;
           text-transform: uppercase;
           color:$color-gray-dark-2;
+          margin-top: 0;
+          margin-bottom: 10px;
         }
         .tab-content {
           display: none;
@@ -503,8 +513,18 @@ ficha-fosa {
 
     .news-related {
       list-style: none;
-      padding: 0;
-      margin: 10px 0;
+      padding-bottom: 10px;
+      margin: 10px 0 0;
+      border-bottom: 1px solid #D1D1D1;
+
+      &_title-block {
+        font-family: $font-primary;
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 24px;
+        color: $text-color-secundary;
+        margin-top: 0;
+      }
 
       img {
         min-width: 80px;
@@ -518,8 +538,8 @@ ficha-fosa {
       &_title {
         font-family: $font-primary;
         font-weight: 700;
-        font-size: 15px;
-        line-height: 20px;
+        font-size: 14px;
+        line-height: 24px;
         color: $text-color-secundary;
         text-decoration: none;
         display: block;
@@ -585,12 +605,22 @@ ficha-fosa {
       }
     }
 
+    .multimedia-section {
+      padding-bottom: 16px;
+      border-bottom: 1px solid #D1D1D1;
+      margin-bottom: 16px;
+
+      &:last-child {
+        border-bottom: 0;
+      }
+
+    }
+
     // Estilos para grids de multimedia
     .multimedia-grid {
       display: flex;
       flex-direction: column;
       gap: 20px;
-      margin-top: 16px;
 
       .multimedia-card {
         display: flex;
@@ -610,10 +640,15 @@ ficha-fosa {
           object-fit: cover;
           display: block;
           position: relative;
+          margin-right: 10px;
 
          @media (min-width: $breakpoint-mobile) {
             width: 151px;
           }
+        }
+
+        .destacado-badge {
+          display: none;
         }
 
         .content-img {
@@ -650,7 +685,6 @@ ficha-fosa {
         }
 
         .card-text {
-           padding: 0 10px 10px;
         }
 
         .card-title {
@@ -660,6 +694,11 @@ ficha-fosa {
           line-height: 18px;
           color: $text-color-secundary;
           margin-bottom: 5px;
+          text-decoration: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
         }
 
         .card-date {
@@ -707,6 +746,7 @@ ficha-fosa {
       padding: 20px;
       gap: 8px;
       border: 5px solid $color-white;
+      margin-bottom: 30px;
 
       &_header {
         width: 100%;
@@ -797,6 +837,8 @@ ficha-fosa {
     }
 
     .fuentes {
+      margin-bottom: 20px;
+      
       &_title {
         font-family: $font-primary;
         font-weight: 700;
@@ -804,6 +846,7 @@ ficha-fosa {
         line-height: 24px;
         color: $text-color-secundary;
         text-transform: uppercase;
+        margin-top: 0;
       }
 
       &_list {
