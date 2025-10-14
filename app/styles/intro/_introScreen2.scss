@@ -239,7 +239,6 @@ button {
     .botones-categorias {
       width: 100%;
       display: flex;
-      justify-content: space-between;
       align-items: flex-start;
       gap: #{$spacing-lg + 4px};
       flex-wrap: nowrap;
@@ -344,6 +343,11 @@ button {
         &.activa .category-icon {
           border: solid 6px transparent;
           box-shadow:0 0 0 7px #ffffff;
+
+          @media (max-width: 599.98px) {
+            border: solid 4px transparent;
+            box-shadow:0 0 0 5px #ffffff;
+          }
         }
         &:hover .category-text::after,
         &.activa .category-text::after {
