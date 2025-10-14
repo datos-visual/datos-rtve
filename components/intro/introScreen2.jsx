@@ -112,12 +112,16 @@ export default function IntroScreen2({onNavigation}) {
         >
             <div className="info-content">
                 <div className="text-container">
+                    
                     <div className="info-text-wrapper">
                         {textContent.map((text, idx) => (
                             <p className="info-text" key={idx}>
                                 {text}
                             </p>
                         ))}
+                        <a href="/mapa" data-link="/mapa" className="text-link-btn">
+                        <span>Saltar introducción</span>
+                    </a>
                     </div>
                     <div className="button-wrapper">
                         <button
@@ -184,9 +188,7 @@ export default function IntroScreen2({onNavigation}) {
                 </div>
             </div>
 
-            <a href="/mapa" data-link="/mapa" className="text-link-btn">
-                <span>Saltar introducción</span>
-            </a>
+           
 
             <div className="info-footer">
                 <p>
