@@ -15,6 +15,7 @@ import pointIcon from "../../app/assets/pointIcon.svg";
 import iconClose from "../../app/assets/icon-close.svg";
 
 import ModalCarrousel from "../common/ModalCarrousel";
+import ContentImage from "../common/ContentImage";
 
 const iconosCategorias = {
   todas: iconFiltro,
@@ -31,12 +32,12 @@ const formatearNumero = (numero) => {
   if (!numero && numero !== 0) return numero;
   // Convertir a número
   let num = numero;
-  if (typeof numero === 'string') {
-    num = parseInt(numero.trim().replace(/\s/g, ''), 10);
+  if (typeof numero === "string") {
+    num = parseInt(numero.trim().replace(/\s/g, ""), 10);
   }
   if (isNaN(num)) return numero;
   // Formatear manualmente con puntos como separadores de miles
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 
 const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
@@ -48,11 +49,11 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
   useEffect(() => {
     // El campo id_datos del JSON se normaliza a "id" en datos.js
     const idDatos = fosa?.id;
-    
+
     if (idDatos) {
       // Formatear ID con padding de ceros (ej: 257 → 00257)
-      const idFormateado = String(idDatos).padStart(5, '0');
-      
+      const idFormateado = String(idDatos).padStart(5, "0");
+
       fetch(
         `https://www.rtve.es/datos-repo/test-fosas/v3/fichas/${idFormateado}.json`
       )
@@ -104,13 +105,18 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
 
   // Datos de fichaExtra (API v3)
   const descripcionRaw =
-    fichaExtra?.texto || fichaExtra?.titular || linea_narrativa || "Sin descripción disponible";
-  
+    fichaExtra?.texto ||
+    fichaExtra?.titular ||
+    linea_narrativa ||
+    "Sin descripción disponible";
+
   // Agregar clases a los párrafos del HTML
-  const descripcion = descripcionRaw ? descripcionRaw.replace(/<p>/g, '<p class="resumen-parrafo">') : descripcionRaw;
+  const descripcion = descripcionRaw
+    ? descripcionRaw.replace(/<p>/g, '<p class="resumen-parrafo">')
+    : descripcionRaw;
   const fuenteInfo = fichaExtra?.fuente_info || fuente_info;
   const fuenteEnlace = fichaExtra?.fuente_enlace || fuente_enlace;
-  
+
   // Campos adicionales de fichaExtra
   const statusExtra = fichaExtra?.status || status;
   const eventDateExtra = fichaExtra?.event_date || event_date;
@@ -125,16 +131,17 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
   const texto = fichaExtra?.texto;
 
   // Lógica para mostrar datos de víctimas según el estado de la fosa
-  const statusLower = statusExtra?.toLowerCase() || '';
-  const isExhumada = statusLower.includes('exhumada') && !statusLower.includes('no exhumada');
-  const isNoExhumada = statusLower.includes('no exhumada');
-  const isExhumadaParcial = statusLower.includes('parcial');
-  
+  const statusLower = statusExtra?.toLowerCase() || "";
+  const isExhumada =
+    statusLower.includes("exhumada") && !statusLower.includes("no exhumada");
+  const isNoExhumada = statusLower.includes("no exhumada");
+  const isExhumadaParcial = statusLower.includes("parcial");
+
   // Determinar qué mostrar según la lógica
   let mostrarInhumados = false;
   let mostrarExhumados = false;
-  let etiquetaInhumados = 'NÚMERO DE VÍCTIMAS';
-  
+  let etiquetaInhumados = "NÚMERO DE VÍCTIMAS";
+
   // REGLA 1: Si no hay datos de inhumados ni exhumados -> no se muestra nada
   if (!nBuriedExtra && !nExhumed) {
     mostrarInhumados = false;
@@ -151,17 +158,17 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
     if (nExhumed && nBuriedExtra) {
       mostrarInhumados = true;
       mostrarExhumados = true;
-    } 
+    }
     // REGLA 6: Exhumada parcial con dato de exhumados pero SIN dato de inhumados -> solo exhumados
     else if (nExhumed && !nBuriedExtra) {
       mostrarInhumados = false;
       mostrarExhumados = true;
-    } 
+    }
     // REGLA 7: Exhumada parcial con dato de inhumados pero SIN dato de exhumados -> solo inhumados (etiqueta: VÍCTIMAS)
     else if (!nExhumed && nBuriedExtra) {
       mostrarInhumados = true;
       mostrarExhumados = false;
-      etiquetaInhumados = 'NÚMERO DE VÍCTIMAS';
+      etiquetaInhumados = "NÚMERO DE VÍCTIMAS";
     }
   }
   // REGLAS 3 y 4: Exhumada (total)
@@ -170,7 +177,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
     if (nExhumed) {
       mostrarInhumados = false;
       mostrarExhumados = true;
-    } 
+    }
     // REGLA 4: Exhumada SIN dato de exhumados pero CON dato de inhumados -> solo mostrar inhumados
     else if (nBuriedExtra) {
       mostrarInhumados = true;
@@ -182,16 +189,16 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
     mostrarInhumados = !!nBuriedExtra;
     mostrarExhumados = !!nExhumed;
   }
-  
+
   // Víctimas y contenidos
   const victimas = fichaExtra?.victimas || [];
   const contenidos = fichaExtra?.contenidos || [];
-  
+
   // Separar contenidos por tipo
-  const noticias = contenidos.filter(c => c.tipo === "noticia");
-  const videosContenido = contenidos.filter(c => c.tipo === "video");
-  const audiosContenido = contenidos.filter(c => c.tipo === "audio");
-  const fotosContenido = contenidos.filter(c => c.tipo === "foto");
+  const noticias = contenidos.filter((c) => c.tipo === "noticia");
+  const videosContenido = contenidos.filter((c) => c.tipo === "video");
+  const audiosContenido = contenidos.filter((c) => c.tipo === "audio");
+  const fotosContenido = contenidos.filter((c) => c.tipo === "foto");
 
   const claveCategoria = (linea_narrativa || "todas").toLowerCase();
   const textoCategoria =
@@ -203,7 +210,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
   // Función para generar thumbnail según tipo de contenido
   const generarThumbnail = (contenido, size = 400) => {
     const { tipo, id, url } = contenido;
-    
+
     if (tipo === "video") {
       return `https://img.rtve.es/v/${id}?w=${size}`;
     } else if (tipo === "audio") {
@@ -221,49 +228,58 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
 
   // Multimedia de fichaExtra (combinar con base)
   // Fotos: combinar base + contenidos tipo foto
-  const fotos = [
-    ...fotosBase,
-    ...fotosContenido.map(f => f.url)
-  ].filter(Boolean);
-  
+  const fotos = [...fotosBase, ...fotosContenido.map((f) => f.url)].filter(
+    Boolean
+  );
+
   // Videos: solo los de la base (los de contenido van en videosEmbed)
   const videos = [...videosBase].filter(Boolean);
-  
+
   // Audios: combinar base + contenidos tipo audio
-  const audios = [
-    ...audiosBase,
-    ...audiosContenido.map(a => a.url)
-  ].filter(Boolean);
+  const audios = [...audiosBase, ...audiosContenido.map((a) => a.url)].filter(
+    Boolean
+  );
 
   // Contenidos multimedia completos (para modal con thumbnails)
   const contenidosMultimedia = [
-    ...videosContenido.map(v => ({
+    ...videosContenido.map((v) => ({
       ...v,
       thumbnail: generarThumbnail(v, 400),
-      embed: v.embed || null
+      embed: v.embed || null,
     })),
-    ...audiosContenido.map(a => ({
+    ...audiosContenido.map((a) => ({
       ...a,
       thumbnail: generarThumbnail(a, 400),
-      embed: a.embed || null
+      embed: a.embed || null,
     })),
-    ...fotosContenido.map(f => ({
+    ...fotosContenido.map((f) => ({
       ...f,
-      thumbnail: generarThumbnail(f, 400)
-    }))
+      thumbnail: generarThumbnail(f, 400),
+    })),
   ];
 
   // Filtrar contenidos destacados para el modal
-  const contenidosDestacados = contenidosMultimedia.filter(c => c.destacado === true);
+  const contenidosDestacados = contenidosMultimedia.filter(
+    (c) => c.destacado === true
+  );
 
   // Obtener imagen destacada SOLO del primer contenido con destacado: true
   // No usar foto como fallback para mantener la lógica de contenidos
-  const imagenDestacada = contenidosDestacados.length > 0 
-    ? contenidosDestacados[0].thumbnail 
-    : null;
+  const imagenDestacada =
+    contenidosDestacados.length > 0 ? contenidosDestacados[0].thumbnail : null;
+
+  // Conteos y bandera para mostrar bloque multimedia solo si hay algo
+  const countVideos = videosContenido.length;
+  const countAudios = audiosContenido.length;
+  const countFotos = fotos.length;
+  const countNoticias = noticias.length;
+  const hasAnyMultimedia =
+    countVideos + countAudios + countFotos + countNoticias > 0;
 
   return (
-    <div className={`ficha-fosa inline ${vitaminada === true ? 'vitamin' : ''}`}>
+    <div
+      className={`ficha-fosa inline ${vitaminada === true ? "vitamin" : ""}`}
+    >
       {/* Cerrar */}
       <button className="cerrar" onClick={onClose}>
         <Image src={iconClose} alt="Cerrar" />
@@ -277,9 +293,13 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                 <p className="ubicacion">
                   {/* Si municipio y provincia son iguales, mostrar solo provincia */}
                   {municipio === provincia ? (
-                    <><strong>{provincia}</strong> | {ccaa}</>
+                    <>
+                      <strong>{provincia}</strong> | {ccaa}
+                    </>
                   ) : (
-                    <><strong>{municipio}</strong> | {provincia} | {ccaa}</>
+                    <>
+                      <strong>{municipio}</strong> | {provincia} | {ccaa}
+                    </>
                   )}
                 </p>
                 <h2 className="info-ubicacion__name">
@@ -314,15 +334,23 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                 <li className="datos__item">
                   <label className="datos__label">{etiquetaInhumados}</label>
                   <span className="datos__value">
-                    {formatearNumero(nBuriedExtra)} {nBuriedExtra === 1 ? 'inhumado' : 'inhumados'}
-                    {mostrarExhumados && nExhumed && ` | ${formatearNumero(nExhumed)} ${nExhumed === 1 ? 'exhumado' : 'exhumados'}`}
+                    {formatearNumero(nBuriedExtra)}{" "}
+                    {nBuriedExtra === 1 ? "inhumado" : "inhumados"}
+                    {mostrarExhumados &&
+                      nExhumed &&
+                      ` | ${formatearNumero(nExhumed)} ${
+                        nExhumed === 1 ? "exhumado" : "exhumados"
+                      }`}
                   </span>
                 </li>
               )}
               {mostrarExhumados && !mostrarInhumados && (
                 <li className="datos__item">
                   <label className="datos__label">NÚMERO DE EXHUMADOS</label>
-                  <span className="datos__value">{formatearNumero(nExhumed)} {nExhumed === 1 ? 'exhumado' : 'exhumados'}</span>
+                  <span className="datos__value">
+                    {formatearNumero(nExhumed)}{" "}
+                    {nExhumed === 1 ? "exhumado" : "exhumados"}
+                  </span>
                 </li>
               )}
               {bandoRepresor && (
@@ -334,16 +362,15 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
               {deathContext && (
                 <li className="datos__item">
                   <label className="datos__label">CONTEXTO DE MUERTE</label>
-                  <span className="datos__value">
-                    {deathContext}
-                  </span>
+                  <span className="datos__value">{deathContext}</span>
                 </li>
               )}
               {(interventionsDateStart || interventionsDateEnd) && (
                 <li className="datos__item">
                   <label className="datos__label">INTERVENCIONES</label>
                   <span className="datos__value">
-                    {interventionsDateStart || "-"} / {interventionsDateEnd || "-"}
+                    {interventionsDateStart || "-"} /{" "}
+                    {interventionsDateEnd || "-"}
                   </span>
                 </li>
               )}
@@ -354,13 +381,10 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
           {imagenDestacada && (
             <div className="foto" onClick={handleOpenModal}>
               <h2 className="datos__title">{title || "Sin título"}</h2>
-              <Image
+              <ContentImage
                 src={imagenDestacada}
                 alt={`${title} - Imagen destacada`}
-                unoptimized
-                width={0}
-                height={0}
-                style={{ width: "100%", height: "auto" }}
+                tipo={contenidosDestacados[0]?.tipo}
               />
             </div>
           )}
@@ -378,42 +402,48 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
         <div className="resumen">
           <div className="resumen-datos">
             {/*<h3>Resumen / Descripción / Label</h3>*/}
-            <div 
-              className="resumen-descripcion" 
+            <div
+              className="resumen-descripcion"
               dangerouslySetInnerHTML={{ __html: descripcion }}
             />
           </div>
 
-          {/* Multimedia - Solo mostrar si hay contenidos disponibles */}
-          {contenidos && contenidos.length > 0 && (
+          {/* Multimedia - Solo mostrar si hay algo (videos/audios/fotos/noticias) */}
+          {hasAnyMultimedia && (
             <div className="multimedia">
               <h3>MATERIAL MULTIMEDIA</h3>
               <ul className="multimedia-tabs">
-                <li className="tab">
-                  Videos <span className="badge">{videosContenido.length}</span>
-                </li>
-                <li className="tab">
-                  Audios <span className="badge">{audiosContenido.length}</span>
-                </li>
-                <li className="tab">
-                  Fotos <span className="badge">{fotos.length}</span>
-                </li>
-                <li className="tab">
-                  Noticias <span className="badge">{noticias.length}</span>
-                </li>
+                {countVideos > 0 && (
+                  <li className="tab">
+                    Videos <span className="badge">{countVideos}</span>
+                  </li>
+                )}
+                {countAudios > 0 && (
+                  <li className="tab">
+                    Audios <span className="badge">{countAudios}</span>
+                  </li>
+                )}
+                {countFotos > 0 && (
+                  <li className="tab">
+                    Fotos <span className="badge">{countFotos}</span>
+                  </li>
+                )}
+                {countNoticias > 0 && (
+                  <li className="tab">
+                    Noticias <span className="badge">{countNoticias}</span>
+                  </li>
+                )}
               </ul>
-              
+
               <div className="multimedia-content">
                 {/* FOTOS */}
-                {fotos.length > 0 && (
+                {countFotos > 0 && (
                   <div className="multimedia-section">
                     <h4>FOTOS</h4>
                     <div className="multimedia-grid">
                       {fotos.map((f, i) => (
                         <div key={`foto-${i}`} className="multimedia-card">
-                          <div className="content-img">
-                            <img src={f} alt="Imagen" />
-                          </div>
+                          <ContentImage src={f} alt="Imagen" tipo="foto" />
                         </div>
                       ))}
                     </div>
@@ -421,27 +451,27 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                 )}
 
                 {/* VIDEOS */}
-                {videosContenido.length > 0 && (
+                {countVideos > 0 && (
                   <div className="multimedia-section">
                     <h4>VIDEOS</h4>
                     <div className="multimedia-grid">
                       {videosContenido.map((video, i) => (
-                        <div 
-                          key={`video-${i}`} 
+                        <div
+                          key={`video-${i}`}
                           className="multimedia-card"
                           onClick={() => handleOpenModal()}
                         >
-                          <div className="content-img video">
-                            <img 
-                              src={generarThumbnail(video, 400)} 
-                              alt={video.titulo || 'Video'}
-                              onError={(e) => {
-                                e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="225"%3E%3Crect fill="%23cccccc" width="400" height="225"/%3E%3Ctext fill="%23666666" font-family="Arial" font-size="20" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3EImagen no disponible%3C/text%3E%3C/svg%3E';
-                              }}
-                            />
-                          </div>
+                          <ContentImage
+                            src={generarThumbnail(video, 400)}
+                            alt={video.titulo || "Video"}
+                            tipo="video"
+                            onError={(e) => {
+                              e.target.src =
+                                'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="225"%3E%3Crect fill="%23cccccc" width="400" height="225"/%3E%3Ctext fill="%23666666" font-family="Arial" font-size="20" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3EImagen no disponible%3C/text%3E%3C/svg%3E';
+                            }}
+                          />
                           <div className="card-text">
-                            <a 
+                            <a
                               className="card-title"
                               href={video.url}
                               target="_blank"
@@ -451,7 +481,11 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                               {video.titulo}
                             </a>
                             <div className="card-date">
-                              {video.fecha ? new Date(video.fecha).toLocaleDateString('es-ES') : '-'}
+                              {video.fecha
+                                ? new Date(video.fecha).toLocaleDateString(
+                                    "es-ES"
+                                  )
+                                : "-"}
                             </div>
                           </div>
                         </div>
@@ -461,39 +495,28 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                 )}
 
                 {/* AUDIOS */}
-                {audiosContenido.length > 0 && (
+                {countAudios > 0 && (
                   <div className="multimedia-section">
                     <h4>AUDIOS</h4>
                     <div className="multimedia-grid">
                       {audiosContenido.map((audio, i) => (
-                        <div 
-                          key={`audio-${i}`} 
+                        <div
+                          key={`audio-${i}`}
                           className="multimedia-card"
                           onClick={() => handleOpenModal()}
                         >
-                          <div className="content-img audio">
-                            <img 
-                              src={audio.thumbnail} 
-                              alt={audio.titulo || 'Audio'}
-                              onError={(e) => {
-                                // Si la imagen falla, usar gradiente de fallback
-                                e.target.style.display = 'none';
-                                const parent = e.target.parentElement;
-                                parent.classList.add('audio-fallback');
-                                
-                                // Agregar icono grande de audio si no existe
-                                if (!parent.querySelector('.audio-fallback-icon')) {
-                                  const iconDiv = document.createElement('div');
-                                  iconDiv.className = 'audio-fallback-icon';
-                                  iconDiv.textContent = '🎵';
-                                  parent.insertBefore(iconDiv, parent.lastChild);
-                                }
-                              }}
-                            />
-                          </div>
-                          
+                          <ContentImage
+                            src={audio.thumbnail}
+                            alt={audio.titulo || "Audio"}
+                            tipo="audio"
+                            onError={(e) => {
+                              e.target.src =
+                                'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="225"%3E%3Crect fill="%2366bb6a" width="400" height="225"/%3E%3Ctext fill="%23ffffff" font-family="Arial" font-size="20" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3E🎵 Audio%3C/text%3E%3C/svg%3E';
+                            }}
+                          />
+
                           <div className="card-text">
-                            <a 
+                            <a
                               className="card-title"
                               href={audio.url}
                               target="_blank"
@@ -503,7 +526,11 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                               {audio.titulo}
                             </a>
                             <div className="card-date">
-                              {audio.fecha ? new Date(audio.fecha).toLocaleDateString('es-ES') : '-'}
+                              {audio.fecha
+                                ? new Date(audio.fecha).toLocaleDateString(
+                                    "es-ES"
+                                  )
+                                : "-"}
                             </div>
                           </div>
                         </div>
@@ -514,17 +541,19 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
               </div>
 
               {/* NOTICIAS */}
-              {noticias.length > 0 && (
+              {countNoticias > 0 && (
                 <div className="news-related">
-                  <h4 className="news-related_title-block">NOTAS RELACIONADAS</h4>
+                  <h4 className="news-related_title-block">
+                    NOTAS RELACIONADAS
+                  </h4>
                   <div className="news-related_container">
                     {noticias.map((noticia, i) => (
-                      <div 
-                        key={`noticia-${i}`} 
+                      <div
+                        key={`noticia-${i}`}
                         className="multimedia-card noticia-card"
                       >
                         <div className="card-text">
-                          <a 
+                          <a
                             className="news-related_title"
                             href={noticia.url}
                             target="_blank"
@@ -533,7 +562,11 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                             {noticia.titulo}
                           </a>
                           <div className="news-related_date">
-                            {noticia.fecha ? new Date(noticia.fecha).toLocaleDateString('es-ES') : '-'}
+                            {noticia.fecha
+                              ? new Date(noticia.fecha).toLocaleDateString(
+                                  "es-ES"
+                                )
+                              : "-"}
                           </div>
                         </div>
                       </div>
@@ -544,7 +577,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
             </div>
           )}
 
-           {fuenteInfo && (
+          {fuenteInfo && (
             <>
               <div className="fuentes">
                 <h4 className="fuentes_title">Fuentes</h4>
@@ -564,45 +597,51 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
               <div className="victimas_header">
                 <h4 className="victimas_header-title">Víctimas</h4>
                 <p className="victimas_header-info">
-                  <strong>Total de víctimas identificadas:</strong> {victimas.length}
+                  <strong>Total de víctimas identificadas:</strong>{" "}
+                  {victimas.length}
                 </p>
               </div>
 
               {victimas.map((victima, idx) => {
                 // Construir nombre completo
-                const nombreCompleto = [victima.name, victima.surname]
-                  .filter(Boolean)
-                  .join(' ') || "Nombre desconocido";
-                
+                const nombreCompleto =
+                  [victima.name, victima.surname].filter(Boolean).join(" ") ||
+                  "Nombre desconocido";
+
                 // Calcular edad
                 let edad = null;
                 if (victima.birthdate && victima.dead_date) {
                   const fechaNacimiento = new Date(victima.birthdate);
                   const fechaMuerte = new Date(victima.dead_date);
-                  edad = fechaMuerte.getFullYear() - fechaNacimiento.getFullYear();
-                  
+                  edad =
+                    fechaMuerte.getFullYear() - fechaNacimiento.getFullYear();
+
                   // Ajustar si aún no había cumplido años ese año
                   const mesNacimiento = fechaNacimiento.getMonth();
                   const mesMuerte = fechaMuerte.getMonth();
                   const diaNacimiento = fechaNacimiento.getDate();
                   const diaMuerte = fechaMuerte.getDate();
-                  
-                  if (mesMuerte < mesNacimiento || (mesMuerte === mesNacimiento && diaMuerte < diaNacimiento)) {
+
+                  if (
+                    mesMuerte < mesNacimiento ||
+                    (mesMuerte === mesNacimiento && diaMuerte < diaNacimiento)
+                  ) {
                     edad--;
                   }
                 }
-                
+
                 // Construir información adicional (profesión / edad)
                 const infoAdicional = [];
                 if (victima.profession) infoAdicional.push(victima.profession);
                 if (edad !== null) infoAdicional.push(`${edad} años`);
-                
+
                 return (
                   <div key={idx} className="victimas_item">
                     <div className="victimas_item-title">
                       <h5>
                         <strong>{nombreCompleto}</strong>
-                        {infoAdicional.length > 0 && ` (${infoAdicional.join(' / ')})`}
+                        {infoAdicional.length > 0 &&
+                          ` (${infoAdicional.join(" / ")})`}
                       </h5>
                     </div>
                   </div>

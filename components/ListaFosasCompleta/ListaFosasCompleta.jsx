@@ -13,6 +13,7 @@ import "../../app/styles/_listaFosasCompleta.scss";
 import upChevron from "../../app/assets/icon-up-chevron.svg";
 import downChevron from "../../app/assets/icon-down-chevron.svg";
 import pinLineaNarrativa from "../../app/assets/pinUbicacionLineaNarrativa.svg";
+import ContentImage from "../common/ContentImage";
 
 const CONFIGURACIONES_CONTEXTO = {
   mapaHistorias: {
@@ -367,13 +368,15 @@ const ListaFosasCompleta = React.memo(function ListaFosasCompleta({
           {/* Solo mostrar imagen si hay destacado o foto base */}
           {(imagenesDestacadas[fosa.id] || fosa.foto) && (
             <div className="fosa__img">
-              <img
+              <ContentImage
                 src={
+                  imagenesDestacadas[fosa.id]?.thumbnail ||
                   imagenesDestacadas[fosa.id] ||
                   fosa.foto ||
                   "https://fotografias.larazon.es/clipping/cmsimages02/2024/11/15/93DFFB09-1D04-4088-99A5-94DC549EE9EC/hallada-fosa-comun-cementerio-val-51-victimas-franquismo_98.jpg?crop=1200,675,x0,y113&width=1900&height=1069&optimize=low&format=webply"
                 }
                 alt={titulo}
+                tipo={imagenesDestacadas[fosa.id]?.tipo}
               />
             </div>
           )}
