@@ -16,8 +16,8 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
   const [loading, setLoading] = useState(true);
   const [selectedFosa, setSelectedFosa] = useState(null);
   const [error, setError] = useState(null);
-  // En desktop, el panel debe estar visible por defecto
-  const [listaVisible, setListaVisible] = useState(!isMobile);
+  // El panel debe estar oculto por defecto en la primera carga
+  const [listaVisible, setListaVisible] = useState(false);
   const [busquedaInput, setBusquedaInput] = useState("");
   const [busquedaTexto, setBusquedaTexto] = useState("");
   const [estadosSeleccionados, setEstadosSeleccionados] = useState(["todos"]);
@@ -289,15 +289,6 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
 
   // === EFECTOS ===
   
-  // Sincronizar listaVisible con cambios de dispositivo
-  useEffect(() => {
-    // En desktop, asegurar que el panel esté visible por defecto
-    // En mobile, mantener oculto por defecto para ver el mapa
-    if (!isMobile && !listaVisible) {
-      setListaVisible(true);
-    }
-  }, [isMobile]); // Solo cuando cambia isMobile
-
   // Redimensionar mapa cuando cambie la visibilidad del panel
   useEffect(() => {
     if (!mapaRef.current?.map) return;
