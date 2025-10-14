@@ -43,10 +43,10 @@
     margin: 0;
     padding-top: 60px;
 
-    @media (min-width: 600px) { 
-       //font-size: clamp(3.125rem, calc(7vw + 1rem), 9.375rem);
-       font-size: clamp(4.5rem, 9.6vw - 0.3rem, 12.5rem); // 150 - 54
-       line-height: clamp(4.833rem, 9.8vw - 0.067rem, 13rem); // 156 - 566
+    @media (min-width: 600px) {
+      //font-size: clamp(3.125rem, calc(7vw + 1rem), 9.375rem);
+      font-size: clamp(4.5rem, 7vw - 0.3rem, 12.5rem); // 150 - 54
+      line-height: clamp(4.833rem, 9.8vw - 0.067rem, 13rem); // 156 - 566
     }
   }
 
@@ -77,7 +77,7 @@
     height: 3px;
     margin-inline: auto;
     background-color: $color-white;
-    content: '';
+    content: "";
     position: relative;
     display: block;
 
@@ -98,7 +98,6 @@
     position: absolute;
   }
 }
-
 
 // scroll-button: botón de navegación
 .intro-sticky scroll-button {

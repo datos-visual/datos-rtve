@@ -80,7 +80,7 @@ button {
       .info-text-wrapper {
         width: 100%;
         margin: 0 auto clamp(40px, 4vw, 80px);
-        
+
         // p.info-text (párrafos de contexto histórico)
         .info-text {
           font-family: $font-secondary, serif;
@@ -124,8 +124,6 @@ button {
         -webkit-overflow-scrolling: touch;
         @include hide-scrollbars;
       }
-
-
 
       // .bottom-navigation (contenedor para navegación móvil)
       .bottom-navigation {
@@ -181,7 +179,8 @@ button {
 
           &.prev,
           &.next {
-            background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAOCAYAAAASVl2WAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAACiSURBVHgBfZHRCcIwGISvRcHHZoOOUDfQjdzAuoEb6CYdwRHqBle1oGAhvR/yUELSgxDIfbn/QgDpQ7ZfskZKI9kI8FoPklUSepEngwTfkJOAa0g6r0GdQZaYBKyDxvQh6WBnRQKqt0DngWoD7MsY2IVdN4dfbPrFCCU1yJUcUyXteaFcmzXf5D32CvuDCehV6vlXa+fcsARKNbWDi8xjbJpm+ciBZ0LpOTIAAAAASUVORK5CYII=) center center no-repeat;
+            background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAOCAYAAAASVl2WAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAACiSURBVHgBfZHRCcIwGISvRcHHZoOOUDfQjdzAuoEb6CYdwRHqBle1oGAhvR/yUELSgxDIfbn/QgDpQ7ZfskZKI9kI8FoPklUSepEngwTfkJOAa0g6r0GdQZaYBKyDxvQh6WBnRQKqt0DngWoD7MsY2IVdN4dfbPrFCCU1yJUcUyXteaFcmzXf5D32CvuDCehV6vlXa+fcsARKNbWDi8xjbJpm+ciBZ0LpOTIAAAAASUVORK5CYII=)
+              center center no-repeat;
           }
 
           &.prev {
@@ -326,7 +325,7 @@ button {
           display: block;
           position: relative;
         }
-        
+
         .category-text::after {
           content: "";
           display: block;
@@ -342,11 +341,11 @@ button {
         &:hover .category-icon,
         &.activa .category-icon {
           border: solid 6px transparent;
-          box-shadow:0 0 0 7px #ffffff;
+          box-shadow: 0 0 0 7px #ffffff;
 
           @media (max-width: 599.98px) {
             border: solid 4px transparent;
-            box-shadow:0 0 0 5px #ffffff;
+            box-shadow: 0 0 0 5px #ffffff;
           }
         }
         &:hover .category-text::after,
@@ -364,7 +363,6 @@ button {
     }
   }
 }
-
 
 // .button-wrapper (contiene botones "Historias", "Mapa de Fosas" y "Saltar")
 .button-wrapper {
@@ -386,16 +384,15 @@ button {
     @include button-base;
     outline: none;
     box-sizing: border-box;
-    padding: 16px 50px;
+    padding: 0px 0px;
 
     font-family: $font-secondary;
     font-weight: 400;
-    font-size: 40px;
+    font-size: 2.5rem;
     line-height: 1.3;
     color: $text-color-primary;
-    min-width: 422px;
-    min-height: 120px;
-
+    min-width: 350px;
+    min-height: 80px;
 
     &:hover,
     &.active {
@@ -472,7 +469,6 @@ button {
   display: block;
   border-bottom: 1px solid $color-white;
 
-  
   @media (min-width: 465px) {
     margin: 40px auto 0 auto;
     font-size: 16px;
