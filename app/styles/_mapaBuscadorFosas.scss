@@ -28,9 +28,10 @@
       position: relative;
 
       &.open {
-        // LISTADO ABIERTO SOBRE MAPA
+        // LISTADO ABIERTO: ocupa la mitad izquierda como en infografiasRTVE
         .mapa-fosas_search {
-          width: 50%;
+          position: relative;
+          min-width: 50%;
           height: 100%;
           background: $text-color-primary;
           padding: 60px 36px 30px;
@@ -78,8 +79,8 @@
       width: 400px;
       padding: 36px 0 0 60px;
       z-index: 10;
-      transition: width 0.3s ease-out;
-
+      transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+      
       &.vista-completa {
         position: absolute;
         top: 36px;
@@ -96,7 +97,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.3s ease-out;
+      // Evitar transiciones que afecten a tamaño del canvas
+      transition: none;
+
+      &.vista-completa {
+        width: 100%;
+      }
     }
 
     .mapboxgl-canvas {
