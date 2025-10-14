@@ -250,12 +250,17 @@ export default function MapaBuscadorFosas({
         window.history.replaceState({}, "", sugerencia.url);
       }
 
+      // Abrir el panel de resultados si está cerrado
+      if (!listaVisible) {
+        handleToggleClick();
+      }
+
       // Hacer zoom a la zona después de un pequeño delay para asegurar que las fosas se actualicen
       setTimeout(() => {
         zoomAZonaBuscada();
       }, 100);
     },
-    [setBusquedaInput, setBusquedaTexto, zoomAZonaBuscada]
+    [setBusquedaInput, setBusquedaTexto, zoomAZonaBuscada, listaVisible, handleToggleClick]
   );
 
   // Cerrar sugerencias al hacer clic fuera

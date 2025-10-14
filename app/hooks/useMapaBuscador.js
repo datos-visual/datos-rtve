@@ -16,7 +16,8 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
   const [loading, setLoading] = useState(true);
   const [selectedFosa, setSelectedFosa] = useState(null);
   const [error, setError] = useState(null);
-  const [listaVisible, setListaVisible] = useState(false);
+  // En desktop, el panel debe estar visible por defecto
+  const [listaVisible, setListaVisible] = useState(!isMobile);
   const [busquedaInput, setBusquedaInput] = useState("");
   const [busquedaTexto, setBusquedaTexto] = useState("");
   const [estadosSeleccionados, setEstadosSeleccionados] = useState(["todos"]);
@@ -206,8 +207,12 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
     (e) => {
       e.preventDefault();
       setBusquedaTexto(busquedaInput.trim());
+      // Abrir el panel de resultados si hay búsqueda y está cerrado
+      if (busquedaInput.trim() && !listaVisible) {
+        setListaVisible(true);
+      }
     },
-    [busquedaInput]
+    [busquedaInput, listaVisible]
   );
 
   const handleToggleClick = useCallback(() => {
@@ -283,6 +288,57 @@ export function useMapaBuscador(fosas = [], isMobile = false) {
   }, []);
 
   // === EFECTOS ===
+  
+  // Sincronizar listaVisible con cambios de dispositivo
+  useEffect(() => {
+    // En desktop, asegurar que el panel esté visible por defecto
+    // En mobile, mantener oculto por defecto para ver el mapa
+    if (!isMobile && !listaVisible) {
+      setListaVisible(true);
+    }
+  }, [isMobile]); // Solo cuando cambia isMobile
+
+  // Redimensionar mapa cuando cambie la visibilidad del panel
+  useEffect(() => {
+    if (!mapaRef.current?.map) return;
+
+    // Esperar a que el DOM se actualice con la nueva clase CSS
+    const resizeMap = () => {
+      try {
+        // Primera pasada de resize (inmediata)
+        mapaRef.current.map.resize();
+        
+        // Segunda pasada durante la transición CSS (150ms de 300ms)
+        setTimeout(() => {
+          if (mapaRef.current?.map) {
+            mapaRef.current.map.resize();
+          }
+        }, 150);
+
+        // Tercera pasada después de completar la transición CSS (300ms + margen)
+        setTimeout(() => {
+          if (mapaRef.current?.map) {
+            mapaRef.current.map.resize();
+          }
+        }, 350);
+
+        // Cuarta pasada para asegurar (por si hay reflows lentos)
+        setTimeout(() => {
+          if (mapaRef.current?.map) {
+            mapaRef.current.map.resize();
+          }
+        }, 500);
+      } catch (error) {
+        console.warn("Error al redimensionar el mapa:", error);
+      }
+    };
+
+    // Usar requestAnimationFrame para asegurar que el DOM se haya actualizado
+    requestAnimationFrame(() => {
+      requestAnimationFrame(resizeMap);
+    });
+  }, [listaVisible]); // Se ejecuta cada vez que cambia listaVisible
+
   useEffect(() => {
     if (mapaRef.current?.setFilteredFosas) {
       mapaRef.current.setFilteredFosas(fosasFiltradas);
