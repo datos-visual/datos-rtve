@@ -99,6 +99,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
     foto,
     video,
     audio,
+    vitaminada,
   } = fosa;
 
   // Datos de fichaExtra (API v3)
@@ -262,7 +263,7 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
     : null;
 
   return (
-    <div className="ficha-fosa inline">
+    <div className={`ficha-fosa inline ${vitaminada === true ? 'vitamin' : ''}`}>
       {/* Cerrar */}
       <button className="cerrar" onClick={onClose}>
         <Image src={iconClose} alt="Cerrar" />
