@@ -208,7 +208,7 @@
 /* Botones de navegación Península/Canarias */
 .navjump {
   position: absolute;
-  z-index: 11;
+  z-index: 1;
   display: flex;
   gap: 8px;
   flex-direction: column;
@@ -289,6 +289,7 @@
   top: inherit;
   width: 46px;
   right: 25px;
+  z-index: 1!important;
 }
 
 @media (max-width: 599.98px) {
