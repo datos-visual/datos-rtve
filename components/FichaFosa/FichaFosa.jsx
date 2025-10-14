@@ -382,42 +382,26 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
               className="resumen-descripcion" 
               dangerouslySetInnerHTML={{ __html: descripcion }}
             />
-
-            {fuenteInfo && (
-            <>
-              <div className="fuentes">
-                <h4 className="fuentes_title">Fuentes</h4>
-                <ul className="fuentes_list">
-                  <li className="fuentes_item">
-                    <a href={fuenteEnlace} target="_blank">
-                      {fuenteInfo}
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </>
-          )}
-
           </div>
 
           {/* Multimedia - Solo mostrar si hay contenidos disponibles */}
           {contenidos && contenidos.length > 0 && (
             <div className="multimedia">
               <h3>MATERIAL MULTIMEDIA</h3>
-              <div className="multimedia-tabs">
-                <button className="tab-btn">
+              <ul className="multimedia-tabs">
+                <li className="tab">
                   Videos <span className="badge">{videosContenido.length}</span>
-                </button>
-                <button className="tab-btn">
+                </li>
+                <li className="tab">
                   Audios <span className="badge">{audiosContenido.length}</span>
-                </button>
-                <button className="tab-btn">
+                </li>
+                <li className="tab">
                   Fotos <span className="badge">{fotos.length}</span>
-                </button>
-                <button className="tab-btn">
+                </li>
+                <li className="tab">
                   Noticias <span className="badge">{noticias.length}</span>
-                </button>
-              </div>
+                </li>
+              </ul>
               
               <div className="multimedia-content">
                 {/* FOTOS */}
@@ -447,11 +431,6 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                           className="multimedia-card"
                           onClick={() => handleOpenModal()}
                         >
-                          {video.destacado && (
-                            <span className="destacado-badge">
-                              DESTACADO
-                            </span>
-                          )}
                           <div className="content-img video">
                             <img 
                               src={generarThumbnail(video, 400)} 
@@ -492,11 +471,6 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                           className="multimedia-card"
                           onClick={() => handleOpenModal()}
                         >
-                          {audio.destacado && (
-                            <span className="destacado-badge">
-                              DESTACADO
-                            </span>
-                          )}
                           <div className="content-img audio">
                             <img 
                               src={audio.thumbnail} 
@@ -537,42 +511,52 @@ const FichaFosa = React.memo(function FichaFosa({ fosa, onClose }) {
                     </div>
                   </div>
                 )}
+              </div>
 
-                {/* NOTICIAS */}
-                {noticias.length > 0 && (
-                  <div className="multimedia-section">
-                    <h4>NOTICIAS</h4>
-                    <div className="multimedia-grid">
-                      {noticias.map((noticia, i) => (
-                        <div 
-                          key={`noticia-${i}`} 
-                          className="multimedia-card noticia-card"
-                        >
-                          {noticia.destacado && (
-                            <span className="destacado-badge">
-                              DESTACADO
-                            </span>
-                          )}
-                          <div className="card-text">
-                            <a 
-                              className="card-title"
-                              href={noticia.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              {noticia.titulo}
-                            </a>
-                            <div className="card-date">
-                              {noticia.fecha ? new Date(noticia.fecha).toLocaleDateString('es-ES') : '-'}
-                            </div>
+              {/* NOTICIAS */}
+              {noticias.length > 0 && (
+                <div className="news-related">
+                  <h4 className="news-related_title-block">NOTAS RELACIONADAS</h4>
+                  <div className="news-related_container">
+                    {noticias.map((noticia, i) => (
+                      <div 
+                        key={`noticia-${i}`} 
+                        className="multimedia-card noticia-card"
+                      >
+                        <div className="card-text">
+                          <a 
+                            className="news-related_title"
+                            href={noticia.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {noticia.titulo}
+                          </a>
+                          <div className="news-related_date">
+                            {noticia.fecha ? new Date(noticia.fecha).toLocaleDateString('es-ES') : '-'}
                           </div>
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    ))}
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
+          )}
+
+           {fuenteInfo && (
+            <>
+              <div className="fuentes">
+                <h4 className="fuentes_title">Fuentes</h4>
+                <ul className="fuentes_list">
+                  <li className="fuentes_item">
+                    <a href={fuenteEnlace} target="_blank">
+                      {fuenteInfo}
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </>
           )}
 
           {victimas.length > 0 && (

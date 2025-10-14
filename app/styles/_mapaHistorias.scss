@@ -11,6 +11,16 @@ mapa-fosas-new {
   max-width: 1800px;
 }
 
+.historias_title {
+  font-family: $font-primary;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 20px;
+  color: $text-color-secundary;
+  margin-bottom: 20px;
+  padding-left: 35px;
+}
+
 .vista-figura {
   margin: 0 auto;
   position: relative;
@@ -397,7 +407,7 @@ mapa-fosas-new {
         overflow-y: auto;
         padding-bottom: 2rem;
         margin-top: 0;
-        max-height: 460px;
+        max-height: 560px;
 
         .lista-narrativas {
           @media (max-width: 649px) {
