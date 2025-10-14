@@ -30,38 +30,38 @@ export default function BreadcrumbFiltros({
     todos: "Todos",
   },
 }) {
-
   const items = useMemo(() => {
     const safe = (s) => (s || "").toString().trim();
     // Orden: CCAA | Provincia | Ciudad | Fosa
-    return [safe(ccaa), safe(provincia), safe(ciudad), safe(nombreFosa)].filter(Boolean);
+    return [safe(ccaa), safe(provincia), safe(ciudad), safe(nombreFosa)].filter(
+      Boolean
+    );
   }, [ciudad, ccaa, provincia, nombreFosa]);
+
+  // Si no hay ningún dato de ubicación, no renderizar nada
+  if (items.length === 0) return null;
 
   return (
     <div className={className} role="status" aria-live="polite">
       <span className={`${className}-label`}>Se está mostrando:</span>
       <ul className={`${className}-trail`}>
-        {items.length === 0 ? (
-          <li className="muted">{labelsMap.todos || "Todos"}</li>
-        ) : (
-          items.map((txt, i) => {
-            const isLast = i === items.length - 1; // la última instancia va como H1
-            return (
-              <li key={`${txt}-${i}`} className={isLast ? "last" : undefined}>
-                {isLast ? (
-                  <h1
-                    className={`${className}-h1`}
-                    style={{ display: "inline", margin: 0, font: "inherit" }}
-                  >
-                    {txt}
-                  </h1>
-                ) : (
-                  txt
-                )}
-              </li>
-            );
-          })
-        )}
+        {items.map((txt, i) => {
+          const isLast = i === items.length - 1; // la última instancia va como H1
+          return (
+            <li key={`${txt}-${i}`} className={isLast ? "last" : undefined}>
+              {isLast ? (
+                <h1
+                  className={`${className}-h1`}
+                  style={{ display: "inline", margin: 0, font: "inherit" }}
+                >
+                  {txt}
+                </h1>
+              ) : (
+                txt
+              )}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
